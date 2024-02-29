@@ -53,7 +53,7 @@ const ProviderSignUp = () => {
 
     try {
       const response = await axios.post(
-        `${providerRoute}/otpreq`,
+        `${providerRoute}/signup`,
         {
           residenceName,
           email,
