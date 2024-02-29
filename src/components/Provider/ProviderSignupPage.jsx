@@ -62,18 +62,18 @@ const ProviderSignUp = () => {
           confirmPassword,
         }
       );
-  
+      console.log(response)
 
-      // if (response.status === 201) {
-      //   console.log("Sign up successful");
-      //   toast.success("Sign up Successfull"); 
-      //  setTimeout(() => {
-      //   navigate("/provider");
+      if (response.status === 201) {
+        console.log("Sign up successful");
+        toast.success("Sign up Successfull"); 
+       setTimeout(() => {
+        navigate("/provider");
         
-      //  }, 2000);
-      // } else {
-      //   console.error("Sign up failed");
-      // }
+       }, 2000);
+      } else {
+        console.error("Sign up failed");
+      }
     } catch (error) {
       toast.error("Provider is already registerd please login"); 
      setTimeout(() => {
