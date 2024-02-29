@@ -4,10 +4,12 @@ import axios from "axios";
 const Providers = () => {
   const [providers, setProviders] = useState([]);
 
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const response = await axios.get("http://localhost:1997/admin/providers");
+        const response = await axios.get(`${adminRoute}/providers`);
         setProviders(response.data);
       } catch (error) {
         console.error("Error fetching providers:", error);
@@ -16,14 +18,17 @@ const Providers = () => {
 
     fetchProviders();
   }, []);
+  console.log("Providers", providers);
 
   const providerAction = async (providerId) => {
     try {
-      const response = await axios.post("http://localhost:1997/admin/providers/action", { providerId });
-      console.log(response);
+      const response = await axios.post(
+        `${adminRoute}/providers/action/${providerId}`
+      );
+      console.log("response", response);
 
-      const updatedProviders = providers.map(provider => {
-        if (provider.id === providerId) {
+      const updatedProviders = providers.map((provider) => {
+        if (provider._id === providerId) {
           provider.status = provider.status === "Active" ? "Blocked" : "Active";
         }
         return provider;
@@ -55,7 +60,7 @@ const Providers = () => {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Type
+              Profile
             </th>
             <th
               scope="col"
@@ -88,20 +93,33 @@ const Providers = () => {
             <tr key={provider.id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={provider.image}
+                  src={`http://localhost:1997/${provider.providerImage[0]}`}
                   alt={provider.name}
                   className="h-10 w-10 rounded-full"
                 />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">{provider.providerName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{provider.type}</td>
               <td className="px-6 py-4 whitespace-nowrap">
-                {provider.address}
+                {provider.providerName}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">{provider.rooms}</td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {provider.Profile}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {provider.ProviderCity}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {provider.providerRooms}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap">{provider.status}</td>
               <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
-                <button className={`py-2 px-4 rounded ${provider.status === "Blocked" ? "bg-green-500 hover:bg-green-700" : "bg-red-500 hover:bg-red-700"} text-white font-bold`} onClick={() => providerAction(provider.id)}>
+                <button
+                  className={`py-2 px-4 rounded ${
+                    provider.status === "Blocked"
+                      ? "bg-green-500 hover:bg-green-700"
+                      : "bg-red-500 hover:bg-red-700"
+                  } text-white font-bold`}
+                  onClick={() => providerAction(provider._id)}
+                >
                   {provider.status === "Active" ? "Block" : "Unblock"}
                 </button>
               </td>

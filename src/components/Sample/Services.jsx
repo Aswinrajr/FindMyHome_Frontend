@@ -21,7 +21,7 @@ const Services = () => {
           </div>
           <div className="md:w-1/2">
             <div className="text-lg text-gray-800">
-              <p className="mb-8">Discover our wide range of room booking services designed to make your experience seamless and enjoyable. Whether you're looking for a cozy retreat or a luxurious getaway, we have something for everyone.</p>
+              <p className="mb-8">Discover our wide range of room booking services designed to make your experience seamless and enjoyable. Whether youre looking for a cozy retreat or a luxurious getaway, we have something for everyone.</p>
               <p className="mb-8">Explore our collection of accommodations, browse through our curated listings, and book your perfect room with confidence. Our user-friendly interface and helpful tools make it easy to find exactly what youre looking for.</p>
               <p>Experience hassle-free booking, exceptional customer service, and unforgettable stays with us. Your dream room is just a click away!</p>
             </div>

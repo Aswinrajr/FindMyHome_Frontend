@@ -31,6 +31,9 @@ import VerifyOtp from "../Pages/Users/UserVerifyOtp";
 import SamplePage from "../components/Sample/SamplePage";
 import SampleAddRooms from "../components/Provider/Sample addRooms";
 import LoginByOtp from "../components/Provider/LoginByOtp";
+import ProviderProfile from "../Pages/Provider/ProviderProfile";
+import SearchedRoom from "../Pages/Users/SearchedRoom";
+import FullDetails from "../components/User/FullDetails";
 
 
 const routerPage = createBrowserRouter([
@@ -131,6 +134,11 @@ const routerPage = createBrowserRouter([
     path:"/provider/otplogin",
     element:<LoginByOtp/>
   },
+  {
+    path:"/provider/profileedit",
+    element:<ProviderProfile/>
+
+  },
 
 
   //Users
@@ -155,6 +163,14 @@ const routerPage = createBrowserRouter([
     path: "/home",
     element: <SamplePage />,
   },
+  {
+    path:"/searchedroom",
+    element:<SearchedRoom/>
+  },
+  {
+    path:"/roompreview",
+    element:<FullDetails/>
+  }
 ]);
 
 export default routerPage;

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {setProvider} from '../../features/providerAuth'
 
 const ProviderVerifyOtp = () => {
+  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
   const [otp, setOtp] = useState(0);
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const ProviderVerifyOtp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:1997/provider/verifyotp",
+        `${providerRoute}/verifyotp`,
         {
           otp,
         }

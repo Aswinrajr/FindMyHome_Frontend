@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {  useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setProvider } from "../../features/providerAuth";
 import axios from "axios";
@@ -10,27 +10,30 @@ const ProviderLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:1997/provider/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${providerRoute}/login`, {
+        email,
+        password,
+      });
 
       console.log("response: ", response.data.msg);
 
       if (response.status === 200) {
         dispatch(setProvider(response.data.provider.providerEmail));
-        toast.success(response.data.msg);
+
+        setTimeout(() => {
+          toast.success(response.data.msg);
+        }, 1000);
 
         setTimeout(() => {
           navigate("/provider/dashboard");
@@ -40,15 +43,17 @@ const ProviderLogin = () => {
       }
     } catch (error) {
       console.log("response: ", error.response.data.msg);
-
       toast.error(error.response.data.msg);
       console.error("Error:", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-  
       <Toaster position="top-center" reverseOrder={false} />
 
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
@@ -100,9 +105,12 @@ const ProviderLogin = () => {
             </div>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={loading}
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Login
+              {loading ? "Verifying in..." : "Login"}
             </button>
           </form>
           <p className="text-gray-600 text-center mt-4 cursor-pointer">
@@ -117,7 +125,9 @@ const ProviderLogin = () => {
           <p
             onClick={() => navigate("/provider/otplogin")}
             className="text-blue-600 text-center cursor-pointer hover:text-blue-600 mt-4"
-          >Login By OTP</p>
+          >
+            Login By OTP
+          </p>
           <p
             onClick={() => navigate("/provider/forgotpassword")}
             className="text-red-600 text-center cursor-pointer hover:text-blue-600 mt-4"

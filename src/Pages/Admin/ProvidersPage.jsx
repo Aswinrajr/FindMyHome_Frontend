@@ -1,4 +1,4 @@
-// UserPage.jsx
+
 
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
@@ -15,7 +15,7 @@ function UserPage() {
         </div>
 
         <div className="flex-1 p-4 bg-gray-100">
-          <h1 className="text-2xl font-semibold mb-4">User List</h1>
+          <h1 className="text-2xl font-semibold mb-4">Providers List</h1>
           <div className="bg-white rounded-lg shadow-md p-4">
             <Providers />
           </div>

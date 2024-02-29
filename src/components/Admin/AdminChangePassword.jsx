@@ -8,14 +8,15 @@ const AdminChangePassword = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [cPassword, setCPassword] = useState("");
+  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // console.log("axiosInstance: ",axiosAdminInstance.axiosAdminInstance)
+  
 
     try {
       const response = await axios.post(
-        "http://localhost:1997/admin/changepassword",
+        `${adminRoute}/changepassword`,
         {
           password,
           cPassword,

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 
 
 const LoginByOtp = () => {
+  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate()
   const [mobile, setMobile] = useState(0);
  
@@ -16,7 +17,7 @@ const LoginByOtp = () => {
     
 
     try {
-      const response = await axios.post('http://localhost:1997/provider/reqotp', {
+      const response = await axios.post(`${providerRoute}/reqotp`, {
       mobile
       });
       console.log(response)

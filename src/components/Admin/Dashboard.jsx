@@ -3,8 +3,12 @@
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
 import AdminDashboard from "../../components/Admin/AdminDashboard"
+import { Navigate } from "react-router";
 
 function UserPage() {
+ 
+  const savedData = localStorage.getItem('admin');
+  if (!savedData) return <Navigate to="/admin" />;
   return (
     <div className="flex flex-col min-h-screen">
       <Topbar />

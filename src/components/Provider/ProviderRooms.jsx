@@ -7,6 +7,11 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 const ProviderRooms = () => {
+  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
+  const providerEmail = localStorage.getItem("provider");
+  const emailObject = JSON.parse(providerEmail);
+  const email = emailObject.provider;
+  console.log(providerEmail);
   const [rooms, setRooms] = useState([]);
   const settings = {
     dots: true,
@@ -20,10 +25,10 @@ const ProviderRooms = () => {
     const fetchRooms = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:1997/provider/rooms"
+          `${providerRoute}/rooms?email=${email}`
         );
         setRooms(response.data);
-        console.log(rooms);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -31,8 +36,6 @@ const ProviderRooms = () => {
 
     fetchRooms();
   }, []);
-
-  console.log(rooms);
 
   const navigate = useNavigate();
 

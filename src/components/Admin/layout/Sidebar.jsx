@@ -1,8 +1,14 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logoutAdmin } from "../../../features/adminAuth";
 
 const Sidebar = () => {
+  const admin = localStorage.getItem("admin")
+
+
+
+
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +17,8 @@ const Sidebar = () => {
     dispatch(logoutAdmin());
     navigate("/admin");
   };
+ if(!admin) return <Navigate to="/admin"/>
+  console.log("Admin in navbar",admin)
 
   return (
     <div className="bg-fuchsia-700 text-white p-4 flex flex-col h-full justify-between sm:w-1/4 md:w-1/5 lg:w-1/6">

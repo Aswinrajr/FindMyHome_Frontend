@@ -2,14 +2,21 @@ import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
 import ClipLoader from "react-spinners/ClipLoader"; // Import loading spinner
 
 const Login = () => {
+  const savedData = localStorage.getItem('admin');
+
+  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
+  const apiKey= import.meta.env.VITE_API_KEY
+  console.log("apiKey",apiKey,adminRoute)
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +26,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:1997/admin/login", {
+      const response = await axios.post(`${adminRoute}/login`, {
         email,
         password,
       });
@@ -31,10 +38,11 @@ const Login = () => {
           toast.success(response.data.msg);
 
         },1000)
-
         setTimeout(() => {
-          navigate("/admin/dashboard");
+          navigate("/admin/dashboard")
         }, 2000);
+
+       
       } else {
         console.error("Login failed");
         if (response.data && response.data.msg) {
@@ -52,6 +60,11 @@ const Login = () => {
       }, 2000);
     }
   };
+  
+ 
+    if (savedData) return <Navigate to="/admin/dashboard" />;
+
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -66,7 +79,7 @@ const Login = () => {
         </div>
         <div className="md:w-1/2 p-8 shadow-2xl">
           <h2 className="text-3xl font-bold mb-4 text-center text-blue-900">
-            Welcome Back!
+            Welcome Back Admin!
           </h2>
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <div>

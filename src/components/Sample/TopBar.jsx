@@ -2,17 +2,20 @@ import { Link } from "react-router-dom";
 import logoImage from "../../assets/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../features/userAuth";
-import { useNavigate } from "react-router";
+import {  useNavigate } from "react-router";
 
 const TopBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state)=>state.userAuth.user);
+  // const newUser= localStorage.getItem("user")
+
 
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/");
   };
+  // if(!newUser) return <Navigate to="/"/>
 
   return (
     <nav className="bg-white text-black py-4 px-8 flex justify-between items-center">

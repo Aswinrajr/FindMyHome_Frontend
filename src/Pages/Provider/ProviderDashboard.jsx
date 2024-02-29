@@ -3,10 +3,30 @@ import Sidebar from "../../components/Provider/layout/Sidebar";
 import DashboardPage from "../../components/Provider/Dashboard";
 import {  useSelector } from "react-redux";
 import { Navigate} from "react-router";
+import { useEffect } from "react";
+import axios from "axios";
 
 
 function ProviderDashboard() {
+
+
   const provider = useSelector((state) => state.providerAuth.provider);
+  useEffect(()=>{
+    console.log('Welcome to complete data')
+   try{
+    const completeData = async()=>{
+      const response = await axios.get("http://localhost:1997/provider/completedata",{provider})
+      console.log(response)
+    }
+    completeData()
+
+   }catch(err){
+    console.log(err)
+   }
+  
+
+  },[provider])
+
   return (
     <div className="flex flex-col min-h-screen">
       {provider && <Navigate to="/provider/dashboard" />}

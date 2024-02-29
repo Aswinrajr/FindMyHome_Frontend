@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 
 const SampleAddRooms = () => {
+    const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
     const [files, setFiles] = useState([]);
 
     const handleSubmit = async (e) => {
@@ -13,7 +14,7 @@ const SampleAddRooms = () => {
         });
 
         try {
-            const response = await axios.post("http://localhost:1997/provider/rooms/addrooms", formData, {
+            const response = await axios.post(`${providerRoute}/rooms/addrooms`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

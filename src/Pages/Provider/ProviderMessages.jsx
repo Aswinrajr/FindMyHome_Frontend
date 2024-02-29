@@ -1,4 +1,4 @@
-// UserPage.jsx
+
 
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";

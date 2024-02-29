@@ -5,6 +5,7 @@ import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1)
 import { Toaster, toast } from "react-hot-toast";
 
 const ProviderSignUp = () => {
+  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
   const [residenceName, setResidenceName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const ProviderSignUp = () => {
     if (error) {
       setTimeout(() => {
         setError("");
-        setShowError(false); // Reset showError state after timeout
+        setShowError(false); 
       }, 2000);
     }
   }, [error, navigate]);
@@ -52,7 +53,7 @@ const ProviderSignUp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:1997/provider/signup",
+        `${providerRoute}/otpreq`,
         {
           residenceName,
           email,
@@ -61,17 +62,18 @@ const ProviderSignUp = () => {
           confirmPassword,
         }
       );
+  
 
-      if (response.status === 201) {
-        console.log("Sign up successful");
-        toast.success("Sign up Successfull"); 
-       setTimeout(() => {
-        navigate("/provider");
+      // if (response.status === 201) {
+      //   console.log("Sign up successful");
+      //   toast.success("Sign up Successfull"); 
+      //  setTimeout(() => {
+      //   navigate("/provider");
         
-       }, 2000);
-      } else {
-        console.error("Sign up failed");
-      }
+      //  }, 2000);
+      // } else {
+      //   console.error("Sign up failed");
+      // }
     } catch (error) {
       toast.error("Provider is already registerd please login"); 
      setTimeout(() => {
@@ -179,7 +181,7 @@ const ProviderSignUp = () => {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className=" shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Confirm your password"
                 required
               />

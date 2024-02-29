@@ -1,11 +1,11 @@
 
-
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";
-import Rooms from "../../components/Provider/ProviderRooms";
+import ProviderDetails from "../../components/Provider/ProviderDetails";
 
 
-function ProviderRooms() {
+
+function ProviderProfile() {
   return (
     <div className="flex flex-col min-h-screen">
       <Topbar />
@@ -16,9 +16,9 @@ function ProviderRooms() {
         </div>
 
         <div className="flex-1 p-4 bg-gray-100">
-          <h1 className="text-2xl font-semibold mb-4">Rooms</h1>
+          <h1 className="text-2xl font-semibold mb-4">ProviderDetails</h1>
           <div className="bg-white rounded-lg shadow-md p-4">
-           <Rooms/>
+           <ProviderDetails/>
           </div>
         </div>
       </div>
@@ -26,4 +26,4 @@ function ProviderRooms() {
   );
 }
 
-export default ProviderRooms;
+export default ProviderProfile;

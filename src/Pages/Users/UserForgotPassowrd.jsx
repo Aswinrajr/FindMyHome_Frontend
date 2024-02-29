@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-
 import logo from '../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
@@ -10,11 +9,9 @@ const UserForgotPassword = () => {
   const navigate = useNavigate()
   const [mobile, setMobile] = useState(0);
  
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     
-
     try {
       const response = await axios.post('http://localhost:1997/reqotp', {
       mobile

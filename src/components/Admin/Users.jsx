@@ -4,10 +4,13 @@ import axios from "axios";
 const Users = () => {
   const [users, setUsers] = useState([]);
 
+  
+  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:1997/admin/users");
+        const response = await axios.get(`${adminRoute}/users`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -19,7 +22,7 @@ const Users = () => {
 
   const userAction = async (userId) => {
     try {
-      const response = await axios.post("http://localhost:1997/admin/users/action", { userId });
+      const response = await axios.post(`${adminRoute}/users/action`, { userId });
       console.log(response);
      
       const updatedUsers = users.map(user => {

@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 
-const EditRooms = () => {
+const ProviderDetails = () => {
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
+  const providerEmail = localStorage.getItem("provider");
+  console.log("Provider Email", providerEmail);
   const navigate = useNavigate();
-  const { roomId } = useParams();
-
   const [files, setFiles] = useState([]);
-  const [roomData, setRoomData] = useState({
-    roomType: "",
-    adults: "",
-    children: "",
-    amount: "",
-    status: "",
-    amenities: {
-      food: false,
-      ac: false,
+  const [roomError, setRoomError] = useState("");
+  const [providerDetails, setProviderDetails] = useState({
+    recidenceName: "",
+    rooms: "",
+    location: "",
+    city: "",
+    facilities: {
+      parking: false,
+      pool: false,
       wifi: false,
       tv: false,
       hotWater: false,
@@ -26,32 +26,40 @@ const EditRooms = () => {
   });
 
   useEffect(() => {
-    const fetchRoomData = async () => {
-      try {
-        const response = await axios.get(
-          `${providerRoute}/rooms/editrooms/${roomId}`
-        );
-        setRoomData(response.data);
-      } catch (error) {
-        console.error("Error fetching room data:", error);
-      }
-    };
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      document.getElementById("location"),
+      {}
+    );
 
-    fetchRoomData();
-  }, [roomId]);
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      setProviderDetails((prevData) => ({
+        ...prevData,
+        location: place.formatted_address,
+      }));
+    });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "rooms") {
+      if (!/^\d+$/.test(value)) {
+        setRoomError("Room must be a number");
+      } else {
+        setRoomError("");
+      }
+    }
+
     if (type === "checkbox") {
-      setRoomData((prevData) => ({
+      setProviderDetails((prevData) => ({
         ...prevData,
-        amenities: {
-          ...prevData.amenities,
+        facilities: {
+          ...prevData.facilities,
           [name]: checked,
         },
       }));
     } else {
-      setRoomData((prevData) => ({
+      setProviderDetails((prevData) => ({
         ...prevData,
         [name]: value,
       }));
@@ -61,173 +69,175 @@ const EditRooms = () => {
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
-
-    setRoomData((prevData) => ({
-      ...prevData,
-      images: selectedFiles.map((file) => URL.createObjectURL(file)),
-    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    formData.append("roomType", roomData.roomType);
-    formData.append("adults", roomData.adults);
-    formData.append("children", roomData.children);
-    formData.append("amount", roomData.amount);
-    formData.append("status", roomData.status);
-    formData.append("amenities", JSON.stringify(roomData.amenities));
+    if (roomError) {
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        `${providerRoute}/rooms/updaterooms/${roomData._id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          providerDetails.city
+        )}&key=AIzaSyAoUo0-J9X1J7Dv08pnGwigpu2Jw_KAr8k`
       );
-      console.log(response);
-      if (response.status === 200) {
-        toast.success("Room Updated Successfully");
-        setTimeout(() => {
-          navigate("/provider/rooms");
-        }, 2000);
+      const { results } = response.data;
+      if (results && results.length > 0) {
+        const { lat, lng } = results[0].geometry.location;
+        console.log(lat,lng)
+        console.log(typeof(lat))
+        console.log(typeof(lng))
+
+        const formData = new FormData();
+        files.forEach((file) => {
+          formData.append("images", file);
+        });
+
+        formData.append("recidenceName", providerDetails.recidenceName);
+        formData.append("rooms", providerDetails.rooms);
+        formData.append("location", providerDetails.location);
+        formData.append("providerEmail", providerEmail);
+        formData.append("city", providerDetails.city);
+
+  
+        formData.append("coordinates", `${lat},${lng}`);
+
+        formData.append(
+          "facilities",
+          JSON.stringify(providerDetails.facilities)
+        );
+
+        const saveResponse = await axios.post(
+          `${providerRoute}/savedata`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        console.log(saveResponse);
+        if (saveResponse.status === 200) {
+          toast.success(saveResponse.data.message);
+          setTimeout(() => {
+            navigate("/provider/rooms");
+          }, 2000);
+        }
+      } else {
+        throw new Error("No results found for the city");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error Occured while updating the room");
+      toast.error(error.response.data.message);
     }
   };
 
   return (
     <div className="container mx-auto px-4">
       <Toaster position="top-center" reverseOrder={false} />
-      <h1 className="text-2xl font-semibold mb-4">Edit Room</h1>
+
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div className="mb-4">
           <label
-            htmlFor="roomType"
+            htmlFor="recidenceName"
             className="block text-sm font-medium text-gray-700"
           >
-            Room Type
-          </label>
-          <select
-            id="roomType"
-            name="roomType"
-            value={roomData.roomType}
-            onChange={handleChange}
-            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            required
-          >
-            <option value="">Select a room type</option>
-            <option value="Single">Single</option>
-            <option value="Double">Double</option>
-            <option value="Suite">Suite</option>
-            <option value="Premium">Premium</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="adults"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Adults
-          </label>
-          <input
-            type="number"
-            id="adults"
-            name="adults"
-            value={roomData.adults}
-            onChange={handleChange}
-            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter number of adults"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="children"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Children
-          </label>
-          <input
-            type="number"
-            id="children"
-            name="children"
-            value={roomData.children}
-            onChange={handleChange}
-            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter number of children"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="amount"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Amount
+            Residence Name
           </label>
           <input
             type="text"
-            id="amount"
-            name="amount"
-            value={roomData.amount}
+            id="recidenceName"
+            name="recidenceName"
+            value={providerDetails.recidenceName}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter amount"
+            placeholder="Residence Name"
             required
           />
         </div>
         <div className="mb-4">
           <label
-            htmlFor="status"
+            htmlFor="room"
             className="block text-sm font-medium text-gray-700"
           >
-            Status
+            No of Rooms
           </label>
-          <select
-            id="status"
-            name="status"
-            value={roomData.status}
+          <input
+            type="text"
+            id="rooms"
+            name="rooms"
+            value={providerDetails.rooms}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter number of rooms"
             required
+          />
+          {roomError && (
+            <p className="text-red-500 text-sm mt-1">{roomError}</p>
+          )}
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="location"
+            className="block text-sm font-medium text-gray-700"
           >
-            <option value="available">Available</option>
-            <option value="not-available">Not Available</option>
-          </select>
+            Location
+          </label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            value={providerDetails.location}
+            onChange={handleChange}
+            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter location"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="city"
+            className="block text-sm font-medium text-gray-700"
+          >
+            City
+          </label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            value={providerDetails.city}
+            onChange={handleChange}
+            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your City"
+            required
+          />
         </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Amenities
+            Facilities
           </label>
           <div className="mt-1 grid grid-cols-2 gap-4">
-            {Object.entries(roomData.amenities).map(
-              ([amenity, checked], index) => (
+            {Object.entries(providerDetails.facilities).map(
+              ([facility, checked], index) => (
                 <div key={index} className="flex items-center">
                   <input
                     type="checkbox"
-                    id={amenity}
-                    name={amenity}
+                    id={facility}
+                    name={facility}
                     checked={checked}
                     onChange={handleChange}
                     className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                   />
                   <label
-                    htmlFor={amenity}
+                    htmlFor={facility}
                     className="ml-2 text-sm text-gray-700"
                   >
-                    {amenity}
+                    {facility}
                   </label>
                 </div>
               )
@@ -260,27 +270,16 @@ const EditRooms = () => {
               />
             ))}
           </div>
-          <div className="flex space-x-2">
-            {roomData.images.map((image, index) => (
-              <img
-                key={index}
-                src={`http://localhost:1997/${image}`}
-                alt={`Image ${index + 1}`}
-                className="max-w-xs max-h-xs"
-                style={{ maxWidth: "100px", maxHeight: "100px" }}
-              />
-            ))}
-          </div>
         </div>
         <button
           type="submit"
           className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
         >
-          Update Room
+          Update Details
         </button>
       </form>
     </div>
   );
 };
 
-export default EditRooms;
+export default ProviderDetails;
