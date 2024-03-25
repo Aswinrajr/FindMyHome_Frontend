@@ -6,7 +6,7 @@ import Login from "../components/Admin/Login";
 import UserPage from "../Pages/Admin/UserPage";
 import ProvidersPage from "../Pages/Admin/ProvidersPage";
 import BookingPage from "../Pages/Admin/BookingPage";
-import MessageList from "../Pages/Admin/MessageList";
+// import MessageList from "../Pages/Admin/MessageList";
 import AdminForgotPassword from "../components/Admin/AdminForgotPassword";
 import AdminVerifyOtp from "../components/Admin/AdminVerifyOtp";
 import AdminChangePassword from "../components/Admin/AdminChangePassword";
@@ -16,7 +16,7 @@ import ProviderLogin from "../components/Provider/ProviderLogin";
 import ProviderSignUp from "../components/Provider/ProviderSignupPage";
 import ProviderDashboard from "../Pages/Provider/ProviderDashboard";
 import ProviderBookings from "../Pages/Provider/ProviderBookings";
-import ProviderMessage from "../Pages/Provider/ProviderMessages";
+// import ProviderMessage from "../Pages/Provider/ProviderMessages";
 import ProviderRooms from "../Pages/Provider/ProviderRooms";
 import ProviderAddRooms from "../Pages/Provider/ProviderAddRooms";
 import ProviderEditRooms from "../Pages/Provider/ProviderEditRoms";
@@ -34,6 +34,8 @@ import LoginByOtp from "../components/Provider/LoginByOtp";
 import ProviderProfile from "../Pages/Provider/ProviderProfile";
 import SearchedRoom from "../Pages/Users/SearchedRoom";
 import FullDetails from "../components/User/FullDetails";
+import FirebaseMobile from "../components/Provider/FirebaseMobile";
+
 
 
 const routerPage = createBrowserRouter([
@@ -41,7 +43,6 @@ const routerPage = createBrowserRouter([
     path: "/test",
     element: <SampleAddRooms />,
   },
-
   {
     path: "/",
     element: <SamplePage />,
@@ -72,10 +73,10 @@ const routerPage = createBrowserRouter([
     path: "/admin/bookings",
     element: <BookingPage />,
   },
-  {
-    path: "/admin/messages",
-    element: <MessageList />,
-  },
+  // {
+  //   path: "/admin/messages",
+  //   element: <MessageList />,
+  // },
   {
     path: "/admin/forgotpassword",
     element: <AdminForgotPassword />,
@@ -106,10 +107,10 @@ const routerPage = createBrowserRouter([
     path: "/provider/bookings",
     element: <ProviderBookings />,
   },
-  {
-    path: "/provider/messages",
-    element: <ProviderMessage />,
-  },
+  //{
+  //   path: "/provider/messages",
+  //   element: <ProviderMessage />,
+  // },
   {
     path: "/provider/rooms",
     element: <ProviderRooms />,
@@ -137,6 +138,10 @@ const routerPage = createBrowserRouter([
   {
     path:"/provider/profileedit",
     element:<ProviderProfile/>
+
+  },{
+    path:"/provider/register",
+    element:<FirebaseMobile/>
 
   },
 
@@ -168,7 +173,7 @@ const routerPage = createBrowserRouter([
     element:<SearchedRoom/>
   },
   {
-    path:"/roompreview",
+    path:"/searchedroom/roompreview/:id",
     element:<FullDetails/>
   }
 ]);

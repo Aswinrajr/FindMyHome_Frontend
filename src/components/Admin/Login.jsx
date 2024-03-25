@@ -1,11 +1,11 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
 import { useNavigate,Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
-import ClipLoader from "react-spinners/ClipLoader"; // Import loading spinner
+import ClipLoader from "react-spinners/ClipLoader"; 
 
 const Login = () => {
   const savedData = localStorage.getItem('admin');
@@ -20,6 +20,9 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();

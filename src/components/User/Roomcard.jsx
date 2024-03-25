@@ -25,8 +25,7 @@ const Roomcard = () => {
       icon: "error",
       confirmButtonText: "OK",
     });
-    navigate("/login")
-    
+    navigate("/login");
   }
 
   useEffect(() => {
@@ -73,9 +72,7 @@ const Roomcard = () => {
 
         const htmlContent = `
           <div>
-            <p><strong>User ID:</strong> ${bookingDetails.userId}</p>
-            <p><strong>Room ID:</strong> ${bookingDetails.roomId}</p>
-            <p><strong>Provider ID:</strong> ${bookingDetails.providerId}</p>
+
             <p><strong>Room Type:</strong> ${bookingDetails.roomType}</p>
             <p><strong>Adults:</strong> ${bookingDetails.adults}</p>
             <p><strong>Children:</strong> ${bookingDetails.children}</p>
@@ -139,10 +136,10 @@ const Roomcard = () => {
             <Slider {...settings}>
               {item.room.images.map((image, imageIndex) => (
                 <div key={imageIndex}>
-                  <img
+                  <img onClick={()=>navigate(`roompreview/${item.room._id}`)}
                     src={`http://localhost:1997/${image}`}
                     alt={`Room ${index} Image ${imageIndex}`}
-                    className="w-full h-32 mb-4 object-cover rounded-lg"
+                    className="w-full h-48 mb-4 object-cover rounded-lg" 
                   />
                 </div>
               ))}
@@ -163,7 +160,6 @@ const Roomcard = () => {
                     Children: {item.room.children}
                   </span>
                 </div>
-                {/* <p className="text-sm text-gray-600 mb-2">Location: {item.room.location}</p> */}
                 <p className="text-sm text-black-600 mb-2">
                   Away from: {item.distance.toFixed(2)} KM
                 </p>

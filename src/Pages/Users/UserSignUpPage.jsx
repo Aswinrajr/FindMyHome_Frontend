@@ -48,8 +48,11 @@ const SignUpPage = () => {
 
       if (response.status === 201) {
         console.log("Sign up successful");
-        toast.success(response.data.msg)
+        toast.success("Sign up successful")
+      setTimeout(() => {
         navigate("/login");
+        
+      }, 1000);
       } else {
         console.error("Sign up failed");
         toast.error(response.data.msg)

@@ -116,7 +116,7 @@ const ProviderLogin = () => {
           <p className="text-gray-600 text-center mt-4 cursor-pointer">
             Dont have an account?{" "}
             <span
-              onClick={() => navigate("/provider/signup")}
+              onClick={() => navigate("/provider/register")}
               className="text-blue-600 hover:underline cursor-pointer"
             >
               Sign up

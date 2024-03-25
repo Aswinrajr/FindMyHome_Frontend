@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import { Toaster, toast } from "react-hot-toast";
 
 const ProviderSignUp = () => {
+  const location = useLocation()
+  const { phoneNumber } = location.state?location.state:"";
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
   const [residenceName, setResidenceName] = useState("");
   const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
+  // const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,9 +26,9 @@ const ProviderSignUp = () => {
     }
   }, [error, navigate]);
 
-  const validateMobile = () => {
-    return /^[0-9]{10}$/.test(mobile);
-  };
+  // const validateMobile = () => {
+  //   return /^[0-9]{10}$/.test(mobile);
+  // };
 
   const validatePassword = () => {
     return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
@@ -37,11 +39,11 @@ const ProviderSignUp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateMobile()) {
-      setError("Mobile number must be 10 digits");
-      setShowError(true);
-      return;
-    }
+    // if (!validateMobile()) {
+    //   setError("Mobile number must be 10 digits");
+    //   setShowError(true);
+    //   return;
+    // }
 
     if (!validatePassword()) {
       setError(
@@ -57,7 +59,7 @@ const ProviderSignUp = () => {
         {
           residenceName,
           email,
-          mobile,
+          mobile:phoneNumber,
           password,
           confirmPassword,
         }
@@ -135,7 +137,7 @@ const ProviderSignUp = () => {
                 required
               />
             </div>
-            <div>
+            {/* <div>
               <label
                 htmlFor="mobile"
                 className="block text-gray-700 font-bold text-sm mb-2"
@@ -151,7 +153,7 @@ const ProviderSignUp = () => {
                 placeholder="Enter your mobile number"
                 required
               />
-            </div>
+            </div> */}
             <div>
               <label
                 htmlFor="password"
