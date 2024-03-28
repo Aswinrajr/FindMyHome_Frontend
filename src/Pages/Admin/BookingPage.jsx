@@ -1,5 +1,3 @@
-
-
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
 import Bookings from "../../components/Admin/BookingList";
@@ -14,9 +12,8 @@ function BookingPage() {
           <Sidebar />
         </div>
 
-        <div className="flex-1 bg-gray-100">
-          <h1 className="text-2xl font-semibold ">Booking List</h1>
-          <div className="bg-white rounded-lg shadow-md ">
+        <div className="flex-1 bg-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-md p-4">
             <Bookings />
           </div>
         </div>

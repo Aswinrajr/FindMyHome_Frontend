@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { useNavigate,Navigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {setUser} from "../../features/userAuth"
-
+import { setUser } from "../../features/userAuth";
 
 const UserLogin = () => {
   const navigate = useNavigate();
@@ -13,10 +12,8 @@ const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const user = useSelector((state)=>state.userAuth.user)
+  const user = useSelector((state) => state.userAuth.user);
   console.log(user);
-
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,16 +24,13 @@ const UserLogin = () => {
         email,
         password,
       });
-      console.log(response.data)
+      console.log(response.data);
 
       if (response.status === 200) {
-       
         toast.success(response.data.msg);
-        dispatch(setUser(response.data.user.userEmail))
+        dispatch(setUser(response.data.user.userEmail));
 
-        
-          navigate("/");
-       
+        navigate("/");
       } else {
         console.error("Login failed");
         if (response.data && response.data.msg) {
@@ -55,7 +49,6 @@ const UserLogin = () => {
     }
   };
   if (user) return <Navigate to="/home" />;
- 
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

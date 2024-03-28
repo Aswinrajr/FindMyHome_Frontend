@@ -15,7 +15,7 @@ function ProviderEditRooms() {
         <div className="flex-1 p-4 bg-gray-100">
           <h1 className="text-2xl font-semibold mb-4">Edit Rooms</h1>
           <div className="bg-white rounded-lg shadow-md p-4">
-            <EditRooms/>
+            <EditRooms />
           </div>
         </div>
       </div>

@@ -5,8 +5,8 @@ import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1)
 import { Toaster, toast } from "react-hot-toast";
 
 const ProviderSignUp = () => {
-  const location = useLocation()
-  const { phoneNumber } = location.state?location.state:"";
+  const location = useLocation();
+  const { phoneNumber } = location.state ? location.state : "";
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
   const [residenceName, setResidenceName] = useState("");
@@ -21,7 +21,7 @@ const ProviderSignUp = () => {
     if (error) {
       setTimeout(() => {
         setError("");
-        setShowError(false); 
+        setShowError(false);
       }, 2000);
     }
   }, [error, navigate]);
@@ -54,34 +54,29 @@ const ProviderSignUp = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${providerRoute}/signup`,
-        {
-          residenceName,
-          email,
-          mobile:phoneNumber,
-          password,
-          confirmPassword,
-        }
-      );
-      console.log(response)
+      const response = await axios.post(`${providerRoute}/signup`, {
+        residenceName,
+        email,
+        mobile: phoneNumber,
+        password,
+        confirmPassword,
+      });
+      console.log(response);
 
       if (response.status === 201) {
         console.log("Sign up successful");
-        toast.success("Sign up Successfull"); 
-       setTimeout(() => {
-        navigate("/provider");
-        
-       }, 2000);
+        toast.success("Sign up Successfull");
+        setTimeout(() => {
+          navigate("/provider");
+        }, 2000);
       } else {
         console.error("Sign up failed");
       }
     } catch (error) {
-      toast.error("Provider is already registerd please login"); 
-     setTimeout(() => {
-      navigate("/provider");
-      
-     }, 2000);
+      toast.error("Provider is already registerd please login");
+      setTimeout(() => {
+        navigate("/provider");
+      }, 2000);
       console.error("Error:", error);
     }
   };

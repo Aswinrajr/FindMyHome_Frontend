@@ -28,7 +28,7 @@ const SearchRooms = () => {
       const { lat, lng } = results[0].geometry.location;
 
       console.log(formData);
-      console.log(baseRoute)
+      console.log(baseRoute);
       const fetchData = async () => {
         const response = await axios.post(`${baseRoute}/searchrooms`, {
           city: formData.city,

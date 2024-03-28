@@ -1,69 +1,96 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import pics from "../../assets/2.jpeg"
+import userImage from "../../assets/1 - Copy.webp";
 
 const BookingList = () => {
+  const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const [bookings, setBookings] = useState([]);
-  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
 
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        const response = await axios.get(
-          `${adminRoute}/getallbookingdata`
-        );
-        console.log("response",response)
-        setBookings(response.data.orders); 
+        const response = await axios.get(`${adminRoute}/getallbookingdata`);
+        console.log("response", response.data);
+        setBookings(response.data.orders);
+        console.log("Bookings", bookings);
       } catch (error) {
         console.error("Error fetching booking data:", error);
       }
     };
     fetchBookingData();
-  }, []); 
+  }, []);
 
   return (
     <div className="overflow-x-auto">
       <div className="min-w-max">
-        <table className="w-full whitespace-nowrap bg-white divide-y divide-gray-200">
+        <table className="w-full  border-gray-500 border-collapse table-auto">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                User Image
-              </th>
-              <th scope="col" className="px-6 py-3">
-                User Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Provider Image
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Provider Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Address
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Amount
-              </th>
+              <th className="px-6 py-3 text-left">User Image</th>
+              <th className="px-6 py-3 text-left">User Name</th>
+              <th className="px-6 py-3 text-left">Provider Image</th>
+              <th className="px-6 py-3 text-left">Provider Name</th>
+              <th className="px-6 py-3 text-left">Address</th>
+              <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-left">Amount</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200">
             {bookings.map((booking) => (
-              <tr key={booking.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <img src={pics} alt={booking.userName} className="h-10 w-10 rounded-full" />
+              <tr key={booking._id}>
+                <td className="px-6 py-4">
+                  <img
+                    src={
+                      booking.user && booking.user.image
+                        ? `${baseRoute}/${booking.user.image}`
+                        : userImage
+                    }
+                    alt={
+                      booking.user && booking.user.name
+                        ? booking.user.name
+                        : userImage
+                    }
+                    className="h-10 w-10 rounded-full"
+                  />
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{booking.userName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <img src={pics} alt={booking.providerName} className="h-10 w-10 rounded-full" />
+                <td className="px-6 py-4">
+                  {booking.user && booking.user.userName
+                    ? booking.user.userName
+                    : "N/A"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{booking.providerName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{booking.address}</td>
-                <td className="px-6 py-4 whitespace-nowrap">Booked</td>
-                <td className="px-6 py-4 whitespace-nowrap">{booking.amount}</td>
+                <td className="px-6 py-4">
+                  <img
+                    src={
+                      booking.provider &&
+                      booking.provider.providerImage
+                        ? `${baseRoute}/${booking.provider.providerImage[1]}`
+                        : ""
+                    }
+                    alt={
+                      booking.provider &&
+                      booking.provider.providerName
+                        ? booking.provider.name
+                        : "Provider Image"
+                    }
+                    className="h-10 w-10 rounded-full"
+                  />
+                </td>
+                <td className="px-6 py-4">
+                  {booking.provider &&
+                  booking.provider.providerName
+                    ? booking.provider.providerName
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">
+                  {booking.provider &&
+                  booking.provider.ProviderCity
+                    ? booking.provider.ProviderCity
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">Booked</td>
+                <td className="px-6 py-4">{booking.totalAmounttoPay}</td>
+                <td className="px-6 py-4 text-red-500 underline cursor-pointer hover:text-blue-700">View More</td>
               </tr>
             ))}
           </tbody>

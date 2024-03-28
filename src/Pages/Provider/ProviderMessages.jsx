@@ -1,9 +1,6 @@
-
-
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";
 import Messages from "../../components/Admin/messages";
-
 
 function ProviderMessage() {
   return (
@@ -18,7 +15,7 @@ function ProviderMessage() {
         <div className="flex-1 p-4 bg-gray-100">
           <h1 className="text-2xl font-semibold mb-4">Message</h1>
           <div className="bg-white rounded-lg shadow-md p-4">
-           <Messages/>
+            <Messages />
           </div>
         </div>
       </div>

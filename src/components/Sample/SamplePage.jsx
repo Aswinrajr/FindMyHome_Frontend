@@ -5,8 +5,6 @@ import Services from "./Services";
 import Footer from "./Footer";
 import ExploreByType from "./ExploreByType";
 
-
-
 const SamplePage = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -14,7 +12,7 @@ const SamplePage = () => {
       <Banner />
       <SearchRooms />
       <ExploreByType />
-  
+
       <Services />
       <Footer />
     </div>

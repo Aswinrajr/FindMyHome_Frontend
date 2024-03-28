@@ -1,8 +1,6 @@
-
-
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
-import Messages from "../../components/Admin/messages";
+import AdminMessages from "../../components/Admin/AdminMessages";
 
 
 function MessageList() {
@@ -16,9 +14,9 @@ function MessageList() {
         </div>
 
         <div className="flex-1 p-4 bg-gray-100">
-          <h1 className="text-2xl font-semibold mb-4">User List</h1>
+          <h1 className="text-2xl font-semibold mb-4">Notifications</h1>
           <div className="bg-white rounded-lg shadow-md p-4">
-           <Messages/>
+           <AdminMessages/>
           </div>
         </div>
       </div>

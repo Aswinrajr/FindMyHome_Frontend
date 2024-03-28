@@ -4,11 +4,13 @@ import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import logo from "../../assets/logo.png";
 
 import Swal from "sweetalert2";
 
 const Roomcard = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
+  const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
@@ -31,10 +33,7 @@ const Roomcard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          `${baseRoute}/fetchdata`,
-          data
-        );
+        const response = await axios.post(`${baseRoute}/fetchdata`, data);
         console.log(response);
         if (response.status === 200) {
           setRoomData(response.data);
@@ -90,11 +89,17 @@ const Roomcard = () => {
           html: htmlContent,
           icon: "info",
           showCancelButton: true,
-          confirmButtonText: "Confirm",
+          confirmButtonText: "Cash Booking",
           cancelButtonText: "Cancel",
+          showDenyButton: true,
+          denyButtonText: "Online Booking",
         }).then((result) => {
           if (result.isConfirmed) {
-            placeOrder(bookingDetails);
+            placeOrder(bookingDetails, "Cash");
+          } else if (result.isDenied) {
+            showRazorpay(roomId, bookingDetails);
+
+            // placeOrder(bookingDetails, "Online");
           } else if (result.dismiss === Swal.DismissReason.cancel) {
             console.log("Booking cancelled");
           }
@@ -102,6 +107,55 @@ const Roomcard = () => {
       }
     } catch (error) {
       console.error("Error in booking:", error);
+    }
+  };
+  const showRazorpay = async (roomId, bookingDetails) => {
+    try {
+      console.log(bookingDetails);
+      const orderUrl = await axios.post(`${baseRoute}/verifybooking/${roomId}`);
+      console.log(orderUrl);
+
+      const { data } = orderUrl;
+      console.log("Dataaa", data);
+      console.log("bookingDetails", bookingDetails.amount);
+
+      const options = {
+        key: `${RAZORPAY_KEY}`,
+        amount: bookingDetails.totalAmounttoPay * 100,
+        currency: data.currency,
+        name: "FindMyHome",
+        description: "Test booking",
+        image: logo,
+        order_id: data.id,
+        handler: async () => {
+          try {
+            const result = await axios.post(
+              `${baseRoute}/placeorder`,
+              bookingDetails
+            );
+            console.log(result);
+
+            Swal.fire({
+              title: "Room Booked Successfully",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+            setTimeout(() => {
+              navigate("/home");
+            }, 2000);
+          } catch (err) {
+            console.log("Error in verify order", err);
+          }
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Error in fetching order URL:", error);
     }
   };
 
@@ -136,10 +190,11 @@ const Roomcard = () => {
             <Slider {...settings}>
               {item.room.images.map((image, imageIndex) => (
                 <div key={imageIndex}>
-                  <img onClick={()=>navigate(`roompreview/${item.room._id}`)}
+                  <img
+                    onClick={() => navigate(`roompreview/${item.room._id}`)}
                     src={`http://localhost:1997/${image}`}
                     alt={`Room ${index} Image ${imageIndex}`}
-                    className="w-full h-48 mb-4 object-cover rounded-lg" 
+                    className="w-full h-48 mb-4 object-cover rounded-lg"
                   />
                 </div>
               ))}

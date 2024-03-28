@@ -26,7 +26,12 @@ const Sidebar = () => {
       </div>
       <label className="flex items-center mb-1 text-white">
         <span className="text-sm">Price Range:</span>
-        <input type="range" className="flex-grow mt-1 ml-2" min="0" max="1000" />
+        <input
+          type="range"
+          className="flex-grow mt-1 ml-2"
+          min="0"
+          max="1000"
+        />
       </label>
       <div className="flex flex-col gap-2">
         <label className="flex items-center mb-1 text-white">

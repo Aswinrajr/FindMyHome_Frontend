@@ -13,12 +13,9 @@ const ProviderForgotPassword = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(
-        `${providerRoute}/reqotp`,
-        {
-          mobile,
-        }
-      );
+      const response = await axios.post(`${providerRoute}/reqotp`, {
+        mobile,
+      });
       console.log(response);
       if (response.status === 200) {
         navigate("/provider/verifyotp");

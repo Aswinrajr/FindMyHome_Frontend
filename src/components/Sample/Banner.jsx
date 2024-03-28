@@ -1,17 +1,12 @@
-
 import { useNavigate } from "react-router";
 import imageUrl from "../../assets/istockphoto-1050564510-2048x2048.jpg";
 import { useSelector } from "react-redux";
 
-
-
 const Banner = () => {
-  const navigate = useNavigate()
- const user =  useSelector((state)=>state.userAuth.user)
- console.log(user?user:"")
- 
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.userAuth.user);
+  console.log(user ? user : "");
 
-  
   return (
     <section className="relative h-96 md:h-128">
       <img src={imageUrl} alt="Banner" className="w-full h-full object-cover" />
@@ -21,7 +16,10 @@ const Banner = () => {
           <p className="text-lg md:text-xl mb-8">
             Find your perfect room with ease
           </p>
-          <button onClick={()=>navigate('/login')} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          >
             Book Now
           </button>
         </div>

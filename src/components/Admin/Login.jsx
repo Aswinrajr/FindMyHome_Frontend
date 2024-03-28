@@ -1,28 +1,25 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { useNavigate,Navigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
-import ClipLoader from "react-spinners/ClipLoader"; 
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Login = () => {
-  const savedData = localStorage.getItem('admin');
+  const savedData = localStorage.getItem("admin");
 
-  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
-  const apiKey= import.meta.env.VITE_API_KEY
-  console.log("apiKey",apiKey,adminRoute)
-  
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+  const apiKey = import.meta.env.VITE_API_KEY;
+  console.log("apiKey", apiKey, adminRoute);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,15 +34,12 @@ const Login = () => {
 
       if (response.status === 200) {
         dispatch(setAdmin(response.data.admin.adminEmail));
-        setTimeout(()=>{
-          toast.success(response.data.msg);
-
-        },1000)
         setTimeout(() => {
-          navigate("/admin/dashboard")
+          toast.success(response.data.msg);
+        }, 1000);
+        setTimeout(() => {
+          navigate("/admin/dashboard");
         }, 2000);
-
-       
       } else {
         console.error("Login failed");
         if (response.data && response.data.msg) {
@@ -63,11 +57,8 @@ const Login = () => {
       }, 2000);
     }
   };
-  
- 
-    if (savedData) return <Navigate to="/admin/dashboard" />;
 
-
+  if (savedData) return <Navigate to="/admin/dashboard" />;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

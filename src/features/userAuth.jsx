@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 let user;
 
 if (localStorage.getItem("user")) {
-    user = JSON.parse(localStorage.getItem("user"));
+  user = JSON.parse(localStorage.getItem("user"));
 }
 
 const initialState = {
-    user: user ? user.userEmail : null,
+  user: user ? user.userEmail : null,
 };
 
 const userSliceAuth = createSlice({

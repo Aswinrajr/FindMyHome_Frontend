@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import profilePic from "../../assets/profile_demo.avif"
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
 
   
   const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
@@ -82,10 +84,10 @@ const Users = () => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {users.map((user) => (
-            <tr key={user.id}>
+            <tr key={user._id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={`https://via.placeholder.com/50?text=${user.name}`}
+                  src={user.image?`${baseUrl}/${user.image}`:`${profilePic}`}
                   alt={user.name}
                   className="h-10 w-10 rounded-full"
                 />

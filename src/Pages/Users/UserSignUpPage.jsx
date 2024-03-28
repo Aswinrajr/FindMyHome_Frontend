@@ -44,28 +44,26 @@ const SignUpPage = () => {
         password,
         confirmPassword,
       });
-      console.log(response)
+      console.log(response);
 
       if (response.status === 201) {
         console.log("Sign up successful");
-        toast.success("Sign up successful")
-      setTimeout(() => {
-        navigate("/login");
-        
-      }, 1000);
+        toast.success("Sign up successful");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
       } else {
         console.error("Sign up failed");
-        toast.error(response.data.msg)
+        toast.error(response.data.msg);
       }
     } catch (error) {
       console.error("Error:", error);
-      
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-       <Toaster position="top-center" reverseOrder={false}></Toaster>
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
         <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
           <img

@@ -86,9 +86,9 @@ const ProviderDetails = () => {
       const { results } = response.data;
       if (results && results.length > 0) {
         const { lat, lng } = results[0].geometry.location;
-        console.log(lat,lng)
-        console.log(typeof(lat))
-        console.log(typeof(lng))
+        console.log(lat, lng);
+        console.log(typeof lat);
+        console.log(typeof lng);
 
         const formData = new FormData();
         files.forEach((file) => {
@@ -101,7 +101,6 @@ const ProviderDetails = () => {
         formData.append("providerEmail", providerEmail);
         formData.append("city", providerDetails.city);
 
-  
         formData.append("coordinates", `${lat},${lng}`);
 
         formData.append(
