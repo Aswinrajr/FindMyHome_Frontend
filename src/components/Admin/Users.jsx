@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import profilePic from "../../assets/profile_demo.avif"
-import { Navigate } from "react-router";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const admin = localStorage.getItem("admin")
+
+  
+  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -19,11 +21,6 @@ const Users = () => {
 
     fetchUsers();
   }, []);
-  if(!admin) return <Navigate to="/admin"/>
-
-  
-  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
-
 
   const userAction = async (userId) => {
     try {

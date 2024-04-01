@@ -65,7 +65,6 @@ const routerPage = createBrowserRouter([
   {
     path: "/admin/dashboard",
     element: <Dashboard />,
-    protected:true
   },
   {
     path: "/admin/users",
@@ -74,13 +73,11 @@ const routerPage = createBrowserRouter([
   {
     path: "/admin/providers",
     element: <ProvidersPage />,
-    protected:true
   },
 
   {
     path: "/admin/providers",
     element: <ProvidersPage />,
-    protected:true
   },
   {
     path: "/admin/bookings",

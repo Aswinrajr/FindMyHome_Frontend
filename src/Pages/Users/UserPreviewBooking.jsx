@@ -6,7 +6,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
-import { Navigate } from "react-router";
 
 const UserPreviewBooking = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
@@ -26,7 +25,6 @@ const UserPreviewBooking = () => {
     };
     fetchData();
   }, []);
-  if(!user) return <Navigate to="/login"/>
 
   const renderSeal = (status) => {
     if (status === "confirmed") {

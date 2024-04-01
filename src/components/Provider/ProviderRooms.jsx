@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import axios from "axios";
 import "slick-carousel/slick/slick.css";
@@ -9,7 +9,17 @@ import Slider from "react-slick";
 const ProviderRooms = () => {
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const providerEmail = localStorage.getItem("provider");
+  const emailObject = JSON.parse(providerEmail);
+  const email = emailObject.provider;
+  console.log(providerEmail);
   const [rooms, setRooms] = useState([]);
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -28,18 +38,6 @@ const ProviderRooms = () => {
   }, []);
 
   const navigate = useNavigate();
-  if(!providerEmail) return <Navigate to="/provider"/>
-  const emailObject = JSON.parse(providerEmail);
-  const email = emailObject.provider;
-  console.log(providerEmail);
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
 
   return (
     <div className="container mx-auto px-4">

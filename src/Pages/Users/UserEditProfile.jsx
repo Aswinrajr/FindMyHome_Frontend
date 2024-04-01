@@ -4,12 +4,10 @@ import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
-import { Navigate } from "react-router";
 
 const UserEditProfile = () => {
   const user = localStorage.getItem("user");
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +39,6 @@ const UserEditProfile = () => {
     };
     fetchData();
   }, [baseUrl, user]);
-  if(!user) return <Navigate to="/login"/>
 
   const handleChange = (e) => {
     const { name, value } = e.target;

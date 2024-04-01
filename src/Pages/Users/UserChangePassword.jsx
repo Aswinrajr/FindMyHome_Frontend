@@ -3,7 +3,7 @@ import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 const UserChangePassword = () => {
   const user = localStorage.getItem("user");
@@ -18,13 +18,9 @@ const UserChangePassword = () => {
     confirmPassword,
     user,
   };
-  if(!user) return <Navigate to="/"/>
 
   const handleSubmit = async (e) => {
     const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
-    if(!oldPassword||!newPassword||!confirmPassword){
-      return toast.error("All fields are required")
-    }
     e.preventDefault();
     try {
       if (newPassword !== confirmPassword) {

@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import images from "../../assets/profile_demo.avif";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 const AdminProfile = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const admin = localStorage.getItem("admin");
@@ -27,7 +27,6 @@ const AdminProfile = () => {
     };
     fetchData();
   }, []);
-  if (!admin) return <Navigate to="/admin" />;
 
   const handleEditProfile = () => {
     setIsEditing(true);
@@ -77,11 +76,13 @@ const AdminProfile = () => {
         },
       });
       console.log(response.data);
-
+      
       toast.success("Image uploaded successfully!");
       setTimeout(() => {
-        navigate("/admin/profile");
+        navigate("/admin/profile")
+        
       }, 1000);
+    
     } catch (error) {
       console.error("Image upload error:", error);
       toast.error("Failed to upload image. Please try again later.");

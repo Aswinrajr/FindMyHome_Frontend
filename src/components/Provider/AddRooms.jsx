@@ -54,11 +54,6 @@ const AddRooms = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!roomData.roomType||!roomData.adults||!roomData.children||!roomData.status||!roomData.amenities){
-      console.log(roomData.roomType,roomData.adults,roomData.children,roomData.status,roomData.amenities)
-      return toast.error("All fields are required")
-    }
-
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("images", file);
@@ -113,7 +108,7 @@ const AddRooms = () => {
             value={roomData.roomType}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-           
+            required
           >
             <option value="">Select a room type</option>
             <option value="Single">Single</option>
@@ -137,7 +132,7 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of adults"
-       
+            required
           />
         </div>
         <div className="mb-4">
@@ -155,7 +150,7 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of children"
-    
+            required
           />
         </div>
         <div className="mb-4">
@@ -173,7 +168,7 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter amount"
-  
+            required
           />
         </div>
         <div className="mb-4">
@@ -189,7 +184,7 @@ const AddRooms = () => {
             value={roomData.status}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-       
+            required
           >
             <option value="">Select status</option>
             <option value="Available">Available</option>
