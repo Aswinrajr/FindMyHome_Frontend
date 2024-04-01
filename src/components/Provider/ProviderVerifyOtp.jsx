@@ -1,15 +1,28 @@
-import { useState } from "react";
+
 
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { useNavigate ,Navigate} from "react-router";
+import { useNavigate, Navigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {setProvider} from '../../features/providerAuth'
+import { setProvider } from "../../features/providerAuth";
+import { useEffect, useState } from "react";
 
+import { Toaster, toast } from "react-hot-toast";
 const ProviderVerifyOtp = () => {
+  const location = useLocation();
+  const code = location.state ? location.state.otp : "";
+  const [otp,setOtp ]=useState("")
+
+ useEffect(()=>{
+   toast.success(`Your otp is ${code}`)
+
+ },[])
+    
+
+
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(0);
+
   const dispatch = useDispatch();
 
   const provider = useSelector((state) => state.providerAuth.provider);
@@ -19,12 +32,9 @@ const ProviderVerifyOtp = () => {
     // console.log("axiosInstance: ",axiosAdminInstance.axiosAdminInstance)
 
     try {
-      const response = await axios.post(
-        `${providerRoute}/verifyotp`,
-        {
-          otp,
-        }
-      );
+      const response = await axios.post(`${providerRoute}/verifyotp`, {
+        otp,
+      });
       console.log(response);
       if (response.status === 200) {
         dispatch(setProvider(response.data.provider.providerEmail));
@@ -38,6 +48,8 @@ const ProviderVerifyOtp = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
+         <Toaster position="top-center" reverseOrder={false}></Toaster>
+        
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
         <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
           <img

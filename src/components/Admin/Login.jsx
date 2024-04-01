@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-import axios from "axios";
+
 import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
 import ClipLoader from "react-spinners/ClipLoader";
+// import axiosInstance from "../../utils/AxiosInstance";
+import axios from "axios";
 
 const Login = () => {
   const savedData = localStorage.getItem("admin");
@@ -60,13 +62,24 @@ const Login = () => {
     }
 
     try {
+      
       const response = await axios.post(`${adminRoute}/login`, {
         email,
         password,
       });
+      // const response = await axiosInstance.post(`/admin/login`, {
+      //   email,
+      //   password,
+      // });
       console.log(response.data);
 
       if (response.status === 200) {
+        const token = response.data.token;
+        const role = response.data.role
+
+
+        localStorage.setItem('token', token)
+        localStorage.setItem('role', role)
         dispatch(setAdmin(response.data.admin.adminEmail));
         setTimeout(() => {
           toast.success(response.data.msg);
@@ -74,17 +87,19 @@ const Login = () => {
         setTimeout(() => {
           navigate("/admin/dashboard");
         }, 2000);
-      } else {
-        console.error("Login failed");
-        if (response.data && response.data.msg) {
-          toast.error(response.data.msg);
-        } else {
-          toast.error("An error occurred. Please try again later.");
-        }
       }
+      
+      // else {
+      //   console.error("Login failed");
+      //   if (response.data && response.data.msg) {
+      //     toast.error(response.data.msg);
+      //   } else {
+      //     toast.error(error.response.data.msg);
+      //   }
+      // }
     } catch (error) {
       console.error("Axios error:", error);
-      toast.error("An error occurred. Please try again later.");
+      toast.error(error.response.data.msg);
     } finally {
       setTimeout(() => {
         setIsLoading(false);

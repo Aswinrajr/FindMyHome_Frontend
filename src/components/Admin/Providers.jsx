@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Navigate } from "react-router";
 
 const Providers = () => {
-  const [providers, setProviders] = useState([]);
-
-  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
-
   useEffect(() => {
     const fetchProviders = async () => {
       try {
@@ -18,6 +15,12 @@ const Providers = () => {
 
     fetchProviders();
   }, []);
+  const [providers, setProviders] = useState([]);
+  const adminEmail = localStorage.getItem("admin")
+  if(!adminEmail) return <Navigate to="/admin"/>
+
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+
   console.log("Providers", providers);
 
   const providerAction = async (providerId) => {

@@ -26,10 +26,6 @@ const ProviderSignUp = () => {
     }
   }, [error, navigate]);
 
-  // const validateMobile = () => {
-  //   return /^[0-9]{10}$/.test(mobile);
-  // };
-
   const validatePassword = () => {
     return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
       password
@@ -39,17 +35,20 @@ const ProviderSignUp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // if (!validateMobile()) {
-    //   setError("Mobile number must be 10 digits");
-    //   setShowError(true);
-    //   return;
-    // }
+    if (!residenceName || !email || !password || !confirmPassword) {
+      setError("Please fill in all the fields.");
+      setShowError(true);
+      return;
+    }
 
     if (!validatePassword()) {
       setError(
         "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one symbol"
       );
       setShowError(true);
+      setTimeout(() => {
+        setShowError("");
+      }, 1000);
       return;
     }
 
@@ -73,7 +72,7 @@ const ProviderSignUp = () => {
         console.error("Sign up failed");
       }
     } catch (error) {
-      toast.error("Provider is already registerd please login");
+      toast.error(error.response.data.message);
       setTimeout(() => {
         navigate("/provider");
       }, 2000);
@@ -112,7 +111,6 @@ const ProviderSignUp = () => {
                 onChange={(e) => setResidenceName(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your residence name"
-                required
               />
             </div>
             <div>
@@ -129,7 +127,6 @@ const ProviderSignUp = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
-                required
               />
             </div>
             {/* <div>
@@ -163,7 +160,6 @@ const ProviderSignUp = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
-                required
               />
             </div>
             <div>
@@ -180,7 +176,6 @@ const ProviderSignUp = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className=" shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Confirm your password"
-                required
               />
             </div>
             <button

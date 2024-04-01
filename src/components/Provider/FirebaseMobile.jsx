@@ -35,7 +35,7 @@ const FirebaseMobile = () => {
       }, 1000);
       return;
     }
-    if (phoneNumber.length < 11) {
+    if (phoneNumber.length < 13) {
       setPhoneNumberError("Mobile must have 10 digits");
       setTimeout(() => {
         setPhoneNumberError("");

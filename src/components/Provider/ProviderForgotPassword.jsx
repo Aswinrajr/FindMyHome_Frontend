@@ -3,6 +3,7 @@ import { useState } from "react";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { Toaster, toast } from "react-hot-toast";
 
 const ProviderForgotPassword = () => {
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
@@ -17,16 +18,26 @@ const ProviderForgotPassword = () => {
         mobile,
       });
       console.log(response);
+      const {data} = response
+      console.log("oTP ",data)
       if (response.status === 200) {
-        navigate("/provider/verifyotp");
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate("/provider/verifyotp", {
+        
+            state: { otp: response.data.OTP },
+          });
+        }, 1000);
       }
     } catch (error) {
+      toast.error(error.response.data.message);
       console.error("Error:", error);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
         <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
           <img

@@ -20,6 +20,12 @@ const ProviderLogin = () => {
     event.preventDefault();
     setLoading(true);
 
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(`${providerRoute}/login`, {
         email,
@@ -46,9 +52,7 @@ const ProviderLogin = () => {
       toast.error(error.response.data.msg);
       console.error("Error:", error);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      setLoading(false);
     }
   };
 
@@ -83,7 +87,6 @@ const ProviderLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
-                required
               />
             </div>
             <div>
@@ -100,7 +103,6 @@ const ProviderLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
-                required
               />
             </div>
             <button

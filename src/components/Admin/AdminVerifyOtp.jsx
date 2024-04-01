@@ -1,16 +1,19 @@
 import { useState } from "react";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { useNavigate, } from "react-router";
+import { Navigate, useNavigate, } from "react-router";
 import { useDispatch,  } from "react-redux";
 import { setAdmin } from '../../features/adminAuth'
 import { toast, Toaster } from "react-hot-toast";
+
 
 const AdminVerifyOtp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('');
   const dispatch = useDispatch();
   const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
+  const admin = localStorage.getItem("admin")
+  if(admin) return <Navigate to="/admin/dashboard"/>
 
   const handleSubmit = async (event) => {
     event.preventDefault();

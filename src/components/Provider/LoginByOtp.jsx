@@ -17,8 +17,11 @@ const LoginByOtp = () => {
         mobile,
       });
       console.log(response);
+      console.log(response.data.OTP)
       if (response.status === 200) {
-        navigate("/provider/verifyotp");
+        navigate("/provider/verifyotp",{
+          state:{otp:response.data.OTP},
+        });
       }
     } catch (error) {
       console.error("Error:", error);

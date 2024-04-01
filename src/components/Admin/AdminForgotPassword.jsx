@@ -36,6 +36,7 @@ const AdminForgotPassword = () => {
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error("No admin Found")
     }
   };
 

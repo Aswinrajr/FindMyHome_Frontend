@@ -2,16 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { FaEdit } from "react-icons/fa";
+
 const ProviderDetails = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const providerEmail = localStorage.getItem("provider");
   console.log("Provider Email", providerEmail);
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [roomError, setRoomError] = useState("");
-  const [edit, setEdit] = useState(false);
   const [providerDetails, setProviderDetails] = useState({
     recidenceName: "",
     rooms: "",
@@ -26,6 +24,7 @@ const ProviderDetails = () => {
     },
     images: [],
   });
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const autocomplete = new window.google.maps.places.Autocomplete(
@@ -45,14 +44,13 @@ const ProviderDetails = () => {
       const response = await axios.post(`${providerRoute}/getprovider`, {
         providerEmail,
       });
-      console.log("Provider Data", response);
+      console.log(response);
       if (response.data) {
         setProviderDetails(response.data);
-        setFiles(providerDetails.providerImage);
       }
     };
     fetchData();
-  }, [providerDetails.providerImage]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -151,12 +149,6 @@ const ProviderDetails = () => {
   return (
     <div className="container mx-auto px-4">
       <Toaster position="top-center" reverseOrder={false} />
-      <button
-        className="rounded-md bg-pink-800 text-white w- px-4 py-2 mr-2 focus:outline-none mb-2 "
-        onClick={() => setEdit(true)}
-      >
-        <FaEdit className="mr-2" />
-      </button>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div className="mb-4">
@@ -170,11 +162,12 @@ const ProviderDetails = () => {
             type="text"
             id="recidenceName"
             name="recidenceName"
-            value={edit ? "" : providerDetails?.providerName}
+            value={editMode ? "" : providerDetails?.providerName}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Residence Name"
+            placeholder={editMode ? " " : `${providerDetails.providerName}`}
             required
+            readOnly={!editMode}
           />
         </div>
         <div className="mb-4">
@@ -188,11 +181,12 @@ const ProviderDetails = () => {
             type="text"
             id="rooms"
             name="rooms"
-            value={edit ? "" : providerDetails?.providerRooms}
+            value={editMode ? "" : providerDetails?.providerRooms}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of rooms"
             required
+            readOnly={!editMode}
           />
           {roomError && (
             <p className="text-red-500 text-sm mt-1">{roomError}</p>
@@ -209,11 +203,12 @@ const ProviderDetails = () => {
             type="text"
             id="location"
             name="location"
-            value={edit ? "" : providerDetails?.providerAddress}
+            value={editMode ? "" : providerDetails?.providerAddress}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter location"
             required
+            readOnly={!editMode}
           />
         </div>
 
@@ -228,11 +223,12 @@ const ProviderDetails = () => {
             type="text"
             id="city"
             name="city"
-            value={edit ? "" : providerDetails?.ProviderCity}
+            value={editMode ? "" : providerDetails?.ProviderCity}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter your City"
             required
+            readOnly={!editMode}
           />
         </div>
 
@@ -241,28 +237,31 @@ const ProviderDetails = () => {
             Facilities
           </label>
           <div className="mt-1 grid grid-cols-2 gap-4">
-            {Object.entries(providerDetails?.facilities).map(
-              ([facility, checked], index) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={facility}
-                    name={facility}
-                    checked={edit ? "" : checked}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor={facility}
-                    className="ml-2 text-sm text-gray-700"
-                  >
-                    {facility}
-                  </label>
-                </div>
-              )
-            )}
+            {providerDetails?.facilities &&
+              Object.entries(providerDetails?.facilities).map(
+                ([facility, checked], index) => (
+                  <div key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={facility}
+                      name={facility}
+                      checked={checked}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                      disabled={!editMode}
+                    />
+                    <label
+                      htmlFor={facility}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {facility}
+                    </label>
+                  </div>
+                )
+              )}
           </div>
         </div>
+
         <div className="col-span-2">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
@@ -276,14 +275,14 @@ const ProviderDetails = () => {
               accept="image/*"
               multiple
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              disabled={!editMode}
             />
           </div>
           <div className="flex space-x-2">
-            {console.log("haiii", providerDetails?.providerImage)}
             {files?.map((file, index) => (
               <img
                 key={index}
-                src={edit ? "" : `${baseUrl}/${file}`}
+                src={URL.createObjectURL(file)}
                 alt={`Image ${index + 1}`}
                 className="max-w-xs max-h-xs"
                 style={{ maxWidth: "100px", maxHeight: "100px" }}
@@ -294,10 +293,19 @@ const ProviderDetails = () => {
         <button
           type="submit"
           className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          disabled={!editMode}
         >
           Update Details
         </button>
       </form>
+      <div className="mt-4">
+        <button
+          onClick={() => setEditMode((prevMode) => !prevMode)}
+          className="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray"
+        >
+          {editMode ? "Cancel" : "Edit Details"}
+        </button>
+      </div>
     </div>
   );
 };

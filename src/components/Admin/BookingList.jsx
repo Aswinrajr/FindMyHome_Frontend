@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import userImage from "../../assets/1 - Copy.webp";
+import { Navigate } from "react-router";
 
 const BookingList = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
@@ -20,6 +21,9 @@ const BookingList = () => {
     };
     fetchBookingData();
   }, []);
+  
+  const adminEmail = localStorage.getItem("admin")
+  if(!adminEmail) return <Navigate to="/admin"/>
 
   return (
     <div className="overflow-x-auto">

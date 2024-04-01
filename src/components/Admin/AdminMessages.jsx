@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 const AdminMessages = () => {
   const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
@@ -21,15 +21,18 @@ const AdminMessages = () => {
     fetchData();
   }, []);
 
+  const admin = localStorage.getItem("admin");
+  if (!admin) return <Navigate to="/admin" />;
+
   const handleConfirm = async (action, email) => {
     try {
       const data = { action, email };
       const response = await axios.post(`${adminUrl}/action`, data);
       console.log(response.data);
-      const newUserdata = userData.filter((data)=>data.userEmail!==email)
-      console.log("newUserdata",newUserdata)
+      const newUserdata = userData.filter((data) => data.userEmail !== email);
+      console.log("newUserdata", newUserdata);
       toast.success(`User role ${action} successfully`);
-      setUserData(newUserdata)
+      setUserData(newUserdata);
       setTimeout(() => {
         navigate("/admin/messages");
       }, 1000);

@@ -10,7 +10,6 @@ import AdminForgotPassword from "../components/Admin/AdminForgotPassword";
 import AdminVerifyOtp from "../components/Admin/AdminVerifyOtp";
 import AdminChangePassword from "../components/Admin/AdminChangePassword";
 
-
 //PROVIDER
 import ProviderLogin from "../components/Provider/ProviderLogin";
 import ProviderSignUp from "../components/Provider/ProviderSignupPage";
@@ -24,7 +23,6 @@ import ProviderVerifyOtp from "../components/Provider/ProviderVerifyOtp";
 import FirebaseMobile from "../components/Provider/FirebaseMobile";
 import ProviderProfile from "../Pages/Provider/ProviderProfile";
 import LoginByOtp from "../components/Provider/LoginByOtp";
-
 
 //USER
 import UserLogin from "../Pages/Users/UserLogin";
@@ -47,14 +45,13 @@ import PageNotFound from "../components/PageNotFound";
 import MessageList from "../Pages/Admin/MessageList";
 import UserAddRoom from "../Pages/Users/UserAddRoom";
 import UserEditRoom from "../Pages/Users/UserEditRoom";
-
-
-
+import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
+import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 
 const routerPage = createBrowserRouter([
   {
     path: "/*",
-    element: <PageNotFound/>
+    element: <PageNotFound />,
   },
   {
     path: "/",
@@ -68,6 +65,7 @@ const routerPage = createBrowserRouter([
   {
     path: "/admin/dashboard",
     element: <Dashboard />,
+    protected:true
   },
   {
     path: "/admin/users",
@@ -76,11 +74,13 @@ const routerPage = createBrowserRouter([
   {
     path: "/admin/providers",
     element: <ProvidersPage />,
+    protected:true
   },
 
   {
     path: "/admin/providers",
     element: <ProvidersPage />,
+    protected:true
   },
   {
     path: "/admin/bookings",
@@ -100,8 +100,12 @@ const routerPage = createBrowserRouter([
     element: <AdminChangePassword />,
   },
   {
-    path:"/admin/messages",
-    element:<MessageList/>
+    path: "/admin/messages",
+    element: <MessageList />,
+  },
+  {
+    path:"/admin/profile",
+    element:<AdminProfilePage/>
 
   },
 
@@ -144,19 +148,22 @@ const routerPage = createBrowserRouter([
     element: <ProviderVerifyOtp />,
   },
   {
-    path:"/provider/otplogin",
-    element:<LoginByOtp/>
+    path: "/provider/otplogin",
+    element: <LoginByOtp />,
   },
   {
-    path:"/provider/profileedit",
-    element:<ProviderProfile/>
-
-  },{
-    path:"/provider/register",
-    element:<FirebaseMobile/>
+    path: "/provider/profileedit",
+    element: <ProviderProfile />,
+  },
+  {
+    path: "/provider/register",
+    element: <FirebaseMobile />,
+  },
+  {
+    path:"/provider/account",
+    element:<ProviderCardPage/>
 
   },
-
 
   //Users
   {
@@ -181,65 +188,62 @@ const routerPage = createBrowserRouter([
     element: <SamplePage />,
   },
   {
-    path:"/searchedroom",
-    element:<SearchedRoom/>
+    path: "/searchedroom",
+    element: <SearchedRoom />,
   },
   {
-    path:"/searchedroom/roompreview/:id",
-    element:<FullDetails/>
+    path: "/searchedroom/roompreview/:id",
+    element: <FullDetails />,
   },
   {
-    path:"/userprofile",
-    element:<UserProfile/>
+    path: "/userprofile",
+    element: <UserProfile />,
   },
   {
-    path:"/dashboard",
-    element:<UserDashboard/>
+    path: "/dashboard",
+    element: <UserDashboard />,
   },
   {
-    path:"/editprofile",
-    element:<UserProfile/>
+    path: "/editprofile",
+    element: <UserProfile />,
   },
   {
-    path:"/change_password",
-    element:<UserChangePassword/>
+    path: "/change_password",
+    element: <UserChangePassword />,
   },
   {
-    path:"/notification",
-    element:<UserNotification/>
+    path: "/notification",
+    element: <UserNotification />,
   },
   {
-    path:"/bookings",
-    element:<UserPreviewBooking/>
+    path: "/bookings",
+    element: <UserPreviewBooking />,
   },
   {
-    path:"/edit_profile",
-    element:<UserEditProfile/>
+    path: "/edit_profile",
+    element: <UserEditProfile />,
   },
   {
-    path:"/room",
-    element:<UserRoom/>
+    path: "/room",
+    element: <UserRoom />,
+  },
+  {
+    path: "/rentify",
+    element: <UserRentify />,
+  },
+  {
+    path: "/contact",
+    element: <UserContact />,
+  },
+  {
+    path: "/addroom",
+    element: <UserAddRoom />,
+  },
 
-  },
   {
-    path:"/rentify",
-    element:<UserRentify/>
+    path: "/usereditroom/:roomId",
+    element: <UserEditRoom />,
   },
-  {
-    path:"/contact",
-    element:<UserContact/>
-  },
-  {
-    path:"/addroom",
-    element:<UserAddRoom/>
-  },
-
-  {
-    path:"/usereditroom/:roomId",
-    element:<UserEditRoom/>
-  }
-
-
 ]);
 
 export default routerPage;
