@@ -1,15 +1,27 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { axiosInstance } from "../../api/axios";
+import { uploadCloudinary } from "../../Helper/Upload";
+import { BeatLoader } from "react-spinners";
 
 const AddRooms = () => {
-  const email = localStorage.getItem("provider");
-  console.log(email);
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
-  
+  const [imageUrl, setImageUrl] = useState([]);
+  const [loading, setLoading] = useState(false);
+ 
+
+ 
+ 
+
+  const [imageErr, setimageErr] = useState("");
 
   const [roomData, setRoomData] = useState({
     roomType: "",
@@ -17,7 +29,6 @@ const AddRooms = () => {
     children: "",
     amount: "",
     status: "",
-    email: "",
     amenities: {
       food: false,
       ac: false,
@@ -31,53 +42,84 @@ const AddRooms = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
-      setRoomData((prevData) => ({
-        ...prevData,
+      setRoomData((prevState) => ({
+        ...prevState,
         amenities: {
-          ...prevData.amenities,
+          ...prevState.amenities,
           [name]: checked,
         },
       }));
     } else {
-      setRoomData((prevData) => ({
-        ...prevData,
+      setRoomData((prevState) => ({
+        ...prevState,
         [name]: value,
       }));
     }
   };
 
-  const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+  const handleUploadImage = async (e) => {
+    e.preventDefault();
+    console.log(files)
+
+  setTimeout(() => {
+    setimageErr("")
+    
+  }, 1000);
+    setLoading(true);
+    const uploadedImages = [];
+    for (let i = 0; i < imageUrl.length; i++) {
+      const data = await uploadCloudinary(imageUrl[i]);
+      const { url } = data;
+      uploadedImages.push(url);
+    }
+    setLoading(false);
+    setFiles(uploadedImages);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!roomData.roomType||!roomData.amount||!roomData.adults||!roomData.children){
+      return
+    }
+     
+
+ 
+
+   
+
+
+
+ 
 
     const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
+    const data = {
+      roomData,
+      files,
+    };
+    console.log(data);
 
     formData.append("roomType", roomData.roomType);
     formData.append("adults", roomData.adults);
     formData.append("children", roomData.children);
     formData.append("amount", roomData.amount);
     formData.append("status", roomData.status);
-    formData.append("email", email);
     formData.append("amenities", JSON.stringify(roomData.amenities));
 
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+    console.log(formData);
+
     try {
-      const response = await axios.post(
-        `${providerRoute}/rooms/addrooms`,
-        formData,
+      const response = await axiosInstance.post(
+        `/provider/rooms/addrooms`,
+        data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(response);
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {
@@ -108,7 +150,6 @@ const AddRooms = () => {
             value={roomData.roomType}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            required
           >
             <option value="">Select a room type</option>
             <option value="Single">Single</option>
@@ -116,6 +157,12 @@ const AddRooms = () => {
             <option value="Suite">Suite</option>
             <option value="Double">Premium</option>
           </select>
+
+          {roomData.roomType === "" && (
+            <p className="text-red-500 text-sm mt-1">
+              Please select a room type
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <label
@@ -132,8 +179,15 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of adults"
-            required
           />
+          
+          {roomData.adults === "" && (
+            <p className="text-red-500 text-sm mt-1">
+              No.of adults required
+            </p>
+          )}
+
+
         </div>
         <div className="mb-4">
           <label
@@ -150,8 +204,12 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of children"
-            required
           />
+              {roomData.children === "" && (
+            <p className="text-red-500 text-sm mt-1">
+              No.of children required
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <label
@@ -168,8 +226,13 @@ const AddRooms = () => {
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter amount"
-            required
           />
+              {roomData.amount === "" && (
+            <p className="text-red-500 text-sm mt-1">
+              Amount required
+            </p>
+          )}
+
         </div>
         <div className="mb-4">
           <label
@@ -184,12 +247,17 @@ const AddRooms = () => {
             value={roomData.status}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            required
+       
           >
             <option value="">Select status</option>
             <option value="Available">Available</option>
             <option value="Not Available">Not Available</option>
           </select>
+          {roomData.status === "" && (
+            <p className="text-red-500 text-sm mt-1">
+              Status required
+            </p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -217,6 +285,7 @@ const AddRooms = () => {
                 </div>
               )
             )}
+ 
           </div>
         </div>
         <div className="col-span-2">
@@ -226,25 +295,38 @@ const AddRooms = () => {
             </label>
             <input
               type="file"
-              onChange={handleImageChange}
+              onChange={(e) => setImageUrl(e.target.files)}
               name="images"
               id="images"
               accept="image/*"
               multiple
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
+                  {imageErr&& (
+            <p className="text-red-500 text-sm mt-1">
+              {imageErr}
+            </p>
+          )}
+            
           </div>
+          {loading && <BeatLoader color="#36d7b7" />}
           <div className="flex space-x-2">
             {files.map((file, index) => (
               <img
                 key={index}
-                src={URL.createObjectURL(file)}
+                src={`${file}`}
                 alt={`Image ${index + 1}`}
                 className="max-w-xs max-h-xs"
                 style={{ maxWidth: "100px", maxHeight: "100px" }}
               />
             ))}
           </div>
+          <button
+            className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            onClick={handleUploadImage}
+          >
+            Upload Image
+          </button>
         </div>
         <button
           type="submit"

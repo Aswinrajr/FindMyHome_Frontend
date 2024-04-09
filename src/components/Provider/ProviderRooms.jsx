@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import axios from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { axiosInstance } from "../../api/axios";
 
 const ProviderRooms = () => {
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
-  const providerEmail = localStorage.getItem("provider");
-  const emailObject = JSON.parse(providerEmail);
-  const email = emailObject.provider;
-  console.log(providerEmail);
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+  console.log("Welcome to get provider rooms---------", token);
+
   const [rooms, setRooms] = useState([]);
   const settings = {
     dots: true,
@@ -24,11 +25,16 @@ const ProviderRooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get(
-          `${providerRoute}/rooms?email=${email}`
+        const response = await axiosInstance.get(
+          `/provider/rooms`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setRooms(response.data);
-        console.log(response.data);
+        console.log("response.data", response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -58,9 +64,9 @@ const ProviderRooms = () => {
               {room.images.map((image, index) => (
                 <img
                   key={index}
-                  src={`http://localhost:1997/${image}`}
+                  src={`${image}`}
                   alt={room.roomType}
-                  className="w-full h-40 object-cover"
+                  className="w-full h-40 object-contain"
                 />
               ))}
             </Slider>

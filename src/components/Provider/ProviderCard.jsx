@@ -1,19 +1,26 @@
-import { FaLock,FaEdit  } from "react-icons/fa";
+import { FaLock, FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 // import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Toaster, toast } from "react-hot-toast";
 
-
 import { useNavigate } from "react-router";
+import { axiosInstance } from "../../api/axios";
 
 const ProviderCard = () => {
-  const providerUrl = import.meta.env.VITE_PROVIDER_ROUTE;
+
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const navigate = useNavigate()
-  const providerEmail = localStorage.getItem("provider");
+
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+
+
+  const navigate = useNavigate();
+
   const [provider, setProvider] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -21,8 +28,10 @@ const ProviderCard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.post(`${providerUrl}/getprovider`, {
-        providerEmail,
+      const response = await axiosInstance.get(`/provider/getprovider`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log(response);
       console.log(response.data);
@@ -56,11 +65,16 @@ const ProviderCard = () => {
     const data = {
       newPassword,
       confirmPassword,
-      providerEmail,
     };
 
     try {
-      const response = await axios.post(`${providerUrl}/changepassword`, data);
+      const response = await axiosInstance.post(`/provider/changepassword`, data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+
+      });
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsEditing(false);
@@ -111,7 +125,10 @@ const ProviderCard = () => {
                 </div>
               ))}
             </Slider> */}
-            <img src={`${baseUrl}`+"/uploads/images-1711947497867-1.jpeg"} alt="" />
+            <img
+              src={`${baseUrl}` + "/uploads/images-1711947497867-1.jpeg"}
+              alt=""
+            />
 
             <div className="flex flex-col ml-40">
               <h3 className="text-5xl font-bold text-gray-800">
@@ -165,13 +182,13 @@ const ProviderCard = () => {
               </button>
             )}
           </div>
-             <button
-                className="rounded-md bg-pink-800 text-white px-4 py-2 mr-2 focus:outline-none"
-                onClick={()=>navigate("/provider/profileedit")}
-              >
-                <FaEdit  className="mr-2" />
-                Edit Profile
-              </button>
+          <button
+            className="rounded-md bg-pink-800 text-white px-4 py-2 mr-2 focus:outline-none"
+            onClick={() => navigate("/provider/profileedit")}
+          >
+            <FaEdit className="mr-2" />
+            Edit Profile
+          </button>
         </div>
       </div>
     </div>

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 import Footer from "../../components/Sample/Footer";
 import TopBar from "../../components/Sample/TopBar";
 
 const UserEditRoom = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  const user = localStorage.getItem("user");
   console.log(baseUrl)
   const navigate = useNavigate();
   const { roomId } = useParams();
@@ -60,6 +61,7 @@ const UserEditRoom = () => {
       }));
     }
   };
+  if(!user) return <Navigate to="/"/>
 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);

@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-let provider;
+let providerAccessToken;
 
-if (localStorage.getItem("provider")) {
-  provider = JSON.parse(localStorage.getItem("provider"));
+
+if (localStorage.getItem("providerAccessToken")) {
+  providerAccessToken = JSON.parse(localStorage.getItem("providerAccessToken"));
 }
 
 const initialState = {
-  provider: provider ? provider.providerEmail : null,
+  providerAccessToken: providerAccessToken ? providerAccessToken : null,
 };
 
 const providerAuthSlice = createSlice({
@@ -17,13 +18,13 @@ const providerAuthSlice = createSlice({
     setProvider: (state, action) => {
       state.provider = action.payload;
       localStorage.setItem(
-        "provider",
-        JSON.stringify({ provider: action.payload })
+        "providerAccessToken",
+        JSON.stringify({ providerAccessToken: action.payload })
       );
     },
     logoutProvider: (state) => {
-      state.provider = null;
-      localStorage.removeItem("provider");
+      state.accessToken = null;
+      localStorage.removeItem("providerAccessToken");
     },
   },
 });

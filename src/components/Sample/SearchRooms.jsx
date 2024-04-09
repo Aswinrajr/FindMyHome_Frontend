@@ -1,9 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const SearchRooms = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
+  const [error, setError] = useState(false)
+  const [cityError,setCityerr] = useState()
+  const [date,setDate] = useState()
+  
+  const [adults,setAduls] = useState()
+  const [children,setChildren] = useState()
 
   const navigate = useNavigate();
 
@@ -17,6 +24,19 @@ const SearchRooms = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // if(!formData.city||!formData.checkIn||!formData.checkOut||!formData.adults||!formData.children){
+    //   setCityerr("cITY REQUIRED")
+    //   setDate("Date required")
+    //   setAduls("Adults required")
+    //   setChildren("children req")
+    //   return toast.error("All fields are required")
+    // }
+    if(formData.checkIn>formData.checkOut){
+      return toast.error("Selected date is invlid")
+
+    }
+    console.log(formData)
+    
 
     try {
       const cordResponse = await axios.get(
@@ -39,13 +59,16 @@ const SearchRooms = () => {
           adults: formData.adults,
           children: formData.children,
         });
-        console.log(response);
-        const nearbyProviders = response.data.nearbyProviders;
-        console.log(nearbyProviders);
+        console.log(response.data.data);
+        const nearbyProviders = response.data.data.nearbyProviders;
+        const nearbyUser = response.data.data.nearbyUser 
+        console.log("nearbyProviders.data",nearbyProviders.data);
         const data = {
           formData,
           nearbyProviders,
+          nearbyUser
         };
+        console.log("Daaaata",data)
         if (response.status === 200) {
           navigate("/searchedroom", { state: data });
         }
@@ -53,6 +76,8 @@ const SearchRooms = () => {
       fetchData();
     } catch (err) {
       console.log(err);
+
+      // return toast.error("All fields are required")
     }
   };
 
@@ -66,6 +91,7 @@ const SearchRooms = () => {
 
   return (
     <section className="py-16 px-8 bg-gray-200">
+        <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold mb-8">Search Rooms</h2>
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
@@ -77,6 +103,8 @@ const SearchRooms = () => {
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
+            <h1 className="text-red-500" >{cityError}</h1>
+           
             <input
               type="date"
               name="checkIn"
@@ -84,6 +112,7 @@ const SearchRooms = () => {
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
+             <h1 className="text-red-500" >{date}</h1>
             <input
               type="date"
               name="checkOut"
@@ -91,6 +120,7 @@ const SearchRooms = () => {
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
+              <h1 className="text-red-500" >{date}</h1>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
@@ -102,6 +132,7 @@ const SearchRooms = () => {
               max="10"
               onChange={handleChange}
             />
+              <h1 className="text-red-500" >{adults}</h1>
             <input
               type="number"
               name="children"
@@ -111,6 +142,7 @@ const SearchRooms = () => {
               max="10"
               onChange={handleChange}
             />
+              <h1 className="text-red-500" >{children}</h1>
           </div>
           <button
             type="submit"

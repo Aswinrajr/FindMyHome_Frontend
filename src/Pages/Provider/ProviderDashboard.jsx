@@ -1,20 +1,30 @@
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";
 import DashboardPage from "../../components/Provider/Dashboard";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router";
+
 import { useEffect } from "react";
-import axios from "axios";
+
+import { axiosInstance } from "../../api/axios";
 
 function ProviderDashboard() {
-  const provider = useSelector((state) => state.providerAuth.provider);
+  let token = localStorage.getItem("providerAccessToken");
+  console.log("Token in provider dashbpard", token);
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+  console.log("New Token provider", token);
+
   useEffect(() => {
     console.log("Welcome to complete data");
     try {
       const completeData = async () => {
-        const response = await axios.get(
-          "http://localhost:1997/provider/completedata",
-          { provider }
+        const response = await axiosInstance.get(
+          "/provider/completedata",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log(response);
       };
@@ -22,11 +32,10 @@ function ProviderDashboard() {
     } catch (err) {
       console.log(err);
     }
-  }, [provider]);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {provider && <Navigate to="/provider/dashboard" />}
       <Topbar />
 
       <div className="flex flex-1 flex-col sm:flex-row">

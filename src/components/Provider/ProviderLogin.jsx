@@ -1,41 +1,65 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setProvider } from "../../features/providerAuth";
-import axios from "axios";
+
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import { Toaster, toast } from "react-hot-toast";
+import { axiosInstance } from "../../api/axios";
 
 const ProviderLogin = () => {
+  const token = localStorage.getItem("providerAccessToken");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
 
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
+    if (!email && !password) {
+      setEmailError("Please enter you email");
+      setPasswordError("Please enter you password");
+      setTimeout(() => {
+        setEmailError("");
+        setPasswordError("");
+      }, 1000);
+
+      setLoading(false);
+      return;
+    } else if (!email) {
+      setEmailError("Please enter you email");
+      setTimeout(() => {
+        setEmailError("");
+        setPasswordError("");
+      }, 1000);
+      setLoading(false);
+      return;
+    } else if (!password) {
+      setPasswordError("Please enter you password");
+      setTimeout(() => {
+        setEmailError("");
+        setPasswordError("");
+      }, 1000);
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(`${providerRoute}/login`, {
+      const response = await axiosInstance.post(`/provider/login`, {
         email,
         password,
       });
 
-      console.log("response: ", response.data.msg);
+      console.log("response: ", response.data);
 
       if (response.status === 200) {
-        dispatch(setProvider(response.data.provider.providerEmail));
+        dispatch(setProvider(response.data.token));
 
         setTimeout(() => {
           toast.success(response.data.msg);
@@ -55,6 +79,7 @@ const ProviderLogin = () => {
       setLoading(false);
     }
   };
+  if (token) return <Navigate to="/provider/dashboard" />;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -88,6 +113,7 @@ const ProviderLogin = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
               />
+              {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
             </div>
             <div>
               <label
@@ -104,6 +130,9 @@ const ProviderLogin = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
               />
+              {passwordError && (
+                <p className="text-red-500 mt-1">{passwordError}</p>
+              )}
             </div>
             <button
               type="submit"

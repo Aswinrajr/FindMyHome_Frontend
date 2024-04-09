@@ -1,7 +1,7 @@
 import { useState } from "react";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import { Navigate, useNavigate, } from "react-router";
+import {  useNavigate, } from "react-router";
 import { useDispatch,  } from "react-redux";
 import { setAdmin } from '../../features/adminAuth'
 import { toast, Toaster } from "react-hot-toast";
@@ -12,8 +12,7 @@ const AdminVerifyOtp = () => {
   const [otp, setOtp] = useState('');
   const dispatch = useDispatch();
   const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
-  const admin = localStorage.getItem("admin")
-  if(admin) return <Navigate to="/admin/dashboard"/>
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,7 +23,7 @@ const AdminVerifyOtp = () => {
       );
       console.log(response);
       if (response.status === 200) {
-        dispatch(setAdmin(response.data.admin.adminEmail));
+        dispatch(setAdmin(response.data.token));
         toast.success("Admin Login Successfull")
         setTimeout(() => {
           navigate("/admin/dashboard");

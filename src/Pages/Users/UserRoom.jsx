@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -15,6 +15,7 @@ const UserRoom = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
 
   const settings = {
     dots: true,
@@ -42,6 +43,7 @@ const UserRoom = () => {
 
     fetchRooms();
   }, [baseUrl, email]);
+  if(!userEmail) return <Navigate to="/"/>
 
   return (
     <>
@@ -73,9 +75,9 @@ const UserRoom = () => {
                       {room.images.map((image, index) => (
                         <img
                           key={index}
-                          src={`${baseUrl}/${image}`}
+                          src={`${image}`}
                           alt={room.roomType}
-                          className="w-full h-40 object-cover"
+                          className="w-full h-40 object-contain"
                         />
                       ))}
                     </Slider>

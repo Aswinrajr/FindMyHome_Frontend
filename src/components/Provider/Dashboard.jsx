@@ -1,23 +1,29 @@
-import axios from "axios";
+
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import Swal from 'sweetalert2'
+import { Navigate, useNavigate } from "react-router";
+import Swal from "sweetalert2";
+import { axiosInstance } from "../../api/axios";
 
 const Dashboard = () => {
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
-  const navigate = useNavigate()
-  const providerEmail = localStorage.getItem("provider");
-  console.log("Provider Email", providerEmail);
+
+  const navigate = useNavigate();
+  
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+
 
   useEffect(() => {
     const completeData = async () => {
       try {
-        const response = await axios.post(
-          `${providerRoute}/completedata`,
-          { providerEmail }
-        );
+        const response = await axiosInstance.post(`/provider/completedata`,{}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log(response);
-        if(response.data.msg==="Complete your profile Data"){
+        if (response.data.msg === "Complete your profile Data") {
           Swal.fire({
             title: "Profile Updation Pending!!",
             text: "Complete Your Profile Info",
@@ -25,11 +31,10 @@ const Dashboard = () => {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Go to profile"
+            confirmButtonText: "Go to profile",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/provider/profileedit")
-              
+              navigate("/provider/profileedit");
             }
           });
         }
@@ -37,11 +42,14 @@ const Dashboard = () => {
         console.error("Error completing data:", error);
       }
     };
-    
-    if (providerEmail) {
+
+    if (token) {
       completeData();
     }
-  }, []);
+  }, [navigate, token]);
+
+
+  if(!token) return <Navigate to="/provider"/>
 
   return <div>Dashboard</div>;
 };

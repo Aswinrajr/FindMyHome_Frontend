@@ -1,13 +1,12 @@
-import axios from "axios";
 import { useEffect } from "react";
+import { axiosInstance } from "../../api/axios";
 
 const BookingPageProvider = () => {
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const provider = localStorage.getItem("provider");
   useEffect(() => {
     const getBookingDataProvider = async () => {
-      const response = await axios.post(
-        `${providerRoute}/getallbookingdata`,
+      const response = await axiosInstance.post(
+        `/provider/getallbookingdata`,
         provider
       );
       console.log(response);

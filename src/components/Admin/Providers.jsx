@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+
+import Swal from "sweetalert2";
 import { Navigate } from "react-router";
+import { axiosInstance } from "../../api/axios";
 
 const Providers = () => {
+  let token = localStorage.getItem("accessToken")
+  console.log("In users list",token)
+  const newToken =JSON.parse(token)
+  token = newToken?.accessToken
+  console.log("New Token",token)
+  const [providers, setProviders] = useState([]);
+
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const response = await axios.get(`${adminRoute}/providers`);
+        const response = await axiosInstance.get(`/admin/providers`,{
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setProviders(response.data);
       } catch (error) {
         console.error("Error fetching providers:", error);
@@ -15,30 +28,45 @@ const Providers = () => {
 
     fetchProviders();
   }, []);
-  const [providers, setProviders] = useState([]);
-  const adminEmail = localStorage.getItem("admin")
-  if(!adminEmail) return <Navigate to="/admin"/>
 
-  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+  if(!token) return <Navigate to="/admin"/>
 
   console.log("Providers", providers);
 
   const providerAction = async (providerId) => {
-    try {
-      const response = await axios.post(
-        `${adminRoute}/providers/action/${providerId}`
-      );
-      console.log("response", response);
+    const confirmation = await Swal.fire({
+      title: "Confirm Action",
+      text: `Are you sure you want to ${
+        providers.find((provider) => provider._id === providerId).status ===
+        "Active"
+          ? "block"
+          : "unblock"
+      } this provider?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, proceed",
+    });
 
-      const updatedProviders = providers.map((provider) => {
-        if (provider._id === providerId) {
-          provider.status = provider.status === "Active" ? "Blocked" : "Active";
-        }
-        return provider;
-      });
-      setProviders(updatedProviders);
-    } catch (error) {
-      console.error("Error updating provider status:", error);
+    if (confirmation.isConfirmed) {
+      try {
+        const response = await axiosInstance.post(
+          `/admin/providers/action/${providerId}`
+        );
+        console.log("response", response);
+
+        const updatedProviders = providers.map((provider) => {
+          if (provider._id === providerId) {
+            provider.status =
+              provider.status === "Active" ? "Blocked" : "Active";
+          }
+          return provider;
+        });
+        setProviders(updatedProviders);
+      } catch (error) {
+        console.error("Error updating provider status:", error);
+      }
     }
   };
 
@@ -93,10 +121,10 @@ const Providers = () => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {providers.map((provider) => (
-            <tr key={provider.id}>
+            <tr key={provider._id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={`http://localhost:1997/${provider.providerImage[0]}`}
+                  src={`${provider.providerImage[0]}`}
                   alt={provider.name}
                   className="h-10 w-10 rounded-full"
                 />

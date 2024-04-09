@@ -18,30 +18,36 @@ const UserLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
+    if (!email || !password) {
+      setIsLoading(false);
+      return toast.error("All fields are required");
+    }
 
     try {
       const response = await axios.post("http://localhost:1997/login", {
         email,
         password,
       });
-      console.log(response.data);
+      console.log(response);
 
       if (response.status === 200) {
         toast.success(response.data.msg);
         dispatch(setUser(response.data.user.userEmail));
-
-        navigate("/");
-      } else {
-        console.error("Login failed");
-        if (response.data && response.data.msg) {
-          toast.error(response.data.msg);
-        } else {
-          toast.error("An error occurred. Please try again later.");
-        }
-      }
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      } 
+      // else {
+      //   console.error("Login failed");
+      //   if (response.data && response.data.msg) {
+      //     toast.error(response.data.msg);
+      //   } else {
+      //     toast.error("An error occurred. Please try again later.");
+      //   }
+      // }
     } catch (error) {
       console.error("Axios error:", error);
-      toast.error("An error occurred. Please try again later.");
+      toast.error(error.response.data.msg);
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -80,7 +86,6 @@ const UserLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
-                required
               />
             </div>
             <div>
@@ -97,7 +102,6 @@ const UserLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
-                required
               />
             </div>
             <button
@@ -111,7 +115,7 @@ const UserLogin = () => {
           <p className="text-gray-600 text-center mt-4 cursor-pointer">
             Dont have an account?{" "}
             <span
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/register")}
               className="text-blue-600 hover:underline cursor-pointer"
             >
               Sign up

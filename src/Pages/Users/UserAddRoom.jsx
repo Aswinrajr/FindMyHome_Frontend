@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
+import { uploadCloudinary } from "../../Helper/Upload";
+import { BeatLoader } from "react-spinners";
 
 const UserAddRoom = () => {
   const email = localStorage.getItem("user");
@@ -11,6 +13,10 @@ const UserAddRoom = () => {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  const [imageUrl, setImageUrl] = useState();
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [imageErr, setImageErr] = useState("");
 
   const [roomData, setRoomData] = useState({
     roomType: "",
@@ -28,6 +34,7 @@ const UserAddRoom = () => {
     },
     images: [],
   });
+  if (!email) return <Navigate to="/" />;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,14 +53,44 @@ const UserAddRoom = () => {
       }));
     }
   };
+  const handleUploadImage = async (e) => {
+    e.preventDefault();
+    if (imageUrl.length < 4) {
+      setImageErr("Image shoulb be 5 in nos");
+    }
+    console.log(imageUrl);
+    setLoading(true);
+    const uploadedImages = [];
+    for (let i = 0; i < imageUrl.length; i++) {
+      const data = await uploadCloudinary(imageUrl[i]);
+      const { url } = data;
+      console.log("Data=======>", url);
+      uploadedImages.push(url);
+    }
 
-  const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+    setLoading(false);
+    console.log("Link=========>", uploadedImages);
+    setFiles(uploadedImages);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !roomData.roomType ||
+      !roomData.adults ||
+      !roomData.children ||
+      !roomData.status ||
+      !roomData.amount
+    ) {
+      setErr("Required all the  fields");
+
+      setTimeout(() => {
+        setErr("");
+        setImageErr("");
+      }, 1000);
+      return;
+    }
 
     const formData = new FormData();
     files.forEach((file) => {
@@ -68,11 +105,15 @@ const UserAddRoom = () => {
     formData.append("email", email);
     formData.append("amenities", JSON.stringify(roomData.amenities));
 
+    const data = {
+      roomData,
+      files,
+      email,
+    };
+
     try {
-      const response = await axios.post(`${baseUrl}/addroom`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await axios.post(`${baseUrl}/addroom`, data, {
+        headers: {},
       });
       console.log(response);
       if (response.status === 200) {
@@ -107,14 +148,13 @@ const UserAddRoom = () => {
               value={roomData.roomType}
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              required
             >
               <option value="">Select a room type</option>
               <option value="Single">Single</option>
               <option value="Double">Double</option>
               <option value="Dormetry">Dormetry</option>
-             
             </select>
+            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
           </div>
           <div className="mb-4">
             <label
@@ -131,8 +171,8 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of adults"
-              required
             />
+            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
           </div>
           <div className="mb-4">
             <label
@@ -149,8 +189,8 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of children"
-              required
             />
+            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
           </div>
           <div className="mb-4">
             <label
@@ -167,8 +207,8 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter amount"
-              required
             />
+            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
           </div>
           <div className="mb-4">
             <label
@@ -183,12 +223,12 @@ const UserAddRoom = () => {
               value={roomData.status}
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              required
             >
               <option value="">Select status</option>
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
             </select>
+            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
           </div>
 
           <div className="mb-4">
@@ -225,7 +265,7 @@ const UserAddRoom = () => {
               </label>
               <input
                 type="file"
-                onChange={handleImageChange}
+                onChange={(e) => setImageUrl(e.target.files)}
                 name="images"
                 id="images"
                 accept="image/*"
@@ -233,11 +273,15 @@ const UserAddRoom = () => {
                 className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
+            {imageErr && (
+              <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+            )}
+            {loading && <BeatLoader color="#36d7b7" />}
             <div className="flex space-x-2">
               {files.map((file, index) => (
                 <img
                   key={index}
-                  src={URL.createObjectURL(file)}
+                  src={`${file}`}
                   alt={`Image ${index + 1}`}
                   className="max-w-xs max-h-xs"
                   style={{ maxWidth: "100px", maxHeight: "100px" }}
@@ -246,6 +290,12 @@ const UserAddRoom = () => {
             </div>
           </div>
           <button
+            className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            onClick={handleUploadImage}
+          >
+            Upload image
+          </button>
+          <button
             type="submit"
             className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
           >
@@ -253,7 +303,7 @@ const UserAddRoom = () => {
           </button>
         </form>
       </div>
-      <Footer  />
+      <Footer />
     </>
   );
 };

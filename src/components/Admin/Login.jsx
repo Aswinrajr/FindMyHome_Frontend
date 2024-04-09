@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-import axios from "axios";
-import { useNavigate, Navigate } from "react-router-dom";
+// import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
 import ClipLoader from "react-spinners/ClipLoader";
+import { axiosInstance } from "../../api/axios";
 
 const Login = () => {
-  const savedData = localStorage.getItem("admin");
-
-  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
-  const apiKey = import.meta.env.VITE_API_KEY;
-  console.log("apiKey", apiKey, adminRoute);
+  const token = localStorage.getItem("accessToken");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -22,6 +19,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  if (token) return <Navigate to="/admin/dashboard" />;
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
@@ -39,6 +37,7 @@ const Login = () => {
       setErrors((prevErrors) => ({
         ...prevErrors,
         email: "Invalid email address",
+        password: "Password must be at least 6 characters long",
       }));
       setTimeout(() => {
         setErrors("");
@@ -60,14 +59,15 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`${adminRoute}/login`, {
+      // const response = await axios.post(`${adminRoute}/login`, {
+      const response = await axiosInstance.post(`admin/login`, {
         email,
         password,
       });
-      console.log(response.data);
+      console.log("response.data in Admin", response.data);
 
       if (response.status === 200) {
-        dispatch(setAdmin(response.data.admin.adminEmail));
+        dispatch(setAdmin(response.data.token));
         setTimeout(() => {
           toast.success(response.data.msg);
         }, 1000);
@@ -78,21 +78,17 @@ const Login = () => {
         console.error("Login failed");
         if (response.data && response.data.msg) {
           toast.error(response.data.msg);
-        } else {
-          toast.error("An error occurred. Please try again later.");
-        }
+        } 
       }
     } catch (error) {
       console.error("Axios error:", error);
-      toast.error("An error occurred. Please try again later.");
+      toast.error(error.response.data.msg);
     } finally {
       setTimeout(() => {
         setIsLoading(false);
       }, 2000);
     }
   };
-
-  if (savedData) return <Navigate to="/admin/dashboard" />;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

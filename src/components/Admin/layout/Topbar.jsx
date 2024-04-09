@@ -2,23 +2,26 @@ import logoImage from "../../../assets/logo.png";
 import profilePic from "../../../assets/3.webp";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
+import { axiosInstance } from "../../../api/axios";
 
 const Topbar = () => {
   const navigate = useNavigate()
   const [imagePath,setImagePath] = useState("")
-  const admin = localStorage.getItem('admin')
-  const adminEmail = JSON.parse(admin)
-  const adminName = adminEmail?.admin
-  const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  console.log(imagePath)
+  const [email,setEmail] = useState("")
+
+
+
+
+
 
   useEffect(()=>{
     const fetchData = async()=>{
-      const response = await axios.get(`${adminUrl}/adminimage`)
-      console.log("In navbar image",response)
+      const response = await axiosInstance.get(`/admin/adminimage`)
+      console.log(response)
+   
       setImagePath(response.data.imagePath)
+      setEmail(response.data.email)
     }
     fetchData()
   },[])
@@ -43,9 +46,9 @@ const Topbar = () => {
 
       <div className="flex items-center">
         <div className="flex items-center mr-4">
-          <span className="text-sm font-semibold mr-4">{adminName}</span>
+          <span className="text-sm font-semibold mr-4">{email}</span>
           <span onClick={()=>navigate("/admin/profile")} className="text-sm font-semibold cursor-pointer mr-4">Accounts</span>
-          <img src={imagePath?`${baseUrl}/${imagePath}`:profilePic} alt="Profile" className="h-8 rounded-full" />
+          <img src={imagePath?`${imagePath}`:profilePic} alt="Profile" className="h-8 rounded-full" />
         </div>
       </div>
     </div>

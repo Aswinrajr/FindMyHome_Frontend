@@ -47,6 +47,7 @@ import UserAddRoom from "../Pages/Users/UserAddRoom";
 import UserEditRoom from "../Pages/Users/UserEditRoom";
 import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
 import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
+import UserMobileSignup from "../Pages/Users/UserMobileSignup";
 
 const routerPage = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ const routerPage = createBrowserRouter([
   {
     path: "/admin/dashboard",
     element: <Dashboard />,
+    
   },
   {
     path: "/admin/users",
@@ -241,6 +243,10 @@ const routerPage = createBrowserRouter([
     path: "/usereditroom/:roomId",
     element: <UserEditRoom />,
   },
+  {
+    path:"/register",
+    element:<UserMobileSignup/>
+  }
 ]);
 
 export default routerPage;

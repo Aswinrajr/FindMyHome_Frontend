@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logoutProvider } from '../../../features/providerAuth';
 
 const Sidebar = () => {
-  const provider = localStorage.getItem('provider')
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,7 +12,7 @@ const Sidebar = () => {
     dispatch(logoutProvider());
     navigate("/provider");
   };
-  if(!provider) return <Navigate to="/provider"/>
+
 
   return (
     <div className="bg-fuchsia-700 text-white p-4 flex flex-col h-full justify-between sm:w-1/4 md:w-1/5 lg:w-1/6">

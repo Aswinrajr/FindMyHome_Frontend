@@ -1,40 +1,28 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import Swal from "sweetalert2";
 import logo from "../../assets/logo.png";
 
-import Swal from "sweetalert2";
+const Roomcard = ({ filteredDatas }) => {
+  console.log("filteredDatas on room cardc", filteredDatas);
 
-const Roomcard = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
   const [roomData, setRoomData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(2);
+  const [searchTerm, setSearchTerm] = useState("");
   const user = localStorage.getItem("user");
-
-  if (user) {
-    console.log(user);
-  } else {
-    console.log("no user");
-
-    Swal.fire({
-      title: "user is not logged in please login",
-      icon: "error",
-      confirmButtonText: "OK",
-    });
-    navigate("/login");
-  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.post(`${baseRoute}/fetchdata`, data);
-        console.log(response);
         if (response.status === 200) {
           setRoomData(response.data);
         }
@@ -44,14 +32,51 @@ const Roomcard = () => {
     };
 
     fetchData();
-  }, [data]);
+  }, [baseRoute, data]);
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
+  useEffect(() => {
+    if (!user) {
+      Swal.fire({
+        title: "User is not logged in. Please login.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (filteredDatas.length > 0) {
+      const getFilterData = roomData.filter((item) => {
+        const roomType = item && item.room && item.room.roomType;
+        if (typeof filteredDatas === "string" && roomType) {
+          return roomType.toLowerCase() === filteredDatas.toLowerCase();
+        } else {
+          console.log("Invalid filtered data or missing room type in item:", item);
+          return false;
+        }
+      });
+      setRoomData(getFilterData);
+    }
+  }, [filteredDatas, roomData]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const filteredData = roomData.filter((item) =>
+    item.room.roomType.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const nextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const prevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
   };
 
   const handleBook = async (roomId) => {
@@ -71,7 +96,6 @@ const Roomcard = () => {
 
         const htmlContent = `
           <div>
-
             <p><strong>Room Type:</strong> ${bookingDetails.roomType}</p>
             <p><strong>Adults:</strong> ${bookingDetails.adults}</p>
             <p><strong>Children:</strong> ${bookingDetails.children}</p>
@@ -98,10 +122,6 @@ const Roomcard = () => {
             placeOrder(bookingDetails, "Cash");
           } else if (result.isDenied) {
             showRazorpay(roomId, bookingDetails);
-
-            // placeOrder(bookingDetails, "Online");
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            console.log("Booking cancelled");
           }
         });
       }
@@ -109,15 +129,11 @@ const Roomcard = () => {
       console.error("Error in booking:", error);
     }
   };
+
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
-      console.log(bookingDetails);
       const orderUrl = await axios.post(`${baseRoute}/verifybooking/${roomId}`);
-      console.log(orderUrl);
-
       const { data } = orderUrl;
-      console.log("Dataaa", data);
-      console.log("bookingDetails", bookingDetails.amount);
 
       const options = {
         key: `${RAZORPAY_KEY}`,
@@ -134,7 +150,6 @@ const Roomcard = () => {
               bookingDetails
             );
             console.log(result);
-
             Swal.fire({
               title: "Room Booked Successfully",
               icon: "success",
@@ -179,9 +194,25 @@ const Roomcard = () => {
     }
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <div className="room-cards-container">
-      {roomData.map((item, index) => (
+      <input
+        type="text"
+        placeholder="Search by room type..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500"
+      />
+
+      {currentItems.map((item, index) => (
         <div
           key={index}
           className="room-card bg-white shadow-md p-4 rounded-lg mb-4 flex flex-col md:flex-row"
@@ -192,9 +223,9 @@ const Roomcard = () => {
                 <div key={imageIndex}>
                   <img
                     onClick={() => navigate(`roompreview/${item.room._id}`)}
-                    src={`http://localhost:1997/${image}`}
+                    src={`${image}`}
                     alt={`Room ${index} Image ${imageIndex}`}
-                    className="w-full h-48 mb-4 object-cover rounded-lg"
+                    className="w-full h-48 mb-4 object-contain rounded-lg"
                   />
                 </div>
               ))}
@@ -229,6 +260,49 @@ const Roomcard = () => {
           </div>
         </div>
       ))}
+      <div className="pagination flex justify-center mt-4">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 mr-2 rounded-lg ${
+            currentPage === 1
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700"
+          } text-white`}
+        >
+          Prev
+        </button>
+        {filteredData.length > itemsPerPage &&
+          Array.from(
+            { length: Math.ceil(filteredData.length / itemsPerPage) },
+            (_, index) => (
+              <button
+                key={index}
+                onClick={() => paginate(index + 1)}
+                className={`px-4 py-2 mx-2 rounded-lg ${
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
+        <button
+          onClick={nextPage}
+          disabled={
+            currentPage === Math.ceil(filteredData.length / itemsPerPage)
+          }
+          className={`px-4 py-2 ml-2 rounded-lg ${
+            currentPage === Math.ceil(filteredData.length / itemsPerPage)
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700"
+          } text-white`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

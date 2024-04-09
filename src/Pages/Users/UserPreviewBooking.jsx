@@ -6,6 +6,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
+import { Navigate } from "react-router";
 
 const UserPreviewBooking = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
@@ -25,6 +26,7 @@ const UserPreviewBooking = () => {
     };
     fetchData();
   }, []);
+  if(!user) return <Navigate to="/"/>
 
   const renderSeal = (status) => {
     if (status === "confirmed") {
@@ -78,10 +80,10 @@ const UserPreviewBooking = () => {
                 {booking.image.map((imageUrl, index) => (
                   <div key={index}>
                     <img
-                      src={`${baseUrl}/${imageUrl}`}
+                      src={`${imageUrl}`}
                       alt={`Room ${index + 1}`}
                       style={imageStyle}
-                      className="w-full h-auto rounded-lg"
+                      className="w-full h-auto rounded-lg object-cover"
                     />
                   </div>
                 ))}

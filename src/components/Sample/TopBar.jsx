@@ -1,15 +1,49 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/logo.png";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../features/userAuth";
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 
 const TopBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
   const user = localStorage.getItem("user");
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(`${baseUrl}/validateuser`, { user });
+        const validUser = response.data;
+        console.log(response)
+
+        if (validUser) {
+          return;
+        }
+        if(response.status===403) {
+          toast.error('User is blocked please contact admin');
+          dispatch(logoutUser());
+          setTimeout(() => {
+          return <Navigate to="/login"/>
+
+          }, 1000);
+
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+
+        dispatch(logoutUser());
+      
+       return <Navigate to="/login"/>
+
+      }
+    };
+
+    fetchData();
+  }, []);
   const handleLogout = () => {
     dispatch(logoutUser());
   };
@@ -24,6 +58,7 @@ const TopBar = () => {
         <img src={logoImage} alt="Logo" className="h-8" />
         <span className="text-xl font-bold">FindMyHome</span>
       </div>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex space-x-4">
         <Link to="/" className="hover:text-gray-700">
           Home

@@ -1,21 +1,24 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import { Toaster, toast } from "react-hot-toast";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { phoneNumber } = location.state ? location.state : "";
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
+  // const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+ 
 
-  const validateMobile = () => {
-    return /^[0-9]{10}$/.test(mobile);
-  };
+  // const validateMobile = () => {
+  //   return /^[0-9]{10}$/.test(mobile);
+  // };
 
   const validatePassword = () => {
     return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
@@ -26,8 +29,13 @@ const SignUpPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateMobile()) {
-      setError("Mobile number must be 10 digits");
+    // if (!validateMobile()) {
+    //   setError("Mobile number must be 10 digits");
+    // }
+    if (!userName || !email || !password || !confirmPassword) {
+      setError("Please fill in all the fields.");
+    
+      return;
     }
 
     if (!validatePassword()) {
@@ -40,7 +48,7 @@ const SignUpPage = () => {
       const response = await axios.post("http://localhost:1997/signup", {
         userName,
         email,
-        mobile,
+        mobile:phoneNumber,
         password,
         confirmPassword,
       });
@@ -54,10 +62,15 @@ const SignUpPage = () => {
         }, 1000);
       } else {
         console.error("Sign up failed");
-        toast.error(response.data.msg);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error(error.response.data.message);
+      setTimeout(() => {
+        navigate("/register")
+        
+      }, 1000);
     }
   };
 
@@ -112,7 +125,7 @@ const SignUpPage = () => {
                 required
               />
             </div>
-            <div>
+            {/* <div>
               <label
                 htmlFor="mobile"
                 className="block text-gray-700 font-bold text-sm mb-2"
@@ -128,7 +141,7 @@ const SignUpPage = () => {
                 placeholder="Enter your mobile number"
                 required
               />
-            </div>
+            </div> */}
             <div>
               <label
                 htmlFor="password"

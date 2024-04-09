@@ -11,12 +11,13 @@ import { Toaster, toast } from "react-hot-toast";
 const ProviderVerifyOtp = () => {
   const location = useLocation();
   const code = location.state ? location.state.otp : "";
-  const [otp,setOtp ]=useState("")
+  const [otp, setOtp ]=useState("")
 
  useEffect(()=>{
    toast.success(`Your otp is ${code}`)
+   return
 
- },[])
+ },[code])
     
 
 

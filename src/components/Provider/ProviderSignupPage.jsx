@@ -11,44 +11,69 @@ const ProviderSignUp = () => {
   const navigate = useNavigate();
   const [residenceName, setResidenceName] = useState("");
   const [email, setEmail] = useState("");
-  // const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showError, setShowError] = useState(false);
+  const [residenceNameError, setResidenceNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
 
   useEffect(() => {
-    if (error) {
-      setTimeout(() => {
-        setError("");
-        setShowError(false);
-      }, 2000);
-    }
-  }, [error, navigate]);
+    const errorTimeout = setTimeout(() => {
+      clearErrors();
+    }, 2000);
+    return () => clearTimeout(errorTimeout);
+  }, []);
+
+  const clearErrors = () => {
+    setResidenceNameError("");
+    setEmailError("");
+    setPasswordError("");
+   
+  };
 
   const validatePassword = () => {
-    return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
-      password
-    );
+    return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    clearErrors();
+    if (!residenceName && !email && !password && !confirmPassword) {
+      setResidenceNameError("Please enter your residence name.");
+      setEmailError("Please enter your email.");
+      setPasswordError("Please enter your password.");
 
-    if (!residenceName || !email || !password || !confirmPassword) {
-      setError("Please fill in all the fields.");
-      setShowError(true);
+    setTimeout(() => {
+      clearErrors()
+      
+    }, 1000);
+      
+      
+    }
+
+    if (!residenceName) {
+      setResidenceNameError("Please enter your residence name.");
+      return;
+    }
+
+    if (!email) {
+      setEmailError("Please enter your email.");
+      return;
+    }
+
+    if (!password) {
+      setPasswordError("Please enter your password.");
+      return;
+    }
+
+    if (!confirmPassword) {
+       setPasswordError("Password must have an uppercase ,lowecase,symbol and numbers.");
       return;
     }
 
     if (!validatePassword()) {
-      setError(
-        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one symbol"
-      );
-      setShowError(true);
-      setTimeout(() => {
-        setShowError("");
-      }, 1000);
+      setPasswordError("Password must have an uppercase ,lowecase,symbol and numbers.");
       return;
     }
 
@@ -60,11 +85,9 @@ const ProviderSignUp = () => {
         password,
         confirmPassword,
       });
-      console.log(response);
 
       if (response.status === 201) {
-        console.log("Sign up successful");
-        toast.success("Sign up Successfull");
+        toast.success("Sign up Successful");
         setTimeout(() => {
           navigate("/provider");
         }, 2000);
@@ -95,7 +118,6 @@ const ProviderSignUp = () => {
           <h2 className="text-3xl font-bold mb-4 text-center text-blue-900">
             Welcome Back Provider signup!
           </h2>
-          {showError && <p className="text-red-500 mb-2">{error}</p>}
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <div>
               <label
@@ -112,6 +134,7 @@ const ProviderSignUp = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your residence name"
               />
+              {residenceNameError && <p className="text-red-500 mt-1">{residenceNameError}</p>}
             </div>
             <div>
               <label
@@ -128,24 +151,9 @@ const ProviderSignUp = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
               />
+              {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
             </div>
-            {/* <div>
-              <label
-                htmlFor="mobile"
-                className="block text-gray-700 font-bold text-sm mb-2"
-              >
-                Mobile Number
-              </label>
-              <input
-                type="tel"
-                id="mobile"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter your mobile number"
-                required
-              />
-            </div> */}
+           
             <div>
               <label
                 htmlFor="password"
@@ -161,6 +169,7 @@ const ProviderSignUp = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
               />
+              {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
             </div>
             <div>
               <label
@@ -177,6 +186,7 @@ const ProviderSignUp = () => {
                 className=" shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Confirm your password"
               />
+            {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
             </div>
             <button
               type="submit"
@@ -200,4 +210,4 @@ const ProviderSignUp = () => {
   );
 };
 
-export default ProviderSignUp;
+export default ProviderSignUp

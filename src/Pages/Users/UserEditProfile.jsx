@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
-import axios from "axios";
-import { Toaster, toast } from "react-hot-toast";
+import { Navigate } from "react-router";
 
 const UserEditProfile = () => {
   const user = localStorage.getItem("user");
@@ -14,9 +15,11 @@ const UserEditProfile = () => {
     email: "",
     mobile: "",
     gender: "Male",
-    address: "",
+    location: "",
     image: null,
     imageUrl: null,
+    address: "",
+    city: "",
   });
 
   useEffect(() => {
@@ -24,21 +27,41 @@ const UserEditProfile = () => {
       try {
         const response = await axios.post(`${baseUrl}/getuserdata`, { user });
         const userData = response.data.data;
-        setFormData({
+        setFormData((prevData) => ({
+          ...prevData,
           name: userData.userName || "",
           email: userData.userEmail || "",
           mobile: userData.userMobile || "",
           gender: userData.gender || "Male",
+          location: userData.location || "",
           address: userData.userAdress || "",
+          city: userData.city || "",
           image: userData.image || null,
           imageUrl: userData.image ? `${baseUrl}/${userData.image}` : null,
-        });
+        }));
+        console.log(userData)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
     fetchData();
   }, [baseUrl, user]);
+
+  useEffect(() => {
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      document.getElementById("address"),
+      {}
+    );
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      setFormData((prevData) => ({
+        ...prevData,
+        address: place.formatted_address,
+      }));
+    });
+  }, []);
+  if(!user) return <Navigate to="/"/>
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,22 +83,39 @@ const UserEditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("mobile", formData.mobile);
-    formDataToSend.append("gender", formData.gender);
-    formDataToSend.append("address", formData.address);
-    formDataToSend.append("image", formData.image);
+    if (!formData.address || !formData.city) {
+      return toast.error("All fields are required");
+    }
 
     try {
-      const response = await axios.put(
-        `${baseUrl}/updateuserdata`,
-        formDataToSend
+   
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          formData.city
+        )}&key=AIzaSyAoUo0-J9X1J7Dv08pnGwigpu2Jw_KAr8k`
       );
-      console.log(response.data);
-      if (response.status === 200) {
-        toast.success(response.data.message);
+      const { results } = response.data;
+      if (results && results.length > 0) {
+        const { lat, lng } = results[0].geometry.location;
+
+        const formDataToSend = new FormData();
+        formDataToSend.append("name", formData.name);
+        formDataToSend.append("email", formData.email);
+        formDataToSend.append("mobile", formData.mobile);
+        formDataToSend.append("gender", formData.gender);
+        formDataToSend.append("location", formData.location);
+        formDataToSend.append("image", formData.image);
+        formDataToSend.append("address", formData.address);
+        formDataToSend.append("city", formData.city);
+        formDataToSend.append("coordinates", `${lat},${lng}`);
+
+        const updateResponse = await axios.put(
+          `${baseUrl}/updateuserdata`,
+          formDataToSend
+        );
+        if (updateResponse.status === 200) {
+          toast.success(updateResponse.data.message);
+        }
       }
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -153,6 +193,19 @@ const UserEditProfile = () => {
                       type="text"
                       name="address"
                       value={formData.address}
+                      onChange={handleChange}
+                      id="address"
+                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                      City:
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
                       onChange={handleChange}
                       className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
                     />

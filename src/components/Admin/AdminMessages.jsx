@@ -1,9 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 const AdminMessages = () => {
+  let token = localStorage.getItem("accessToken")
+  console.log("In users list",token)
+  const newToken =JSON.parse(token)
+  token = newToken?.accessToken
+  console.log("New Token",token)
   const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
@@ -20,6 +25,8 @@ const AdminMessages = () => {
     };
     fetchData();
   }, []);
+  if(!token) return <Navigate to="/admin"/>
+  
 
   const handleConfirm = async (action, email) => {
     try {

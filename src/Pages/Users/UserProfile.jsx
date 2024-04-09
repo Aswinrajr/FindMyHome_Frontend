@@ -10,7 +10,7 @@ import { Toaster, toast } from "react-hot-toast";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -59,6 +59,7 @@ const UserProfile = () => {
     }
     navigate(`/${path}`);
   };
+  if(!user) return <Navigate to="/"/>
   
   
   return (
@@ -78,7 +79,7 @@ const UserProfile = () => {
                 <img
                   src={
                     userData?.image
-                      ? `${baseUrl}/${userData.image}`
+                      ? `${userData.image}`
                       : profileImage
                   }
                   alt="image"

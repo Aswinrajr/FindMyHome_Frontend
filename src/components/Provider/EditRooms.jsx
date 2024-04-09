@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
+import { axiosInstance } from "../../api/axios";
+import { uploadCloudinary } from "../../Helper/Upload"; 
+import { BeatLoader } from "react-spinners";
+
 
 const EditRooms = () => {
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
+  let token = localStorage.getItem("providerAccessToken");
+
+
+  const newToken = JSON.parse(token);
+  console.log(newToken);
+  token = newToken?.providerAccessToken;
+
   const navigate = useNavigate();
   const { roomId } = useParams();
 
   const [files, setFiles] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
+  const [loading, setLoading] = useState(false);
   const [roomData, setRoomData] = useState({
     roomType: "",
     adults: "",
@@ -28,10 +40,16 @@ const EditRooms = () => {
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const response = await axios.get(
-          `${providerRoute}/rooms/editrooms/${roomId}`
+        const response = await axiosInstance.get(
+          `/provider/rooms/editrooms/${roomId}`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setRoomData(response.data);
+        setFiles(response.data.images)
+        console.log("Images=====>",files)
       } catch (error) {
         console.error("Error fetching room data:", error);
       }
@@ -50,7 +68,9 @@ const EditRooms = () => {
           [name]: checked,
         },
       }));
-    } else {
+    } 
+    
+    else {
       setRoomData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -58,14 +78,21 @@ const EditRooms = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+  const handleUploadImage = async (e) => {
+    e.preventDefault();
+    console.log(imageUrl);
+    setLoading(true);
+    const uploadedImages = [];
+    for (let i = 0; i < imageUrl.length; i++) {
+      const data = await uploadCloudinary(imageUrl[i]);
+      const { url } = data;
+      console.log("Data=======>", url);
+      uploadedImages.push(url);
+    }
 
-    setRoomData((prevData) => ({
-      ...prevData,
-      images: selectedFiles.map((file) => URL.createObjectURL(file)),
-    }));
+    setLoading(false);
+    console.log("Link=========>", uploadedImages);
+    setFiles(uploadedImages);
   };
 
   const handleSubmit = async (e) => {
@@ -83,13 +110,19 @@ const EditRooms = () => {
     formData.append("status", roomData.status);
     formData.append("amenities", JSON.stringify(roomData.amenities));
 
+    const data = {
+      roomData,
+      files
+    }
+
     try {
-      const response = await axios.post(
-        `${providerRoute}/rooms/updaterooms/${roomData._id}`,
-        formData,
+      const response = await axiosInstance.post(
+        `/provider/rooms/updaterooms/${roomData._id}`,
+        data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -241,7 +274,7 @@ const EditRooms = () => {
             </label>
             <input
               type="file"
-              onChange={handleImageChange}
+              onChange={(e) => setImageUrl(e.target.files)}
               name="images"
               id="images"
               accept="image/*"
@@ -249,28 +282,23 @@ const EditRooms = () => {
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+          {loading && <BeatLoader color="#36d7b7" />}
           <div className="flex space-x-2">
             {files.map((file, index) => (
               <img
                 key={index}
-                src={URL.createObjectURL(file)}
+                src={`${file}`}
                 alt={`Image ${index + 1}`}
                 className="max-w-xs max-h-xs"
                 style={{ maxWidth: "100px", maxHeight: "100px" }}
               />
             ))}
           </div>
-          <div className="flex space-x-2">
-            {roomData.images.map((image, index) => (
-              <img
-                key={index}
-                src={`http://localhost:1997/${image}`}
-                alt={`Image ${index + 1}`}
-                className="max-w-xs max-h-xs"
-                style={{ maxWidth: "100px", maxHeight: "100px" }}
-              />
-            ))}
-          </div>
+    
+          <button
+            className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            onClick={handleUploadImage}
+          >Upload image</button>
         </div>
         <button
           type="submit"

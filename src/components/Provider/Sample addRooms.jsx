@@ -1,8 +1,16 @@
-import axios from "axios";
+
 import { useState } from "react";
+import { axiosInstance } from "../../api/axios";
 
 const SampleAddRooms = () => {
-  const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
+  
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.providerAccessToken;
+
+
+
   const [files, setFiles] = useState([]);
 
   const handleSubmit = async (e) => {
@@ -14,12 +22,13 @@ const SampleAddRooms = () => {
     });
 
     try {
-      const response = await axios.post(
-        `${providerRoute}/rooms/addrooms`,
+      const response = await axiosInstance.post(
+        `/provider/rooms/addrooms`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );

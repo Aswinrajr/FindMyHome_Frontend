@@ -1,17 +1,23 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import userImage from "../../assets/1 - Copy.webp";
 import { Navigate } from "react-router";
+import { axiosInstance } from "../../api/axios";
 
 const BookingList = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const [bookings, setBookings] = useState([]);
-  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+  let token = localStorage.getItem("accessToken")
+  console.log("In users list",token)
+  const newToken =JSON.parse(token)
+  token = newToken?.accessToken
+  console.log("New Token",token)
+
 
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        const response = await axios.get(`${adminRoute}/getallbookingdata`);
+        const response = await axiosInstance.get(`/admin/getallbookingdata`);
         console.log("response", response.data);
         setBookings(response.data.orders);
         console.log("Bookings", bookings);
@@ -22,8 +28,9 @@ const BookingList = () => {
     fetchBookingData();
   }, []);
   
-  const adminEmail = localStorage.getItem("admin")
-  if(!adminEmail) return <Navigate to="/admin"/>
+
+
+  if(!token) return <Navigate to="/admin"/>
 
   return (
     <div className="overflow-x-auto">
@@ -68,7 +75,7 @@ const BookingList = () => {
                     src={
                       booking.provider &&
                       booking.provider.providerImage
-                        ? `${baseRoute}/${booking.provider.providerImage[1]}`
+                        ? `${booking.provider.providerImage[1]}`
                         : ""
                     }
                     alt={
@@ -94,7 +101,7 @@ const BookingList = () => {
                 </td>
                 <td className="px-6 py-4">Booked</td>
                 <td className="px-6 py-4">{booking.totalAmounttoPay}</td>
-                <td className="px-6 py-4 text-red-500 underline cursor-pointer hover:text-blue-700">View More</td>
+                {/* <td className="px-6 py-4 text-red-500 underline cursor-pointer hover:text-blue-700">View More</td> */}
               </tr>
             ))}
           </tbody>

@@ -1,4 +1,4 @@
-import { Link,useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logoutAdmin } from "../../../features/adminAuth";
 
@@ -7,7 +7,7 @@ const Sidebar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+
 
   const handleLogout = () => {
     dispatch(logoutAdmin());

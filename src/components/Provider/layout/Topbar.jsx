@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+
 import { Link } from "react-router-dom";
 import logoImage from "../../../assets/logo.png";
 import profilePic from "../../../assets/roomimage.webp";
 
 const Topbar = () => {
-  let providerEmail = useSelector((state) => state.providerAuth.providerEmail);
-  providerEmail = "aswinraj@gmail.com";
   const [searchInput, setSearchInput] = useState("");
 
   const handleSearch = () => {};
@@ -37,8 +35,10 @@ const Topbar = () => {
       </div>
 
       <div className="flex items-center">
-        <p className="text-sm mr-4">{providerEmail}</p>
-        <Link to="/provider/account" className="text-sm mr-4">Account</Link>
+        <p className="text-sm mr-4">{"providerEmail"}</p>
+        <Link to="/provider/account" className="text-sm mr-4">
+          Account
+        </Link>
         <img src={profilePic} alt="Profile" className="h-8 rounded-full" />
       </div>
     </div>
