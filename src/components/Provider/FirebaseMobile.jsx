@@ -6,8 +6,16 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../Helper/Firebase";
 import { useNavigate } from "react-router";
 
+function validNumber(number) {
+  let cleanedNumber = number.replace(/\D/g, "");
+
+  const regex = /^(?:\+?91)?[6-9]\d{9}$/;
+
+  return regex.test(cleanedNumber);
+}
+
 const FirebaseMobile = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(0);
@@ -27,8 +35,9 @@ const FirebaseMobile = () => {
   }, [timer]);
 
   const handleSendOtp = async (e) => {
+    console.log(phoneNumber);
     e.preventDefault();
-    if (phoneNumber.trim() === "") {
+    if (phoneNumber.trim() === "" || !validNumber(phoneNumber)) {
       setPhoneNumberError("Please enter a mobile number.");
       setTimeout(() => {
         setPhoneNumberError("");
@@ -57,6 +66,7 @@ const FirebaseMobile = () => {
         recapta
       );
       console.log("Confirmation", confirmation);
+      console.log("user", user);
       setUser(confirmation);
       console.log("OTP Verification ID:", confirmation.verificationId);
     } catch (err) {
@@ -66,7 +76,7 @@ const FirebaseMobile = () => {
 
   const handleResendOtp = () => {
     setTimer(60);
-    handleSendOtp()
+    handleSendOtp();
   };
 
   const handleVerifyOtp = async () => {
@@ -74,10 +84,9 @@ const FirebaseMobile = () => {
       const verified = await user.confirm(otp);
       console.log(verified);
       if (verified) {
-        navigate("/provider/signup", { state: { phoneNumber: phoneNumber } })
-        
-      }else{
-        navigate("/provider/register")
+        navigate("/provider/signup", { state: { phoneNumber: phoneNumber } });
+      } else {
+        navigate("/provider/register");
       }
     } catch (err) {
       console.log("Eroro in verify orp", err);
@@ -116,7 +125,6 @@ const FirebaseMobile = () => {
                     borderRadius: "5px",
                     marginBottom: "0.5rem",
                   }}
-               
                 />
                 {phoneNumberError && (
                   <p className="text-red-500 text-lg mt-2">

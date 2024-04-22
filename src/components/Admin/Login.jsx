@@ -1,12 +1,13 @@
-import { useState } from "react";
+import  { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-// import axios from "axios";
+
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
 import ClipLoader from "react-spinners/ClipLoader";
-import { axiosInstance } from "../../api/axios";
+
+import { adminLogin } from "../../service/Admin/LoginServices";
 
 const Login = () => {
   const token = localStorage.getItem("accessToken");
@@ -20,13 +21,32 @@ const Login = () => {
   const [errors, setErrors] = useState({});
 
   if (token) return <Navigate to="/admin/dashboard" />;
+
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
   const validatePassword = (password) => {
-    return password.length >= 6;
+    if (password.length < 6) {
+      return false;
+    }
+
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const numberRegex = /[0-9]/;
+
+    if (
+      !uppercaseRegex.test(password) ||
+      !lowercaseRegex.test(password) ||
+      !symbolRegex.test(password) ||
+      !numberRegex.test(password)
+    ) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (event) => {
@@ -34,37 +54,33 @@ const Login = () => {
     setIsLoading(true);
 
     if (!validateEmail(email)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
+      setErrors({
         email: "Invalid email address",
         password: "Password must be at least 6 characters long",
-      }));
+      });
       setTimeout(() => {
-        setErrors("");
+        setErrors({});
       }, 1000);
       setIsLoading(false);
       return;
     }
 
     if (!validatePassword(password)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "Password must be at least 6 characters long",
-      }));
+      setErrors({
+        password:
+          "Password must be at least 6 characters long and contain an uppercase letter, a lowercase letter, a symbol, and a number",
+      });
       setTimeout(() => {
-        setErrors("");
+        setErrors({});
       }, 1000);
       setIsLoading(false);
       return;
     }
 
     try {
-      // const response = await axios.post(`${adminRoute}/login`, {
-      const response = await axiosInstance.post(`admin/login`, {
-        email,
-        password,
-      });
-      console.log("response.data in Admin", response.data);
+      console.log("Before API Call");
+      const response = await adminLogin(email, password);
+      console.log("After API Call:", response);
 
       if (response.status === 200) {
         dispatch(setAdmin(response.data.token));
@@ -74,15 +90,18 @@ const Login = () => {
         setTimeout(() => {
           navigate("/admin/dashboard");
         }, 2000);
+      } else if (response.response.status === 401) {
+        console.error("Login failed", response.response);
+        if (response.response.data && response.response.data.msg) {
+          toast.error(response.response.data.msg);
+        }
       } else {
-        console.error("Login failed");
-        if (response.data && response.data.msg) {
-          toast.error(response.data.msg);
-        } 
+        toast.error(response.response.data.msg);
       }
     } catch (error) {
-      console.error("Axios error:", error);
-      toast.error(error.response.data.msg);
+      console.log("======>", error);
+      console.error("Axios error:", error.response.data.msg);
+      toast.error(error.response.response.data.msg);
     } finally {
       setTimeout(() => {
         setIsLoading(false);

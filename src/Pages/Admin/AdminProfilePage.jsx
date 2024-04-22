@@ -1,6 +1,6 @@
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
-import AdminProfile from "../../components/Admin/AdminProfile";
+import AdminProfile from "../../components/Admin/profile/AdminProfile";
 
 
 

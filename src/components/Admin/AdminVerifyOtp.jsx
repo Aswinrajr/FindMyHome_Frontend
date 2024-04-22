@@ -1,22 +1,33 @@
 import { useState } from "react";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import axios from "axios";
-import {  useNavigate, } from "react-router";
-import { useDispatch,  } from "react-redux";
+import { Navigate, useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
 import { setAdmin } from '../../features/adminAuth'
 import { toast, Toaster } from "react-hot-toast";
-
 
 const AdminVerifyOtp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('');
   const dispatch = useDispatch();
-  const adminRoute =import.meta.env.VITE_ADMIN_ROUTE
-
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+  const [err,setErr] = useState()
+  console.log(adminRoute);
+  const token = localStorage.getItem('accessToken')
+  console.log(token)
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if(otp.length===0){
+      setErr("OTP is required")
+      setTimeout(() => {
+        setErr("")
+        
+      }, 1000);
+      return
+    }
     try {
+      console.log('HANDLE SUBMIT');
       const response = await axios.post(
         `${adminRoute}/verifyotp`,
         { otp }
@@ -24,27 +35,30 @@ const AdminVerifyOtp = () => {
       console.log(response);
       if (response.status === 200) {
         dispatch(setAdmin(response.data.token));
-        toast.success("Admin Login Successfull")
+        toast.success("Admin Login Successful");
         setTimeout(() => {
           navigate("/admin/dashboard");
-          
         }, 2000);
-       
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Incorrect OTP")
+      toast.error("Incorrect OTP");
     }
   };
 
   const handleInputChange = (e) => {
+
     const value = e.target.value.replace(/\D/g, ''); 
-    setOtp(value);
+    
+    if (value.length <= 6) {
+      setOtp(value);
+    }
   };
+  if(token) return <Navigate to="/admin/dashboard"/>
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-       <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
         <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
           <img
@@ -74,8 +88,14 @@ const AdminVerifyOtp = () => {
                 placeholder="Enter OTP"
                 pattern="\d*"
                 inputMode="numeric"
-                required
+                maxLength={5} 
+             
               />
+              {err&& (
+                <p className="text-red-500 text-lg mt-2">
+                  {err}
+                </p>
+              )}
             </div>
             <button
               type="submit"
@@ -84,7 +104,7 @@ const AdminVerifyOtp = () => {
               Verify OTP
             </button>
           </form>
-          <h1 onClick={() => navigate("/admin/changepassword")}>next</h1>
+
         </div>
       </div>
     </div>

@@ -1,22 +1,27 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import { uploadCloudinary } from "../../Helper/Upload";
 import { BeatLoader } from "react-spinners";
+import { userAddsRoom } from "../../service/User/UserService";
 
 const UserAddRoom = () => {
-  const email = localStorage.getItem("user");
+  const email = localStorage.getItem("userAccessToken");
   console.log(email);
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  // const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [imageErr, setImageErr] = useState("");
+
+  const [adultErr, setAdultErr] = useState();
+  const [childErr, setChildErr] = useState();
+  const [amountErr, setAmountErr] = useState();
 
   const [roomData, setRoomData] = useState({
     roomType: "",
@@ -38,6 +43,32 @@ const UserAddRoom = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    console.log(name, value);
+    if (name === "adults" && value < 1) {
+      setAdultErr("Number of adults cannot be less than 1");
+      setTimeout(() => {
+        setAdultErr("")
+        
+      }, 3000);
+     
+    }
+    if (name === "children" && value < 0) {
+      setChildErr("Number of children cannot be less than 0");
+      setTimeout(() => {
+        setChildErr("")
+        
+      }, 3000);
+
+    }
+    if (name === "amount" && value < 300) {
+      setAmountErr(" amount cannot be less than 300");
+      setTimeout(() => {
+        setAmountErr("")
+        
+      }, 3000);
+    
+    }
+
     if (type === "checkbox") {
       setRoomData((prevData) => ({
         ...prevData,
@@ -55,8 +86,14 @@ const UserAddRoom = () => {
   };
   const handleUploadImage = async (e) => {
     e.preventDefault();
+
     if (imageUrl.length < 4) {
       setImageErr("Image shoulb be 5 in nos");
+      setTimeout(() => {
+        setImageErr("")
+        
+      }, 1000);
+      return
     }
     console.log(imageUrl);
     setLoading(true);
@@ -92,6 +129,8 @@ const UserAddRoom = () => {
       return;
     }
 
+ 
+
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("images", file);
@@ -102,19 +141,18 @@ const UserAddRoom = () => {
     formData.append("children", roomData.children);
     formData.append("amount", roomData.amount);
     formData.append("status", roomData.status);
-    formData.append("email", email);
+
     formData.append("amenities", JSON.stringify(roomData.amenities));
 
     const data = {
       roomData,
       files,
-      email,
     };
 
     try {
-      const response = await axios.post(`${baseUrl}/addroom`, data, {
-        headers: {},
-      });
+      console.log(data);
+      const response = await userAddsRoom(data);
+
       console.log(response);
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -171,8 +209,12 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of adults"
-            />
+              />
+  
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+            {adultErr && (
+              <p className="text-red-500 text-lg mt-2">{adultErr}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
@@ -191,6 +233,9 @@ const UserAddRoom = () => {
               placeholder="Enter number of children"
             />
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+            {childErr && (
+              <p className="text-red-500 text-lg mt-2">{childErr}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
@@ -209,6 +254,9 @@ const UserAddRoom = () => {
               placeholder="Enter amount"
             />
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+            {amountErr && (
+              <p className="text-red-500 text-lg mt-2">{amountErr}</p>
+            )}
           </div>
           <div className="mb-4">
             <label

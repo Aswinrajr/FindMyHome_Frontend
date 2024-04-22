@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Toaster, toast } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+import { axiosInstance } from "../../../api/axios";
 import axios from "axios";
 import { BeatLoader } from "react-spinners";
 
@@ -14,7 +14,6 @@ const AdminProfile = () => {
   console.log("In users list", token);
   const newToken = JSON.parse(token);
   token = newToken?.accessToken;
-  // console.log("New Token",token)
 
   const [adminData, setAdminData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -24,6 +23,7 @@ const AdminProfile = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageSelected, setImageSelected] = useState(false);
+  const [error, setError] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +46,34 @@ const AdminProfile = () => {
 
   const handleSavePassword = async () => {
     if (newPassword.trim() === "" || confirmPassword.trim() === "") {
-      toast.error("Please enter both new and confirm passwords.");
+      setError("Please enter both new and confirm passwords.");
       setIsEditing(true);
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+
+    if (
+      !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/.test(newPassword) ||
+      newPassword.length < 6
+    ) {
+      setError(
+        "Password must contain at least one uppercase letter, one lowercase letter, one symbol, one number, and be at least 6 characters long."
+      );
+      setIsEditing(true);
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      setIsEditing(true);
+      setTimeout(() => {
+        setError("");
+      }, 1000);
       return;
     }
 
@@ -66,6 +92,8 @@ const AdminProfile = () => {
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsEditing(false);
+        setNewPassword("")
+        setConfirmPassword("")
       }
     } catch (error) {
       console.error("Error updating password:", error);
@@ -109,25 +137,21 @@ const AdminProfile = () => {
   const handleImageUpload = async () => {
     try {
       const imageUrl = await handleUploadImage();
-  
+
       console.log(imageUrl);
-  
- const data ={
-  imageUrl
- }
-  
-      const response = await axiosInstance.post(
-        `/admin/uploadimage`,
-        data, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+
+      const data = {
+        imageUrl,
+      };
+
+      const response = await axiosInstance.post(`/admin/uploadimage`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response.data);
       setLoading(false);
-  
+
       toast.success("Image uploaded successfully!");
       setTimeout(() => {
         navigate("/admin/profile");
@@ -137,11 +161,6 @@ const AdminProfile = () => {
       toast.error("Failed to upload image. Please try again later.");
     }
   };
-  
-
-
-
-
 
   if (!token) return <Navigate to="/admin" />;
   return (
@@ -178,7 +197,7 @@ const AdminProfile = () => {
               ) : (
                 <button
                   className="rounded-md bg-info-500 text-white px-4 py-2 mr-2 focus:outline-none "
-                  disabled 
+                  disabled
                 >
                   Upload Image
                 </button>
@@ -215,6 +234,7 @@ const AdminProfile = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+
                 <button
                   className="rounded-md bg-green-500 text-white px-4 py-2 mr-2 focus:outline-none"
                   onClick={handleSavePassword}
@@ -238,6 +258,7 @@ const AdminProfile = () => {
               </button>
             )}
           </div>
+          {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
     </div>

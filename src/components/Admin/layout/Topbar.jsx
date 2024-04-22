@@ -6,25 +6,20 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../../../api/axios";
 
 const Topbar = () => {
-  const navigate = useNavigate()
-  const [imagePath,setImagePath] = useState("")
-  const [email,setEmail] = useState("")
+  const navigate = useNavigate();
+  const [imagePath, setImagePath] = useState("");
+  const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axiosInstance.get(`/admin/adminimage`);
+      console.log(response);
 
-
-
-
-
-  useEffect(()=>{
-    const fetchData = async()=>{
-      const response = await axiosInstance.get(`/admin/adminimage`)
-      console.log(response)
-   
-      setImagePath(response.data.imagePath)
-      setEmail(response.data.email)
-    }
-    fetchData()
-  },[])
+      setImagePath(response.data.imagePath);
+      setEmail(response.data.email);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="bg-fuchsia-700 text-white px-4 py-2 flex items-center justify-between sm:px-6 lg:px-8">
@@ -47,8 +42,17 @@ const Topbar = () => {
       <div className="flex items-center">
         <div className="flex items-center mr-4">
           <span className="text-sm font-semibold mr-4">{email}</span>
-          <span onClick={()=>navigate("/admin/profile")} className="text-sm font-semibold cursor-pointer mr-4">Accounts</span>
-          <img src={imagePath?`${imagePath}`:profilePic} alt="Profile" className="h-8 rounded-full" />
+          <span
+            onClick={() => navigate("/admin/profile")}
+            className="text-sm font-semibold cursor-pointer mr-4"
+          >
+            Accounts
+          </span>
+          <img
+            src={imagePath ? `${imagePath}` : profilePic}
+            alt="Profile"
+            className="h-8 rounded-full"
+          />
         </div>
       </div>
     </div>

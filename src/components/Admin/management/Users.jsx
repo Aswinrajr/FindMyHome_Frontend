@@ -1,47 +1,48 @@
 import { useEffect, useState } from "react";
 
 import Swal from "sweetalert2";
-import { Navigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+import profilePic from "../../../assets/profile_demo.avif";
 
-const Providers = () => {
-  let token = localStorage.getItem("accessToken")
-  console.log("In users list",token)
-  const newToken =JSON.parse(token)
-  token = newToken?.accessToken
-  console.log("New Token",token)
-  const [providers, setProviders] = useState([]);
+import { Navigate } from "react-router";
+import {
+  getUserData,
+  userActions,
+} from "../../../service/Admin/ManagementService";
+
+const Users = () => {
+  let token = localStorage.getItem("accessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.accessToken;
+  console.log(token)
+
+  const [users, setUsers] = useState([]);
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
 
   useEffect(() => {
-    const fetchProviders = async () => {
+    const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get(`/admin/providers`,{
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setProviders(response.data);
+        const response = await getUserData();
+        setUsers(response.data);
+        console.log(users);
       } catch (error) {
-        console.error("Error fetching providers:", error);
+        console.error("Error fetching users:", error);
       }
     };
 
-    fetchProviders();
+    if (token) {
+      fetchUsers();
+    }
   }, []);
 
-  if(!token) return <Navigate to="/admin"/>
+  if (!token) return <Navigate to="/admin" />;
 
-  console.log("Providers", providers);
-
-  const providerAction = async (providerId) => {
+  const userAction = async (userId) => {
     const confirmation = await Swal.fire({
       title: "Confirm Action",
       text: `Are you sure you want to ${
-        providers.find((provider) => provider._id === providerId).status ===
-        "Active"
-          ? "block"
-          : "unblock"
-      } this provider?`,
+        users.status === "Active" ? "block" : "unblock"
+      } this user?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -51,21 +52,19 @@ const Providers = () => {
 
     if (confirmation.isConfirmed) {
       try {
-        const response = await axiosInstance.post(
-          `/admin/providers/action/${providerId}`
-        );
-        console.log("response", response);
+        const response = await userActions(userId);
 
-        const updatedProviders = providers.map((provider) => {
-          if (provider._id === providerId) {
-            provider.status =
-              provider.status === "Active" ? "Blocked" : "Active";
+        console.log(response);
+
+        const updatedUsers = users.map((user) => {
+          if (user._id === userId) {
+            user.status = user.status === "Active" ? "Blocked" : "Active";
           }
-          return provider;
+          return user;
         });
-        setProviders(updatedProviders);
+        setUsers(updatedUsers);
       } catch (error) {
-        console.error("Error updating provider status:", error);
+        console.error("Error updating user status:", error);
       }
     }
   };
@@ -91,19 +90,13 @@ const Providers = () => {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Profile
+              Mobile
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Address
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Rooms
+              Role
             </th>
             <th
               scope="col"
@@ -120,40 +113,36 @@ const Providers = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {providers.map((provider) => (
-            <tr key={provider._id}>
+          {users?.map((user) => (
+            <tr key={user._id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={`${provider.providerImage[0]}`}
-                  alt={provider.name}
+                  src={
+                    user.image ? `${baseUrl}/${user.image}` : `${profilePic}`
+                  }
+                  alt={user.name}
                   className="h-10 w-10 rounded-full"
                 />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {provider.providerName}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {provider.Profile}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {provider.ProviderCity}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {provider.providerRooms}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">{provider.status}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.userName}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.userMobile}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.status}</td>
               <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
                 <button
                   className={`py-2 px-4 rounded ${
-                    provider.status === "Blocked"
+                    user.status === "Blocked"
                       ? "bg-green-500 hover:bg-green-700"
                       : "bg-red-500 hover:bg-red-700"
                   } text-white font-bold`}
-                  onClick={() => providerAction(provider._id)}
+                  onClick={() => userAction(user._id)}
                 >
-                  {provider.status === "Active" ? "Block" : "Unblock"}
+                  {user.status === "Active" ? "Block" : "Unblock"}
                 </button>
               </td>
+              {/* <td className="px-6 py-4 whitespace-nowrap text-red-600 underline">
+                View More
+              </td> */}
             </tr>
           ))}
         </tbody>
@@ -162,4 +151,4 @@ const Providers = () => {
   );
 };
 
-export default Providers;
+export default Users;

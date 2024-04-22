@@ -12,7 +12,8 @@ import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
 import { Navigate, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
+import { getUserData } from "../../service/User/UserService";
 
 const facilitiesData = [
   { icon: FaChartLine, text: "Dashboard" },
@@ -25,7 +26,7 @@ const facilitiesData = [
 
 const UserProfile = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userAccessToken");
   console.log(user);
   const [userData, setUserData] = useState({
     userName: "",
@@ -38,7 +39,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.post(`${baseUrl}/getuserdata`, { user });
+      const response = await getUserData()
       console.log(response);
       setUserData(response.data.data);
     };
@@ -79,7 +80,7 @@ const UserProfile = () => {
                 <img
                   src={
                     userData?.image
-                      ? `${userData.image}`
+                      ? `${baseUrl}/${userData.image}`
                       : profileImage
                   }
                   alt="image"

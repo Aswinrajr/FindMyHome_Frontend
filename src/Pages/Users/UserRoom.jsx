@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
-import axios from "axios";
+
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
+import { getUsersRoom } from "../../service/User/UserService";
 
 const UserRoom = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const userEmail = localStorage.getItem("user");
+  const userEmail = localStorage.getItem("userAccessToken");
   const emailObject = JSON.parse(userEmail);
   const email = emailObject?.user;
   const [rooms, setRooms] = useState([]);
@@ -27,12 +28,15 @@ const UserRoom = () => {
 
   useEffect(() => {
     const fetchRooms = async () => {
-      if (!email) {
+      if (!userEmail) {
         console.error("Email is not available.");
         return;
       }
       try {
-        const response = await axios.get(`${baseUrl}/room?email=${email}`);
+        const response = await getUsersRoom()
+
+      
+
         setRooms(response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -60,7 +64,7 @@ const UserRoom = () => {
             </button>
             {loading ? (
               <p>Loading...</p>
-            ) : rooms.length === 0 ? (
+            ) : rooms?.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <p className="text-lg text-gray-500">No rooms available.</p>
               </div>
@@ -107,7 +111,7 @@ const UserRoom = () => {
                       </button>
                       <button
                         className="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"
-                        onClick={() => navigate(`/rooms/${room._id}`)}
+                        onClick={() => navigate(`/addedroompreview/${room._id}`)}
                       >
                         View More
                       </button>

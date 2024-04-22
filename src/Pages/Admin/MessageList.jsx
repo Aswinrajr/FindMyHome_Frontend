@@ -1,6 +1,6 @@
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
-import AdminMessages from "../../components/Admin/AdminMessages";
+import AdminMessages from "../../components/Admin/management/AdminMessages";
 
 
 function MessageList() {

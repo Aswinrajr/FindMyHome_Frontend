@@ -1,20 +1,20 @@
 import { Navigate, useNavigate } from "react-router";
 import Footer from "../../components/Sample/Footer";
 import TopBar from "../../components/Sample/TopBar";
-import axios from "axios";
+
 import { Toaster, toast } from "react-hot-toast";
+import { rentifyUser } from "../../service/User/UserService";
 
 const UserRentify = () => {
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const user = localStorage.getItem("user");
+
+  const user = localStorage.getItem("userAccessToken");
 
   const handleAgree = () => {
     try {
       const roleChange = async () => {
-        const changeRole = await axios.post(`${baseUrl}/userrequested`, {
-          user,
-        });
+        const changeRole = await rentifyUser();
+
         console.log(changeRole);
         if (changeRole.status === 200) {
           toast.success(changeRole.data.message);
@@ -29,7 +29,7 @@ const UserRentify = () => {
       toast.error("Some thing went wrong !! please try after some time");
     }
   };
-  if(!user) return <Navigate to="/"/>
+  if (!user) return <Navigate to="/" />;
 
   return (
     <div className="flex flex-col min-h-screen">

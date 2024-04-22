@@ -3,7 +3,8 @@ import Banner from "./Banner";
 import SearchRooms from "./SearchRooms";
 import Services from "./Services";
 import Footer from "./Footer";
-import ExploreByType from "./ExploreByType";
+
+// import ExploreByType from "./ExploreByType";
 
 const SamplePage = () => {
   return (
@@ -11,7 +12,7 @@ const SamplePage = () => {
       <TopBar />
       <Banner />
       <SearchRooms />
-      <ExploreByType />
+      {/* <ExploreByType /> */}
 
       <Services />
       <Footer />

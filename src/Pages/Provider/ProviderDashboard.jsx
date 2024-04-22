@@ -4,7 +4,8 @@ import DashboardPage from "../../components/Provider/Dashboard";
 
 import { useEffect } from "react";
 
-import { axiosInstance } from "../../api/axios";
+
+import { providerInstance } from "../../api/providerAxiosInstance";
 
 function ProviderDashboard() {
   let token = localStorage.getItem("providerAccessToken");
@@ -17,8 +18,8 @@ function ProviderDashboard() {
     console.log("Welcome to complete data");
     try {
       const completeData = async () => {
-        const response = await axiosInstance.get(
-          "/provider/completedata",
+        const response = await providerInstance.get(
+          "/completedata",
           {},
           {
             headers: {

@@ -4,7 +4,9 @@ import { useNavigate } from "react-router";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import { axiosInstance } from "../../api/axios";
+
+
+import { getRoomData } from "../../service/Provider/LoginService";
 
 const ProviderRooms = () => {
   let token = localStorage.getItem("providerAccessToken");
@@ -25,15 +27,10 @@ const ProviderRooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/provider/rooms`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setRooms(response.data);
+        const response = await getRoomData()
+        console.log("====>",response)
+      
+        setRooms(response);
         console.log("response.data", response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -55,13 +52,13 @@ const ProviderRooms = () => {
         Add Rooms
       </button>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-        {rooms.map((room) => (
+        {rooms?.map((room) => (
           <div
             key={room.id}
             className="border rounded-lg overflow-hidden shadow-md"
           >
             <Slider {...settings}>
-              {room.images.map((image, index) => (
+              {room.images?.map((image, index) => (
                 <img
                   key={index}
                   src={`${image}`}

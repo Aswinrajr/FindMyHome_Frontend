@@ -68,7 +68,7 @@ const LoginByOtp = () => {
               Request for OTP
             </button>
           </form>
-          <h1 onClick={() => navigate("/provider/verifyotp")}>next</h1>
+
         </div>
       </div>
     </div>

@@ -1,16 +1,19 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const SearchRooms = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
-  const [error, setError] = useState(false)
-  const [cityError,setCityerr] = useState()
-  const [date,setDate] = useState()
-  
-  const [adults,setAduls] = useState()
-  const [children,setChildren] = useState()
+
+  const [date, setDate] = useState();
+  const [error, setError] = useState();
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  const formattedDate = `${year}-${month}-${day}`;
 
   const navigate = useNavigate();
 
@@ -22,21 +25,63 @@ const SearchRooms = () => {
     children: 0,
   });
 
+  useEffect(() => {
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      document.getElementById("city"),
+      {}
+    );
+    console.log(autocomplete);
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (place && place.address_components) {
+        const cityComponent = place.address_components.find(
+          (component) => component.long_name
+        );
+        console.log(cityComponent);
+
+        const cityName = cityComponent ? cityComponent.long_name : "";
+
+        console.log(cityName);
+      }
+    });
+  }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // if(!formData.city||!formData.checkIn||!formData.checkOut||!formData.adults||!formData.children){
-    //   setCityerr("cITY REQUIRED")
-    //   setDate("Date required")
-    //   setAduls("Adults required")
-    //   setChildren("children req")
-    //   return toast.error("All fields are required")
-    // }
-    if(formData.checkIn>formData.checkOut){
-      return toast.error("Selected date is invlid")
-
+    if (
+      !formData.city ||
+      !formData.checkIn ||
+      !formData.adults ||
+      !formData.children
+    ) {
+      // toast.error("All fields are required");
+      setError("All fields are required");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
     }
-    console.log(formData)
-    
+
+    if (formData.checkIn > formData.checkOut) {
+      setError("Selected date is invalid");
+      // toast.error("Selected date is invlid");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+
+    if (formData.checkIn < formattedDate || formData.checkOut < formattedDate) {
+      setError("Selected date is invalid");
+
+      // toast.error("Selected date is invalid");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+    console.log(formData);
 
     try {
       const cordResponse = await axios.get(
@@ -61,14 +106,14 @@ const SearchRooms = () => {
         });
         console.log(response.data.data);
         const nearbyProviders = response.data.data.nearbyProviders;
-        const nearbyUser = response.data.data.nearbyUser 
-        console.log("nearbyProviders.data",nearbyProviders.data);
+        const nearbyUser = response.data.data.nearbyUser;
+        console.log("nearbyProviders.data", nearbyProviders.data);
         const data = {
           formData,
           nearbyProviders,
-          nearbyUser
+          nearbyUser,
         };
-        console.log("Daaaata",data)
+        console.log("Daaaata", data);
         if (response.status === 200) {
           navigate("/searchedroom", { state: data });
         }
@@ -83,6 +128,21 @@ const SearchRooms = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    if (name === "adults" && value < 1) {
+      setError("No of person cannot be less than 1");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+    if (name === "children" && value < 0) {
+      setError("No of children cannot be less than 0");
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return;
+    }
+
     setFormData({
       ...formData,
       [name]: value,
@@ -91,20 +151,20 @@ const SearchRooms = () => {
 
   return (
     <section className="py-16 px-8 bg-gray-200">
-        <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold mb-8">Search Rooms</h2>
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
               type="text"
+              id="city"
               name="city"
               placeholder="City"
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
-            <h1 className="text-red-500" >{cityError}</h1>
-           
+
             <input
               type="date"
               name="checkIn"
@@ -112,7 +172,7 @@ const SearchRooms = () => {
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
-             <h1 className="text-red-500" >{date}</h1>
+            <h1 className="text-red-500">{date}</h1>
             <input
               type="date"
               name="checkOut"
@@ -120,7 +180,7 @@ const SearchRooms = () => {
               className="flex-1 p-2 border"
               onChange={handleChange}
             />
-              <h1 className="text-red-500" >{date}</h1>
+            <h1 className="text-red-500">{date}</h1>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
@@ -128,11 +188,11 @@ const SearchRooms = () => {
               name="adults"
               placeholder="Adults"
               className="flex-1 p-2 border appearance-none"
-              min="0"
+              min="1"
               max="10"
               onChange={handleChange}
             />
-              <h1 className="text-red-500" >{adults}</h1>
+
             <input
               type="number"
               name="children"
@@ -142,8 +202,8 @@ const SearchRooms = () => {
               max="10"
               onChange={handleChange}
             />
-              <h1 className="text-red-500" >{children}</h1>
           </div>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           <button
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"

@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+
 import { uploadCloudinary } from "../../Helper/Upload";
 import { BeatLoader } from "react-spinners";
 import axios from "axios";
+import { providerInstance } from "../../api/providerAxiosInstance";
+import { getProviderData } from "../../service/Provider/LoginService";
 
 const ProviderDetails = () => {
   let token = localStorage.getItem("providerAccessToken");
@@ -15,7 +17,7 @@ const ProviderDetails = () => {
   const [files, setFiles] = useState([]);
   const [roomError, setRoomError] = useState("");
   const [imageUrl, setImageUrl] = useState();
- 
+
   const [loading, setLoading] = useState(false);
 
   const [providerDetails, setProviderDetails] = useState({
@@ -53,7 +55,7 @@ const ProviderDetails = () => {
     });
 
     const fetchData = async () => {
-      const response = await axiosInstance.get(`provider/getprovider`, {
+      const response = await providerInstance.get(`/getprovider`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,18 +69,32 @@ const ProviderDetails = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, type, checked, value } = e.target;
     if (name === "providerRooms") {
       if (!/^\d+$/.test(value)) {
         setRoomError("Rooms must be a number");
       } else {
         setRoomError("");
+        setProviderDetails((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
       }
+    } else if (name.startsWith("facility_")) {
+      const facilityName = name.replace("facility_", "");
+      setProviderDetails((prevData) => ({
+        ...prevData,
+        facilities: {
+          ...prevData.facilities,
+          [facilityName]: checked,
+        },
+      }));
+    } else {
+      setProviderDetails((prevData) => ({
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }));
     }
-    setProviderDetails((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
   };
 
   const handleUploadImage = async (e) => {
@@ -120,7 +136,7 @@ const ProviderDetails = () => {
         });
 
         formData.append("recidenceName", providerDetails.recidenceName);
-        formData.append("rooms", providerDetails.rooms);
+        formData.append("rooms", providerDetails.providerRooms);
         formData.append("location", providerDetails.location);
 
         formData.append("city", providerDetails.city);
@@ -136,22 +152,13 @@ const ProviderDetails = () => {
           providerDetails,
           files,
           lat,
-          lng
+          lng,
         };
-        console.log(data);
+        console.log("data==>", data);
 
-        const saveResponse = await axiosInstance.post(
-          `/provider/savedata`,
-          data,
-          {
-            headers: {
-             
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const saveResponse = await getProviderData(data);
 
-        console.log(saveResponse);
+        console.log("====>", saveResponse);
         if (saveResponse.status === 200) {
           toast.success(saveResponse.data.message);
           setTimeout(() => {
@@ -233,6 +240,7 @@ const ProviderDetails = () => {
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of rooms"
           />
+
           {roomError && (
             <p className="text-red-500 text-sm mt-1">{roomError}</p>
           )}
@@ -282,11 +290,12 @@ const ProviderDetails = () => {
                   <input
                     type="checkbox"
                     id={facility}
-                    name={facility}
+                    name={`facility_${facility}`}
                     checked={checked}
                     onChange={handleChange}
                     className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                   />
+
                   <label
                     htmlFor={facility}
                     className="ml-2 text-sm text-gray-700"

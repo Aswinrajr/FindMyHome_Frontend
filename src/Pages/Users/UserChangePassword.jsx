@@ -1,45 +1,49 @@
 import { useState } from "react";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
-import axios from "axios";
+
 import { toast, Toaster } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router";
+import { changeUserPassword } from "../../service/User/UserService";
 
 const UserChangePassword = () => {
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userAccessToken");
   const navigate = useNavigate();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const data = {
-    oldPassword,
-    newPassword,
-    confirmPassword,
-    user,
-  };
-if(!user) return <Navigate to="/"  />
+
   const handleSubmit = async (e) => {
-    const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
     e.preventDefault();
+    const data = {
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    };
+    console.log(data);
 
-    if(!oldPassword||!newPassword||!confirmPassword){
-      return toast.error("All fields are required")
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      return toast.error("All fields are required");
     }
-
-
-
 
     try {
       if (newPassword !== confirmPassword) {
         setError("New password and confirm password must match");
+        setTimeout(() => {
+          setError("")
+        }, 1000);
         return;
       }
 
       console.log("Old Password:", oldPassword);
       console.log("New Password:", newPassword);
       console.log("Confirm Password:", confirmPassword);
-      const response = await axios.put(`${baseRoute}/changepassword`, data);
+
+      const response = await changeUserPassword(data);
+
+      // axios.put(`${baseRoute}/changepassword`, data);
+
       console.log("Respomse", response);
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -47,11 +51,21 @@ if(!user) return <Navigate to="/"  />
           navigate("/userprofile");
         }, 1000);
       }
+      if (
+        response.response.status === 400 ||
+        response.response.status === 401 ||
+        response.response.status === 404 ||
+        response.response.status === 500
+      ) {
+        console.log(response.response.status);
+        toast.error(response.response.data.message);
+      }
     } catch (err) {
-      console.log("Error in change password", err);
-      toast.error("Something went wrong !! please try after sometime");
+      console.log("Error in change password==>", err);
+      toast.error(err.response.data.message);
     }
   };
+  if (!user) return <Navigate to="/" />;
 
   return (
     <div className="flex flex-col min-h-screen">

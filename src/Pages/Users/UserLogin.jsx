@@ -1,61 +1,108 @@
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-import axios from "axios";
-import { useNavigate, Navigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { setUser } from "../../features/userAuth";
+import { userLogin } from "../../service/User/UserService";
 
 const UserLogin = () => {
+  const token = localStorage.getItem("userAccessToken");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const user = useSelector((state) => state.userAuth.user);
-  console.log(user);
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return false;
+    }
+
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const numberRegex = /[0-9]/;
+
+    if (
+      !uppercaseRegex.test(password) ||
+      !lowercaseRegex.test(password) ||
+      !symbolRegex.test(password) ||
+      !numberRegex.test(password)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    if (!email || !password) {
+
+    if (!validateEmail(email)) {
+      setErrors({
+        email: "Invalid email address",
+        password: "Password must be at least 6 characters long",
+      });
+      setTimeout(() => {
+        setErrors({});
+      }, 1000);
       setIsLoading(false);
-      return toast.error("All fields are required");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setErrors({
+        password:
+          "Password must be at least 6 characters long and contain an uppercase letter, a lowercase letter, a symbol, and a number",
+      });
+      setTimeout(() => {
+        setErrors({});
+      }, 1000);
+      setIsLoading(false);
+      return;
     }
 
     try {
-      const response = await axios.post("http://localhost:1997/login", {
-        email,
-        password,
-      });
-      console.log(response);
+      const response = await userLogin(email, password);
+      console.log("Response:==>", response);
 
       if (response.status === 200) {
+        console.log("Inside status 200", response.data);
+        dispatch(setUser(response.data.token));
         toast.success(response.data.msg);
-        dispatch(setUser(response.data.user.userEmail));
         setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      } 
-      // else {
-      //   console.error("Login failed");
-      //   if (response.data && response.data.msg) {
-      //     toast.error(response.data.msg);
-      //   } else {
-      //     toast.error("An error occurred. Please try again later.");
-      //   }
-      // }
+          navigate("/home");
+        }, 1500);
+      } else if (response.response.status === 401) {
+        console.log("Haii", response.response.data.msg);
+        toast.error(response.response.data.msg);
+      } else if (response.response.status === 404) {
+        console.log("Haii", response.response.data.msg);
+        toast.error(response.response.data.msg);
+      } else {
+        toast.error("Some thing went wrong please try after some time");
+      }
     } catch (error) {
       console.error("Axios error:", error);
-      toast.error(error.response.data.msg);
+
+      toast.error("An error occurred.");
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
+      }, 1500);
     }
   };
-  if (user) return <Navigate to="/home" />;
 
+
+  if (token) return <Navigate to="/home" />;
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <Toaster position="top-center" reverseOrder={false}></Toaster>
@@ -87,6 +134,9 @@ const UserLogin = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
             </div>
             <div>
               <label
@@ -103,6 +153,9 @@ const UserLogin = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              )}
             </div>
             <button
               type="submit"

@@ -4,23 +4,24 @@ export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL_ROUTE,
 });
 
+let authToken = localStorage.getItem("accessToken");
+
+
+const newToken = JSON.parse(authToken);
+let token = newToken?.accessToken;
+
+
+
+
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log("Welcome to axios interceptor request", config);
-    let authToken = localStorage.getItem("accessToken");
-    let providerToken = localStorage.getItem("providerAccessToken")
-    const newProviderToken = JSON.parse(providerToken)
-    const newToken =JSON.parse(authToken)
+    // console.log("Welcome to axios interceptor request", config);
 
-    let extractedToken = newProviderToken?.providerAccessToken
-    let token = newToken?.accessToken
-    console.log("New Token",token)
     if (authToken) {
+      console.log("In auth token");
       config.headers.Authorization = `Bearer ${token}`;
-    }else if(providerToken){
-      config.headers.Authorization = `Bearer ${extractedToken}`;
-
     }
+     
     return config;
   },
   (error) => {
@@ -41,10 +42,10 @@ axiosInstance.interceptors.response.use(
       if (status === 401) {
         localStorage.removeItem("accessToken");
       } else {
-        console.error("Error:", error.response.data);
+        console.log("Error:", error.response.data);
       }
     } else {
-      console.error("Error:", error.message);
+      console.log("Error:", error.message);
     }
     return Promise.reject(error);
   }

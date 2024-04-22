@@ -1,23 +1,22 @@
-
 import { useEffect, useState } from "react";
-import userImage from "../../assets/1 - Copy.webp";
+import userImage from "../../../assets/profile_demo.avif";
 import { Navigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+
+import { getBookingData } from "../../../service/Admin/ManagementService";
 
 const BookingList = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const [bookings, setBookings] = useState([]);
-  let token = localStorage.getItem("accessToken")
-  console.log("In users list",token)
-  const newToken =JSON.parse(token)
-  token = newToken?.accessToken
-  console.log("New Token",token)
+  let token = localStorage.getItem("accessToken");
 
+  const newToken = JSON.parse(token);
+  token = newToken?.accessToken;
 
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        const response = await axiosInstance.get(`/admin/getallbookingdata`);
+        const response = await getBookingData();
+
         console.log("response", response.data);
         setBookings(response.data.orders);
         console.log("Bookings", bookings);
@@ -27,10 +26,9 @@ const BookingList = () => {
     };
     fetchBookingData();
   }, []);
-  
+  console.log(bookings)
 
-
-  if(!token) return <Navigate to="/admin"/>
+  if (!token) return <Navigate to="/admin" />;
 
   return (
     <div className="overflow-x-auto">
@@ -48,13 +46,13 @@ const BookingList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {bookings.map((booking) => (
+            {bookings?.map((booking) => (
               <tr key={booking._id}>
                 <td className="px-6 py-4">
                   <img
                     src={
-                      booking.user && booking.user.image
-                        ? `${baseRoute}/${booking.user.image}`
+                      booking && booking.image
+                        ? `${baseRoute}/${booking?.user.image}`
                         : userImage
                     }
                     alt={
@@ -66,21 +64,19 @@ const BookingList = () => {
                   />
                 </td>
                 <td className="px-6 py-4">
-                  {booking.user && booking.user.userName
+                  {booking?.user && booking.user.userName
                     ? booking.user.userName
                     : "N/A"}
                 </td>
                 <td className="px-6 py-4">
                   <img
                     src={
-                      booking.provider &&
-                      booking.provider.providerImage
+                      booking.provider && booking.provider.providerImage
                         ? `${booking.provider.providerImage[1]}`
                         : ""
                     }
                     alt={
-                      booking.provider &&
-                      booking.provider.providerName
+                      booking.provider && booking.provider.providerName
                         ? booking.provider.name
                         : "Provider Image"
                     }
@@ -88,18 +84,16 @@ const BookingList = () => {
                   />
                 </td>
                 <td className="px-6 py-4">
-                  {booking.provider &&
-                  booking.provider.providerName
+                  {booking.provider && booking.provider.providerName
                     ? booking.provider.providerName
                     : "N/A"}
                 </td>
                 <td className="px-6 py-4">
-                  {booking.provider &&
-                  booking.provider.ProviderCity
+                  {booking.provider && booking.provider.ProviderCity
                     ? booking.provider.ProviderCity
                     : "N/A"}
                 </td>
-                <td className="px-6 py-4">Booked</td>
+                <td className="px-6 py-4">{booking.status}</td>
                 <td className="px-6 py-4">{booking.totalAmounttoPay}</td>
                 {/* <td className="px-6 py-4 text-red-500 underline cursor-pointer hover:text-blue-700">View More</td> */}
               </tr>

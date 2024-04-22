@@ -4,11 +4,13 @@ import { toast, Toaster } from "react-hot-toast";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
+import {editUserProfile,userUpdateData} from "../../service/User/UserService"
 
 const UserEditProfile = () => {
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userAccessToken");
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  const navigate =useNavigate()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,7 +27,10 @@ const UserEditProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(`${baseUrl}/getuserdata`, { user });
+        const response = await editUserProfile()
+        
+        // axios.post(`${baseUrl}/getuserdata`, { user });
+
         const userData = response.data.data;
         setFormData((prevData) => ({
           ...prevData,
@@ -109,12 +114,16 @@ const UserEditProfile = () => {
         formDataToSend.append("city", formData.city);
         formDataToSend.append("coordinates", `${lat},${lng}`);
 
-        const updateResponse = await axios.put(
-          `${baseUrl}/updateuserdata`,
-          formDataToSend
-        );
+        const updateResponse = await userUpdateData(formDataToSend)
+        
+       
+
         if (updateResponse.status === 200) {
           toast.success(updateResponse.data.message);
+          setTimeout(() => {
+            navigate("/userprofile")
+            
+          }, 1000);
         }
       }
     } catch (error) {

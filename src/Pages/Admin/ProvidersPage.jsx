@@ -1,6 +1,6 @@
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
-import Providers from "../../components/Admin/Providers";
+import Providers from "../../components/Admin/management/Providers";
 
 function UserPage() {
   return (

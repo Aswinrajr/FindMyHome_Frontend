@@ -1,27 +1,23 @@
-
 import { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import { axiosInstance } from "../../api/axios";
+
+
+import { completeDatas } from "../../service/Provider/LoginService";
 
 const Dashboard = () => {
-
   const navigate = useNavigate();
-  
+
   let token = localStorage.getItem("providerAccessToken");
 
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
 
-
   useEffect(() => {
     const completeData = async () => {
       try {
-        const response = await axiosInstance.post(`/provider/completedata`,{}, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await completeDatas()
+      
         console.log(response);
         if (response.data.msg === "Complete your profile Data") {
           Swal.fire({
@@ -48,8 +44,7 @@ const Dashboard = () => {
     }
   }, [navigate, token]);
 
-
-  if(!token) return <Navigate to="/provider"/>
+  if (!token) return <Navigate to="/provider" />;
 
   return <div>Dashboard</div>;
 };

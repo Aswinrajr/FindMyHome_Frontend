@@ -5,8 +5,10 @@ import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1)
 import { Toaster, toast } from "react-hot-toast";
 
 const SignUpPage = () => {
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("location.state",location.state)
   const { phoneNumber } = location.state ? location.state : "";
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -14,7 +16,7 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
- 
+  console.log("phoneNumber==>",phoneNumber)
 
   // const validateMobile = () => {
   //   return /^[0-9]{10}$/.test(mobile);
@@ -34,7 +36,10 @@ const SignUpPage = () => {
     // }
     if (!userName || !email || !password || !confirmPassword) {
       setError("Please fill in all the fields.");
-    
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+
       return;
     }
 
@@ -42,13 +47,17 @@ const SignUpPage = () => {
       setError(
         "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one symbol"
       );
+      setTimeout(() => {
+        setError("");
+      }, 1000);
+      return
     }
 
     try {
-      const response = await axios.post("http://localhost:1997/signup", {
+      const response = await axios.post(`${baseUrl}/signup`, {
         userName,
         email,
-        mobile:phoneNumber,
+        mobile: phoneNumber,
         password,
         confirmPassword,
       });
@@ -67,10 +76,7 @@ const SignUpPage = () => {
     } catch (error) {
       console.error("Error:", error);
       toast.error(error.response.data.message);
-      setTimeout(() => {
-        navigate("/register")
-        
-      }, 1000);
+    
     }
   };
 
@@ -105,7 +111,6 @@ const SignUpPage = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your name"
-                required
               />
             </div>
             <div>
@@ -122,7 +127,6 @@ const SignUpPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your email"
-                required
               />
             </div>
             {/* <div>
@@ -156,7 +160,6 @@ const SignUpPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your password"
-                required
               />
             </div>
             <div>
@@ -173,7 +176,6 @@ const SignUpPage = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Confirm your password"
-                required
               />
             </div>
             <button

@@ -1,91 +1,109 @@
-import { useState, useEffect } from "react";
-import PhoneInput from "react-phone-input-2";
+import { useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-import "react-phone-input-2/lib/style.css";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "../../Helper/Firebase";
+import axios from "axios";
 import { useNavigate } from "react-router";
 
 const UserMobileSignup = () => {
-  const navigate=useNavigate()
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [timer, setTimer] = useState(0);
-  const [showOtpField, setShowOtpField] = useState(false);
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  const navigate = useNavigate();
+  const [mobile, setMobile] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
-  const [user, setUser] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
 
-  useEffect(() => {
-    let intervalId;
-    if (timer > 0) {
-      intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-    }
+  function validNumber(number) {
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(number);
+  }
 
-    return () => clearInterval(intervalId);
-  }, [timer]);
+  const handleMobileChange = (event) => {
+    const inputValue = event.target.value;
+    setMobile(inputValue);
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    if (phoneNumber.trim() === "") {
+    setPhoneNumberError("");
+    if (inputValue.trim() === "") {
       setPhoneNumberError("Please enter a mobile number.");
-      setTimeout(() => {
-        setPhoneNumberError("");
-      }, 1000);
-      return;
+    } else if (inputValue.length !== 10) {
+      setPhoneNumberError(`Mobile number must have 10 digits.`);
+    } else if (!validNumber(inputValue)) {
+      setPhoneNumberError("Number must be a valid mobile.");
     }
-    if (phoneNumber.length < 13) {
-      setPhoneNumberError("Mobile must have 10 digits");
-      setTimeout(() => {
-        setPhoneNumberError("");
-      }, 1000);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (mobile.trim() === "" || mobile.length !== 10 || !validNumber(mobile)) {
+      setPhoneNumberError("Please enter a valid mobile number.");
       return;
     }
 
     try {
-      const recapta = new RecaptchaVerifier(auth, "recaptcha", {});
-      recapta.render().then((widgetId) => {
-        console.log("Recaptcha widget ID:", widgetId);
+      const response = await axios.post(`${baseUrl}/reqloginotp`, {
+        mobile,
       });
-
-      setTimer(60);
-      setShowOtpField(true);
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        phoneNumber,
-        recapta
-      );
-      console.log("Confirmation", confirmation);
-      setUser(confirmation);
-      console.log("OTP Verification ID:", confirmation.verificationId);
-    } catch (err) {
-      console.log("Error in sending otp", err);
+      console.log(response);
+      if (response.status === 200) {
+        toast.success("OTP sent to registered mobile number");
+        setShowOtpInput(true);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("No user found.");
     }
   };
 
-  const handleResendOtp = () => {
-    setTimer(60);
-    handleSendOtp()
+  const handleOtpChange = (event) => {
+    const inputValue = event.target.value;
+    setOtp(inputValue);
+    setOtpError("");
   };
 
-  const handleVerifyOtp = async () => {
+  const handleResendOtp = async () => {
     try {
-      const verified = await user.confirm(otp);
-      console.log(verified);
-      if (verified) {
-        navigate("/signup", { state: { phoneNumber: phoneNumber } })
-        
-      }else{
-        navigate("/register")
+      const response = await axios.post(`${baseUrl}/reqloginotp`, {
+        mobile,
+      });
+      if (response.status === 200) {
+        toast.success("OTP resent to registered mobile number");
       }
-    } catch (err) {
-      console.log("Eroro in verify orp", err);
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to resend OTP.");
+    }
+  };
+
+  const handleConfirmOtp = async () => {
+    if (otp.trim() === "") {
+      setOtpError("Please enter the OTP.");
+      return;
+    }
+    try {
+      const response = await axios.post(`${baseUrl}/confirmotp`, {
+        mobile,
+        otp,
+      });
+      if (response.status === 200) {
+      
+    
+        toast.success("OTP confirmed successfully");
+        navigate("/signup", { state: { phoneNumber: mobile } });
+        
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      setOtpError(error.response.data.msg);
+      setTimeout(() => {
+        setOtpError("");
+      }, 2000);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen h-full">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
         <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
           <img
@@ -94,82 +112,97 @@ const UserMobileSignup = () => {
             className="w-auto h-auto max-h-full object-contain"
           />
         </div>
-        <div className="md:w-1/2 p-8 shadow-2xl flex flex-col justify-between">
-          <div className="mb-6 flex flex-col">
-            <h2 className="text-3xl font-bold mb-2 text-center text-blue-900">
-              Enter your mobile number
-            </h2>
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="md:w-2/3 mb-4 md:mb-0">
-                <PhoneInput
-                  country={"in"}
-                  value={phoneNumber}
-                  onChange={(value) => {
-                    setPhoneNumber(value.startsWith("+") ? value : "+" + value);
-                    setPhoneNumberError("");
-                  }}
-                  inputStyle={{
-                    width: "100%",
-                    height: "40px",
-                    padding: "0.5rem",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    marginBottom: "0.5rem",
-                  }}
-               
-                />
-                {phoneNumberError && (
-                  <p className="text-red-500 text-lg mt-2">
-                    {phoneNumberError}
-                  </p>
-                )}
-              </div>
-              <div>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded"
-                  onClick={handleSendOtp}
-                  style={{ marginBottom: "0.5rem" }}
-                >
-                  Send OTP
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div id="recaptcha" className="mb-3"></div>
-
-          {showOtpField && (
-            <div className="mb-4 flex flex-col">
+        <div className="md:w-1/2 p-8 shadow-2xl">
+          <h2 className="text-3xl font-bold mb-4 text-center text-blue-900">
+            Join with the community
+          </h2>
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+            <div>
+              <label
+                htmlFor="mobile"
+                className="block text-gray-700 font-bold text-sm mb-2"
+              >
+                Enter Your Mobile Number
+              </label>
               <input
                 type="text"
-                className="border border-gray-400 rounded py-2 px-4 w-full mb-2"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                id="mobile"
+                value={mobile}
+                onChange={handleMobileChange}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                  mobile.trim() === ""
+                    ? "border-gray-400"
+                    : phoneNumberError
+                    ? "border-red-500"
+                    : "border-green-500"
+                }`}
+                placeholder="Enter your mobile number"
               />
-              {timer > 0 ? (
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2"
-                  disabled
-                >
-                  Resend OTP in {timer} seconds
-                </button>
-              ) : (
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2"
-                  onClick={handleResendOtp}
-                >
-                  Resend OTP
-                </button>
+              {phoneNumberError && (
+                <p className="text-red-500 text-lg mt-2">{phoneNumberError}</p>
               )}
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={handleVerifyOtp}
-              >
-                Verify OTP
-              </button>
             </div>
-          )}
+
+            {!showOtpInput && (
+              <button
+                type="submit"
+                className={`bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                  mobile.trim() === "" || phoneNumberError
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={mobile.trim() === "" || phoneNumberError}
+              >
+                Request for OTP
+              </button>
+            )}
+
+            {showOtpInput && (
+              <>
+                <div>
+                  <label
+                    htmlFor="otp"
+                    className="block text-gray-700 font-bold text-sm mb-2"
+                  >
+                    Enter OTP
+                  </label>
+                  <input
+                    type="text"
+                    id="otp"
+                    value={otp}
+                    onChange={handleOtpChange}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      otp.trim() === ""
+                        ? "border-gray-400"
+                        : otpError
+                        ? "border-red-500"
+                        : "border-green-500"
+                    }`}
+                    placeholder="Enter OTP"
+                  />
+                  {otpError && (
+                    <p className="text-red-500 text-lg mt-2">{otpError}</p>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-blue-600 hover:underline focus:outline-none"
+                  >
+                    Resend OTP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmOtp}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Confirm OTP
+                  </button>
+                </div>
+              </>
+            )}
+          </form>
         </div>
       </div>
     </div>

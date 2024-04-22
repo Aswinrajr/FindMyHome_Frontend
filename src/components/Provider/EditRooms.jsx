@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
-import { axiosInstance } from "../../api/axios";
+
 import { uploadCloudinary } from "../../Helper/Upload"; 
 import { BeatLoader } from "react-spinners";
+import { providerInstance } from "../../api/providerAxiosInstance";
+import { getEditRooms } from "../../service/Provider/LoginService";
 
 
 const EditRooms = () => {
@@ -40,13 +42,8 @@ const EditRooms = () => {
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/provider/rooms/editrooms/${roomId}`,{
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await getEditRooms(roomId)
+ 
         setRoomData(response.data);
         setFiles(response.data.images)
         console.log("Images=====>",files)
@@ -116,8 +113,8 @@ const EditRooms = () => {
     }
 
     try {
-      const response = await axiosInstance.post(
-        `/provider/rooms/updaterooms/${roomData._id}`,
+      const response = await providerInstance.post(
+        `/rooms/updaterooms/${roomData._id}`,
         data,
         {
           headers: {

@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import Slider from "react-slick";
 import Swal from "sweetalert2";
 import logo from "../../assets/logo.png";
+import { bookRoom, getSearchedRoomData, placeBookingOrder, verifyBookings } from "../../service/User/UserService";
 
 const Roomcard = ({ filteredDatas }) => {
   console.log("filteredDatas on room cardc", filteredDatas);
 
-  const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
+
   const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
+
   const [roomData, setRoomData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(2);
   const [searchTerm, setSearchTerm] = useState("");
-  const user = localStorage.getItem("user");
+  const token = localStorage.getItem("userAccessToken");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(`${baseRoute}/fetchdata`, data);
+        const response = await getSearchedRoomData(data);
+
         if (response.status === 200) {
           setRoomData(response.data);
         }
@@ -32,10 +35,10 @@ const Roomcard = ({ filteredDatas }) => {
     };
 
     fetchData();
-  }, [baseRoute, data]);
+  }, [data]);
 
   useEffect(() => {
-    if (!user) {
+    if (!token) {
       Swal.fire({
         title: "User is not logged in. Please login.",
         icon: "error",
@@ -43,26 +46,44 @@ const Roomcard = ({ filteredDatas }) => {
       });
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [navigate, token]);
 
   useEffect(() => {
     if (filteredDatas.length > 0) {
-      const getFilterData = roomData.filter((item) => {
+      const getFilterData = roomData?.filter((item) => {
         const roomType = item && item.room && item.room.roomType;
         if (typeof filteredDatas === "string" && roomType) {
           return roomType.toLowerCase() === filteredDatas.toLowerCase();
         } else {
-          console.log("Invalid filtered data or missing room type in item:", item);
+          console.log(
+            "Invalid filtered data or missing room type in item:",
+            item
+          );
           return false;
         }
       });
       setRoomData(getFilterData);
     }
+
+    if (filteredDatas === "high_to_low") {
+      const sortedHighToLow = roomData
+        ?.slice()
+        .sort((a, b) => b.room.amount - a.room.amount);
+      console.log(sortedHighToLow);
+      setRoomData(sortedHighToLow);
+    }
+    if (filteredDatas === "low_to_high") {
+      const sortedLowToHigh = roomData
+        ?.slice()
+        .sort((a, b) => a.room.amount - b.room.amount);
+      console.log(sortedLowToHigh);
+      setRoomData(sortedLowToHigh);
+    }
   }, [filteredDatas, roomData]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const filteredData = roomData.filter((item) =>
+  const filteredData = roomData?.filter((item) =>
     item.room.roomType.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -82,15 +103,10 @@ const Roomcard = ({ filteredDatas }) => {
   const handleBook = async (roomId) => {
     const newData = {
       data,
-      user,
     };
 
     try {
-      const response = await axios.post(
-        `${baseRoute}/bookroom/${roomId}`,
-        newData
-      );
-
+      const response = await bookRoom(newData, roomId);
       if (response.status === 200) {
         const bookingDetails = response.data.bookingDetails;
 
@@ -132,7 +148,9 @@ const Roomcard = ({ filteredDatas }) => {
 
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
-      const orderUrl = await axios.post(`${baseRoute}/verifybooking/${roomId}`);
+      const orderUrl = await verifyBookings(roomId)
+      console.log("PrderUrl",orderUrl)
+      
       const { data } = orderUrl;
 
       const options = {
@@ -145,10 +163,9 @@ const Roomcard = ({ filteredDatas }) => {
         order_id: data.id,
         handler: async () => {
           try {
-            const result = await axios.post(
-              `${baseRoute}/placeorder`,
-              bookingDetails
-            );
+            const mode = "by Online"
+            const result = await placeBookingOrder(bookingDetails,mode)
+      
             console.log(result);
             Swal.fire({
               title: "Room Booked Successfully",
@@ -176,10 +193,10 @@ const Roomcard = ({ filteredDatas }) => {
 
   const placeOrder = async (bookingDetails) => {
     try {
-      const orderResponse = await axios.post(
-        `${baseRoute}/placeorder`,
-        bookingDetails
-      );
+      const mode = "by cash"
+      const orderResponse = await placeBookingOrder(bookingDetails,mode)
+      
+   
       console.log("Order placed:", orderResponse.data);
       Swal.fire({
         title: "Room Booked Successfully",

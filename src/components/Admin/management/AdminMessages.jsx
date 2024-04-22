@@ -16,7 +16,11 @@ const AdminMessages = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${adminUrl}/confirmuser`);
+        const response = await axios.get(`${adminUrl}/confirmuser`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log(response.data.data);
         setUserData(response.data.data);
       } catch (error) {
@@ -31,7 +35,11 @@ const AdminMessages = () => {
   const handleConfirm = async (action, email) => {
     try {
       const data = { action, email };
-      const response = await axios.post(`${adminUrl}/action`, data);
+      const response = await axios.post(`${adminUrl}/action`, data,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response.data);
       const newUserdata = userData.filter((data)=>data.userEmail!==email)
       console.log("newUserdata",newUserdata)

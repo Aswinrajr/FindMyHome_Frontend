@@ -5,21 +5,34 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 
 const AdminForgotPassword = () => {
+  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
   const navigate = useNavigate();
   const [mobile, setMobile] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
-  const isValidMobile = (value) => {
-    const mobileRegex = /^\d{10}$/;
-    return mobileRegex.test(value);
+  function validNumber(number) {
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(number);
+  }
+
+  const handleMobileChange = (event) => {
+    const inputValue = event.target.value;
+    setMobile(inputValue);
+    setPhoneNumberError("");
+    if (inputValue.trim() === "") {
+      setPhoneNumberError("Please enter a mobile number.");
+    } else if (inputValue.length !== 10) {
+      setPhoneNumberError(`Mobile number must have 10 digits.`);
+    } else if (!validNumber(inputValue)) {
+      setPhoneNumberError("Number must be a valid mobile.");
+    }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!isValidMobile(mobile)) {
-      setErrorMessage("Please enter a valid 10-digit mobile number.");
+    if (mobile.trim() === "" || mobile.length !== 10 || !validNumber(mobile)) {
+      setPhoneNumberError("Please enter a valid mobile number.");
       return;
     }
 
@@ -27,16 +40,15 @@ const AdminForgotPassword = () => {
       const response = await axios.post(`${adminRoute}/reqotp`, {
         mobile,
       });
-      console.log(response);
       if (response.status === 200) {
-        toast.success("OTP send to registered mobile number");
+        toast.success("OTP sent to registered mobile number");
         setTimeout(() => {
           navigate("/admin/verifyotp");
         }, 2000);
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("No admin Found")
+      toast.error("No admin found.");
     }
   };
 
@@ -67,27 +79,32 @@ const AdminForgotPassword = () => {
                 type="text"
                 id="mobile"
                 value={mobile}
-                onChange={(e) => {
-                  setMobile(e.target.value);
-                  setErrorMessage("");
-                }}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                onChange={handleMobileChange}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                  mobile.trim() === "" ? "border-gray-400" : phoneNumberError ? "border-red-500" : "border-green-500"
+                }`}
                 placeholder="Enter your mobile number"
-                required
               />
-              {errorMessage && (
-                <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+              {phoneNumberError && (
+                <p className="text-red-500 text-lg mt-2">
+                  {phoneNumberError}
+                </p>
               )}
             </div>
 
             <button
               type="submit"
-              className="bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                mobile.trim() === "" || phoneNumberError ? "cursor-not-allowed opacity-50" : ""
+              }`}
+              disabled={mobile.trim() === "" || phoneNumberError}
             >
               Request for OTP
             </button>
+
+            
           </form>
-          <h1 onClick={() => navigate("/admin/verifyotp")}>next</h1>
+
         </div>
       </div>
     </div>

@@ -5,7 +5,8 @@ import { setProvider } from "../../features/providerAuth";
 
 import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 import { Toaster, toast } from "react-hot-toast";
-import { axiosInstance } from "../../api/axios";
+
+import { providerLogin } from "../../service/Provider/LoginService";
 
 const ProviderLogin = () => {
   const token = localStorage.getItem("providerAccessToken");
@@ -51,10 +52,12 @@ const ProviderLogin = () => {
     }
 
     try {
-      const response = await axiosInstance.post(`/provider/login`, {
-        email,
-        password,
-      });
+      const response = await providerLogin(email, password);
+
+      // axiosInstance.post(`/provider/login`, {
+      //   email,
+      //   password,
+      // });
 
       console.log("response: ", response.data);
 
@@ -153,12 +156,12 @@ const ProviderLogin = () => {
               Sign up
             </span>
           </p>
-          <p
+          {/* <p
             onClick={() => navigate("/provider/otplogin")}
             className="text-blue-600 text-center cursor-pointer hover:text-blue-600 mt-4"
           >
             Login By OTP
-          </p>
+          </p> */}
           <p
             onClick={() => navigate("/provider/forgotpassword")}
             className="text-red-600 text-center cursor-pointer hover:text-blue-600 mt-4"

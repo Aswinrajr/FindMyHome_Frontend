@@ -1,66 +1,124 @@
-import { useEffect } from "react";
-import { axiosInstance } from "../../api/axios";
+import { useEffect, useState } from "react";
+import userImage from "../../assets/profile_demo.avif";
+import { Navigate } from "react-router";
+
+import { getAllbookingData } from "../../service/Provider/LoginService";
 
 const BookingPageProvider = () => {
-  const provider = localStorage.getItem("provider");
+  const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
+  const [bookings, setBookings] = useState([]);
+  let token = localStorage.getItem("providerAccessToken");
+
+  const newToken = JSON.parse(token);
+  token = newToken?.accessToken;
+  console.log(token);
+
+  const handleSort = (type) => {
+    console.log(type);
+    console.log(bookings);
+    if (type === "high") {
+      let sortedData = bookings.sort((a, b) => a.amount - b.amount);
+        console.log("==>",sortedData);
+        setBookings(sortedData);
+    } else {
+      let sortedBookings = bookings.sort((a, b) => b.amount - a.amount);
+        console.log("==>",sortedBookings);
+        setBookings(sortedBookings); 
+    }
+};
+
+
   useEffect(() => {
-    const getBookingDataProvider = async () => {
-      const response = await axiosInstance.post(
-        `/provider/getallbookingdata`,
-        provider
-      );
-      console.log(response);
+    const fetchBookingData = async () => {
+      try {
+        const response = await getAllbookingData();
+
+        console.log("response", response.data);
+        setBookings(response.data.orders);
+        console.log("Bookings", bookings);
+      } catch (error) {
+        console.error("Error fetching booking data:", error);
+      }
     };
-    getBookingDataProvider();
-  });
+    fetchBookingData();
+  }, []);
+
+  // if (!token) return <Navigate to="/provider" />;
 
   return (
     <div className="overflow-x-auto">
       <div className="min-w-max">
-        <table className="w-full whitespace-nowrap bg-white divide-y divide-gray-200">
+        <table className="w-full  border-gray-500 border-collapse table-auto">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                User Image
-              </th>
-              <th scope="col" className="px-6 py-3">
-                User Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Provider Image
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Provider Name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Address
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Amount
-              </th>
+              <th className="px-6 py-3 text-left">User Image</th>
+              <th className="px-6 py-3 text-left">User Name</th>
+              <th className="px-6 py-3 text-left">Provider Image</th>
+              <th className="px-6 py-3 text-left">Provider Name</th>
+              <th className="px-6 py-3 text-left">Address</th>
+              <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-left">Amount</th>
             </tr>
           </thead>
-          {/* <tbody className="bg-white divide-y divide-gray-200">
-              {bookings.map((booking) => (
-                <tr key={booking.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <img src={"props.profile"} alt={booking.user.name} className="h-10 w-10 rounded-full" />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{booking.user.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <img src={"props.room"} alt={booking.provider.name} className="h-10 w-10 rounded-full" />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{"booking.provider.name"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{"booking.provider.address"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{"booking.status"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{"booking.amount"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">View More</td>
-                </tr>
-              ))}
-            </tbody> */}
+          <tbody className="divide-y divide-gray-200">
+            {bookings?.map((booking) => (
+              <tr key={booking._id}>
+                <td className="px-6 py-4">
+                  <img
+                    src={
+                      booking.user && booking.user.image
+                        ? `${baseRoute}/${booking.user.image}`
+                        : userImage
+                    }
+                    alt={
+                      booking.user && booking.user.name
+                        ? booking.user.name
+                        : userImage
+                    }
+                    className="h-10 w-10 rounded-full"
+                  />
+                </td>
+                <td className="px-6 py-4">
+                  {booking?.user && booking.user.userName
+                    ? booking.user.userName
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">
+                  <img
+                    src={
+                      booking.provider && booking.provider.providerImage
+                        ? `${booking.provider.providerImage[1]}`
+                        : ""
+                    }
+                    alt={
+                      booking.provider && booking.provider.providerName
+                        ? booking.provider.name
+                        : "Provider Image"
+                    }
+                    className="h-10 w-10 rounded-full"
+                  />
+                </td>
+                <td className="px-6 py-4">
+                  {booking.provider && booking.provider.providerName
+                    ? booking.provider.providerName
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">
+                  {booking.provider && booking.provider.ProviderCity
+                    ? booking.provider.ProviderCity
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">{booking.status}</td>
+                <td className="px-6 py-4">{booking.totalAmounttoPay}</td>
+                {/* <td className="px-6 py-4 text-red-500 underline cursor-pointer hover:text-blue-700">View More</td> */}
+              </tr>
+            ))}
+          </tbody>
+
+          <button onClick={() => handleSort("high")} className="ml-3">
+            High to low
+          </button>
+          <button onClick={() => handleSort("low")}>Low to high</button>
         </table>
       </div>
     </div>

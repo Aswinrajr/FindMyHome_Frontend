@@ -3,42 +3,54 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/logo.png";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../features/userAuth";
-import axios from "axios";
+
 import { toast, Toaster } from "react-hot-toast";
+import { userInstance } from "../../api/userInstance";
 
 const TopBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
-  const user = localStorage.getItem("user");
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+
+  const userToken = localStorage.getItem("userAccessToken");
+  console.log(userToken);
+
+  const newUserToken = JSON.parse(userToken);
+  let extractedToken = newUserToken?.userAccessToken;
+  console.log(extractedToken);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(`${baseUrl}/validateuser`, { user });
+        const response = await userInstance.post(
+          `/validateuser`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${extractedToken}`,
+            },
+          }
+        );
         const validUser = response.data;
-        console.log(response)
+        console.log(response);
 
         if (validUser) {
+       
           return;
         }
-        if(response.status===403) {
-          toast.error('User is blocked please contact admin');
-          dispatch(logoutUser());
+        if (response.status === 403) {
+          toast.error("User is blocked please contact admin");
+          // dispatch(logoutUser());
           setTimeout(() => {
-          return <Navigate to="/login"/>
-
+            return <Navigate to="/login" />;
           }, 1000);
-
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
 
-        dispatch(logoutUser());
-      
-       return <Navigate to="/login"/>
+        // dispatch(logoutUser());
 
+        return <Navigate to="/login" />;
       }
     };
 
@@ -66,7 +78,7 @@ const TopBar = () => {
         <Link to="/rentify" className="hover:text-gray-700">
           Rentify
         </Link>
-        {user ? (
+        {userToken ? (
           <>
             <div className="relative">
               <button

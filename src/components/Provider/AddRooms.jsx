@@ -2,9 +2,11 @@ import { useState } from "react";
 
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+
 import { uploadCloudinary } from "../../Helper/Upload";
 import { BeatLoader } from "react-spinners";
+
+import { addRooms } from "../../service/Provider/LoginService";
 
 const AddRooms = () => {
   let token = localStorage.getItem("providerAccessToken");
@@ -16,10 +18,6 @@ const AddRooms = () => {
   const [files, setFiles] = useState([]);
   const [imageUrl, setImageUrl] = useState([]);
   const [loading, setLoading] = useState(false);
- 
-
- 
- 
 
   const [imageErr, setimageErr] = useState("");
 
@@ -59,12 +57,22 @@ const AddRooms = () => {
 
   const handleUploadImage = async (e) => {
     e.preventDefault();
-    console.log(files)
+    console.log(files);
+    console.log(files.length);
+    console.log(imageUrl.length);
 
-  setTimeout(() => {
-    setimageErr("")
-    
-  }, 1000);
+    if (imageUrl.length < 4) {
+      console.log("Min 5 image required");
+      setimageErr("Minmum of 5 image required");
+      setTimeout(() => {
+        setimageErr();
+      }, 1000);
+      return;
+    }
+
+    setTimeout(() => {
+      setimageErr("");
+    }, 1000);
     setLoading(true);
     const uploadedImages = [];
     for (let i = 0; i < imageUrl.length; i++) {
@@ -78,18 +86,15 @@ const AddRooms = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!roomData.roomType||!roomData.amount||!roomData.adults||!roomData.children){
-      return
+    if (
+      !roomData.roomType ||
+      !roomData.amount ||
+      !roomData.adults ||
+      !roomData.children ||
+      !roomData.status
+    ) {
+      return;
     }
-     
-
- 
-
-   
-
-
-
- 
 
     const formData = new FormData();
     const data = {
@@ -111,15 +116,8 @@ const AddRooms = () => {
     console.log(formData);
 
     try {
-      const response = await axiosInstance.post(
-        `/provider/rooms/addrooms`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await addRooms(data);
+
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {
@@ -180,14 +178,10 @@ const AddRooms = () => {
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of adults"
           />
-          
+
           {roomData.adults === "" && (
-            <p className="text-red-500 text-sm mt-1">
-              No.of adults required
-            </p>
+            <p className="text-red-500 text-sm mt-1">No.of adults required</p>
           )}
-
-
         </div>
         <div className="mb-4">
           <label
@@ -205,10 +199,8 @@ const AddRooms = () => {
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter number of children"
           />
-              {roomData.children === "" && (
-            <p className="text-red-500 text-sm mt-1">
-              No.of children required
-            </p>
+          {roomData.children === "" && (
+            <p className="text-red-500 text-sm mt-1">No.of children required</p>
           )}
         </div>
         <div className="mb-4">
@@ -227,12 +219,9 @@ const AddRooms = () => {
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             placeholder="Enter amount"
           />
-              {roomData.amount === "" && (
-            <p className="text-red-500 text-sm mt-1">
-              Amount required
-            </p>
+          {roomData.amount === "" && (
+            <p className="text-red-500 text-sm mt-1">Amount required</p>
           )}
-
         </div>
         <div className="mb-4">
           <label
@@ -247,16 +236,13 @@ const AddRooms = () => {
             value={roomData.status}
             onChange={handleChange}
             className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-       
           >
             <option value="">Select status</option>
             <option value="Available">Available</option>
             <option value="Not Available">Not Available</option>
           </select>
           {roomData.status === "" && (
-            <p className="text-red-500 text-sm mt-1">
-              Status required
-            </p>
+            <p className="text-red-500 text-sm mt-1">Status required</p>
           )}
         </div>
 
@@ -285,7 +271,6 @@ const AddRooms = () => {
                 </div>
               )
             )}
- 
           </div>
         </div>
         <div className="col-span-2">
@@ -302,12 +287,9 @@ const AddRooms = () => {
               multiple
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
-                  {imageErr&& (
-            <p className="text-red-500 text-sm mt-1">
-              {imageErr}
-            </p>
-          )}
-            
+            {imageErr && (
+              <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+            )}
           </div>
           {loading && <BeatLoader color="#36d7b7" />}
           <div className="flex space-x-2">

@@ -1,14 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 
 //ADMIN
-import Dashboard from "../components/Admin/Dashboard";
-import Login from "../components/Admin/Login";
+import Login from "../components/Admin/Login.jsx";
+import Dashboard from "../components/Admin/profile/Dashboard.jsx";
 import UserPage from "../Pages/Admin/UserPage";
 import ProvidersPage from "../Pages/Admin/ProvidersPage";
 import BookingPage from "../Pages/Admin/BookingPage";
 import AdminForgotPassword from "../components/Admin/AdminForgotPassword";
 import AdminVerifyOtp from "../components/Admin/AdminVerifyOtp";
 import AdminChangePassword from "../components/Admin/AdminChangePassword";
+import MessageList from "../Pages/Admin/MessageList.jsx";
+import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
 
 //PROVIDER
 import ProviderLogin from "../components/Provider/ProviderLogin";
@@ -42,12 +44,11 @@ import UserRoom from "../Pages/Users/UserRoom";
 import UserRentify from "../Pages/Users/UserRentify";
 import UserContact from "../Pages/Users/UserContact";
 import PageNotFound from "../components/PageNotFound";
-import MessageList from "../Pages/Admin/MessageList";
 import UserAddRoom from "../Pages/Users/UserAddRoom";
 import UserEditRoom from "../Pages/Users/UserEditRoom";
-import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
 import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 import UserMobileSignup from "../Pages/Users/UserMobileSignup";
+import UserAddedRoomDetails from "../Pages/Users/UserAddedRoomDetails.jsx";
 
 const routerPage = createBrowserRouter([
   {
@@ -246,6 +247,9 @@ const routerPage = createBrowserRouter([
   {
     path:"/register",
     element:<UserMobileSignup/>
+  },{
+    path:"/addedroompreview/:id",
+    element:<UserAddedRoomDetails/>
   }
 ]);
 

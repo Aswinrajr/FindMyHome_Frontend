@@ -8,26 +8,46 @@ import { Toaster, toast } from "react-hot-toast";
 const ProviderForgotPassword = () => {
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const navigate = useNavigate();
-  const [mobile, setMobile] = useState(0);
+  const [mobile, setMobile] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+
+  function validNumber(number) {
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(number);
+  }
+  const handleMobileChange = (event) => {
+    const inputValue = event.target.value;
+    setMobile(inputValue);
+    setPhoneNumberError("");
+    if (inputValue.trim() === "") {
+      setPhoneNumberError("Please enter a valid mobile number.");
+    } else if (inputValue.length !== 10) {
+      setPhoneNumberError(`Mobile number must have 10 digits.`);
+    } else if (!validNumber(inputValue)) {
+      setPhoneNumberError("Number must be a valid mobile.");
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (mobile.trim() === "" || mobile.length !== 10 || !validNumber(mobile)) {
+      setPhoneNumberError("Please enter a valid mobile number.");
+      return;
+    }
 
     try {
       const response = await axios.post(`${providerRoute}/reqotp`, {
         mobile,
       });
-      console.log(response);
-      const {data} = response
-      console.log("oTP ",data)
+
       if (response.status === 200) {
-        toast.success(response.data.message);
+        toast.success("OTP sent to registered mobile number");
         setTimeout(() => {
           navigate("/provider/verifyotp", {
-        
             state: { otp: response.data.OTP },
           });
-        }, 1000);
+        }, 2000);
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -59,24 +79,31 @@ const ProviderForgotPassword = () => {
                 Enter Your Mobile Number
               </label>
               <input
-                type="number"
+                type="text"
                 id="mobile"
                 value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={handleMobileChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your mobile number"
-                required
               />
+              {phoneNumberError && (
+                <p className="text-red-500 text-lg mt-2">{phoneNumberError}</p>
+              )}
             </div>
 
             <button
               type="submit"
-              className="bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                mobile.trim() === "" || phoneNumberError
+                  ? "cursor-not-allowed opacity-50"
+                  : ""
+              }`}
+              disabled={mobile.trim() === "" || phoneNumberError}
             >
               Request for OTP
             </button>
           </form>
-          <h1 onClick={() => navigate("/provider/verifyotp")}>next</h1>
+
         </div>
       </div>
     </div>

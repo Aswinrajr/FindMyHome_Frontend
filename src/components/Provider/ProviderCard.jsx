@@ -7,17 +7,20 @@ import "slick-carousel/slick/slick-theme.css";
 import { Toaster, toast } from "react-hot-toast";
 
 import { useNavigate } from "react-router";
-import { axiosInstance } from "../../api/axios";
+
+
+import {
+  changePassword,
+  getProviderCard,
+} from "../../service/Provider/LoginService";
 
 const ProviderCard = () => {
-
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
 
   let token = localStorage.getItem("providerAccessToken");
 
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
-
 
   const navigate = useNavigate();
 
@@ -28,11 +31,8 @@ const ProviderCard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axiosInstance.get(`/provider/getprovider`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await getProviderCard();
+
       console.log(response);
       console.log(response.data);
       const provider = response.data;
@@ -68,13 +68,8 @@ const ProviderCard = () => {
     };
 
     try {
-      const response = await axiosInstance.post(`/provider/changepassword`, data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await changePassword(data);
 
-      });
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsEditing(false);

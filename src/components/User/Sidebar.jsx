@@ -9,12 +9,12 @@ const Sidebar = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-500 to-pink-500 shadow-md rounded-lg p-4 h-full flex flex-col gap-4">
-      <div className="font-bold text-white">
-        <h3>Filters</h3>
+    <div className="bg-gray-800 text-white rounded-lg p-4 h-full flex flex-col gap-4">
+      <div className="font-bold">
+        <h3 className="text-lg mb-2">Filters</h3>
       </div>
       <div className="flex flex-col gap-2">
-        <label className="flex items-center text-white">
+        <label className="flex items-center">
           <input
             type="radio"
             className="form-radio mr-2"
@@ -23,9 +23,9 @@ const Sidebar = ({ onFilterChange }) => {
             checked={selectedFilter === "Single"}
             onChange={() => handleFilterChange("Single")}
           />
-          <span>Single</span>
+          <span className="text-sm">Single</span>
         </label>
-        <label className="flex items-center text-white">
+        <label className="flex items-center">
           <input
             type="radio"
             className="form-radio mr-2"
@@ -34,9 +34,9 @@ const Sidebar = ({ onFilterChange }) => {
             checked={selectedFilter === "Double"}
             onChange={() => handleFilterChange("Double")}
           />
-          <span>Double</span>
+          <span className="text-sm">Double</span>
         </label>
-        <label className="flex items-center text-white">
+        <label className="flex items-center">
           <input
             type="radio"
             className="form-radio mr-2"
@@ -45,36 +45,38 @@ const Sidebar = ({ onFilterChange }) => {
             checked={selectedFilter === "Suite"}
             onChange={() => handleFilterChange("Suite")}
           />
-          <span>Suite</span>
+          <span className="text-sm">Suite</span>
         </label>
       </div>
-      <label className="flex items-center mb-1 text-white">
-        <span className="text-sm">Sort By:</span>
-        <select
-          name="sortBy"
-          className="flex-grow mt-1 ml-2 border rounded bg-white text-gray-700"
-          value={selectedFilter}
-          onChange={(e) => handleFilterChange(e.target.value)}
-        >
-          <option value="low_to_high">Low to High</option>
-          <option value="high_to_low">High to Low</option>
-        </select>
-      </label>
-      <label className="flex items-center mb-1 text-white">
-        <span className="text-sm">Rating:</span>
-        <select
-          name="rating"
-          className="flex-grow mt-1 ml-2 border rounded bg-white text-gray-700"
-          value={selectedFilter}
-          onChange={(e) => handleFilterChange(e.target.value)}
-        >
-          <option value="1">1 star</option>
-          <option value="2">2 stars</option>
-          <option value="3">3 stars</option>
-          <option value="4">4 stars</option>
-          <option value="5">5 stars</option>
-        </select>
-      </label>
+      <div className="flex flex-col gap-2">
+        <label>
+          Sort By:
+          <select
+            name="sortBy"
+            className="border rounded bg-gray-700 text-white p-2 ml-4"
+            value={selectedFilter}
+            onChange={(e) => handleFilterChange(e.target.value)}
+          >
+            <option value="low_to_high">Low to High</option>
+            <option value="high_to_low">High to Low</option>
+          </select>
+        </label>
+        <label>
+          Rating:
+          <select
+            name="rating"
+            className="border rounded bg-gray-700 text-white p-2 ml-5 mt-3"
+            value={selectedFilter}
+            onChange={(e) => handleFilterChange(e.target.value)}
+          >
+            <option value="1">1 star</option>
+            <option value="2">2 stars</option>
+            <option value="3">3 stars</option>
+            <option value="4">4 stars</option>
+            <option value="5">5 stars</option>
+          </select>
+        </label>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import Topbar from "../../components/Admin/layout/Topbar";
 import Sidebar from "../../components/Admin/layout/Sidebar";
-import Bookings from "../../components/Admin/BookingList";
+import Bookings from "../../components/Admin/management/BookingList";
 
 function BookingPage() {
   return (

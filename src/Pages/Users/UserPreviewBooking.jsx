@@ -5,20 +5,23 @@ import Footer from "../../components/Sample/Footer";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import axios from "axios";
+
 import { Navigate } from "react-router";
+import {
+  cancelBooking,
+  userBookingPreview,
+} from "../../service/User/UserService";
+import Swal from "sweetalert2"; // Import SweetAlert
 
 const UserPreviewBooking = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userAccessToken");
   const [bookingData, setBookingdata] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(`${baseUrl}/getuserbookings`, {
-          user,
-        });
+        const response = await userBookingPreview();
+
         setBookingdata(response.data.data);
       } catch (error) {
         console.error("Error fetching booking data:", error);
@@ -26,7 +29,7 @@ const UserPreviewBooking = () => {
     };
     fetchData();
   }, []);
-  if(!user) return <Navigate to="/"/>
+  if (!user) return <Navigate to="/" />;
 
   const renderSeal = (status) => {
     if (status === "confirmed") {
@@ -66,6 +69,34 @@ const UserPreviewBooking = () => {
     borderRadius: "10px",
   };
 
+  const handleCancel = async (bookingId) => {
+    console.log(bookingId);
+    const confirmCancel = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, cancel it!",
+    });
+
+    if (confirmCancel.isConfirmed) {
+      try {
+        const response = await cancelBooking(bookingId);
+        console.log(response);
+        Swal.fire("Canceled!", "Your booking has been canceled.", "success");
+      } catch (err) {
+        console.log("Error in cancel booking", err);
+        Swal.fire(
+          "Error!",
+          "Failed to cancel booking. Please try again.",
+          "error"
+        );
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <TopBar />
@@ -97,6 +128,10 @@ const UserPreviewBooking = () => {
                     Room Type: {booking.roomType}
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">
+                    Booking Date:{" "}
+                    {`${booking.bookingDate}`.toString().split("T")[0]}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-2">
                     Check-In Date:{" "}
                     {`${booking.checkInDate}`.toString().split("T")[0]}
                   </p>
@@ -113,16 +148,20 @@ const UserPreviewBooking = () => {
                   <p className="text-sm text-gray-600 mb-2">
                     Children: {booking.children}
                   </p>
+                  <p className="text-sm text-red-600 mb-2">
+                    Address: {booking.Adress}
+                  </p>
                   <p className="text-sm text-gray-600 mb-2">
-                    Address: {booking.city}
+                    status: {booking.status}
                   </p>
                 </div>
               </div>
               <div className="flex justify-end mt-4">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
-                  View Booking
-                </button>
-                <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+             
+                <button
+                  onClick={() => handleCancel(booking._id)}
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
                   Cancel Booking
                 </button>
               </div>

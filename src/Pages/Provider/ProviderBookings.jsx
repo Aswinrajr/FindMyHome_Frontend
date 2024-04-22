@@ -1,8 +1,9 @@
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";
-import BookingList from "../../components/Admin/BookingList";
+import BookingList from "../../components/Admin/management/BookingList";
 import profile from "../../assets/istockphoto-1050564510-2048x2048.jpg";
 import room from "../../assets/2.jpeg";
+import BookingPageProvider from "../../components/Provider/BookingPageProvider";
 
 function ProviderBookings() {
   return (
@@ -16,7 +17,8 @@ function ProviderBookings() {
 
         <div className="flex-1 p-4 bg-gray-100">
           <div className="bg-white rounded-lg shadow-md p-4">
-            <BookingList room={room} profile={profile} />
+            {/* <BookingList room={room} profile={profile} /> */}
+            <BookingPageProvider/>
           </div>
         </div>
       </div>

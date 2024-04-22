@@ -8,7 +8,9 @@ import { FaWifi, FaTv, FaSnowflake, FaUtensils, FaBath } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import TopBar from "../Sample/TopBar";
 import Footer from "../Sample/Footer";
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.png";
+
+import { bookRoomPage, roomViewPage } from "../../service/User/UserService";
 
 const facilitiesData = [
   { icon: FaWifi, text: "Free Wi-Fi" },
@@ -20,16 +22,17 @@ const facilitiesData = [
 
 const FullDetails = () => {
   const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
-  const navigate= useNavigate()
+  const navigate = useNavigate();
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const { id } = useParams();
   const [roomData, setRoomData] = useState(null);
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userAccessToken");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseRoute}/roompreview/${id}`);
+        const response = await roomViewPage(id);
+
         setRoomData(response.data);
       } catch (error) {
         console.error("Error fetching room data:", error);
@@ -53,25 +56,20 @@ const FullDetails = () => {
           checkOutDate: document.getElementById("checkOutDate").value,
           adults: document.getElementById("adults").value,
           children: document.getElementById("children").value,
-         
         };
       },
-   
     });
 
     if (formValues) {
       const data = {
-        formData:formValues,
-        user
-
-      }
+        formData: formValues,
+        user,
+      };
       console.log(formValues);
-      console.log(roomData._id)
-      const response = await axios.post(
-        `${baseRoute}/bookrooms/${roomData._id}`,
-        data
-      );
-      console.log(response)
+      console.log(roomData._id);
+      const response = await bookRoomPage(roomData._id, data);
+
+      console.log(response);
       if (response.status === 200) {
         const bookingDetails = response.data.bookingDetails;
 
@@ -231,7 +229,7 @@ const FullDetails = () => {
                   </p>
                   <button
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                    onClick={()=>handleBookNow(roomData._id)}
+                    onClick={() => handleBookNow(roomData._id)}
                   >
                     Book Now
                   </button>

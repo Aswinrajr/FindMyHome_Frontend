@@ -1,17 +1,11 @@
-
-
-import Topbar from "../../components/Admin/layout/Topbar";
-import Sidebar from "../../components/Admin/layout/Sidebar";
-import AdminDashboard from "../../components/Admin/AdminDashboard"
-
+import Topbar from "../layout/Topbar";
+import Sidebar from "../layout/Sidebar";
+import AdminDashboard from "./AdminDashboard";
 
 function UserPage() {
- 
-
   return (
     <div className="flex flex-col min-h-screen">
       <Topbar />
-
       <div className="flex flex-1 flex-col sm:flex-row">
         <div className="w-full sm:w-64 bg-fuchsia-700">
           <Sidebar />
