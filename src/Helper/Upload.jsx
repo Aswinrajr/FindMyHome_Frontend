@@ -9,8 +9,10 @@ export const uploadCloudinary = async (file) => {
   formData.append("file", file);
   formData.append("upload_preset", "provider_images");
   const { data } = await axios.post(
-    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,formData
+    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
+    formData
   );
-  console.log("===========>",data)
-  return {url:data?.secure_url}
+  console.log("===========>", data);
+
+  return { url: data?.secure_url,format:data.format };
 };

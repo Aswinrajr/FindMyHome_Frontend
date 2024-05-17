@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
-import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
+import logo from "../../assets/logo.png";
 import "react-phone-input-2/lib/style.css";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../Helper/Firebase";
 import { useNavigate } from "react-router";
+import backgroundImage from "../../assets/queen-937501_1280.jpg";
 
 function validNumber(number) {
   let cleanedNumber = number.replace(/\D/g, "");
-
   const regex = /^(?:\+?91)?[6-9]\d{9}$/;
-
   return regex.test(cleanedNumber);
 }
 
@@ -35,17 +34,9 @@ const FirebaseMobile = () => {
   }, [timer]);
 
   const handleSendOtp = async (e) => {
-    console.log(phoneNumber);
     e.preventDefault();
     if (phoneNumber.trim() === "" || !validNumber(phoneNumber)) {
-      setPhoneNumberError("Please enter a mobile number.");
-      setTimeout(() => {
-        setPhoneNumberError("");
-      }, 1000);
-      return;
-    }
-    if (phoneNumber.length < 13) {
-      setPhoneNumberError("Mobile must have 10 digits");
+      setPhoneNumberError("Please enter a valid mobile number.");
       setTimeout(() => {
         setPhoneNumberError("");
       }, 1000);
@@ -66,7 +57,6 @@ const FirebaseMobile = () => {
         recapta
       );
       console.log("Confirmation", confirmation);
-      console.log("user", user);
       setUser(confirmation);
       console.log("OTP Verification ID:", confirmation.verificationId);
     } catch (err) {
@@ -89,96 +79,94 @@ const FirebaseMobile = () => {
         navigate("/provider/register");
       }
     } catch (err) {
-      console.log("Eroro in verify orp", err);
+      console.log("Error in verify OTP", err);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen h-full">
-      <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
-        <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-auto h-auto max-h-full object-contain"
-          />
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundRepeat: "no-repeat",
+        width: "full",
+      }}
+    >
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <div className="flex justify-center mb-6">
+          <img src={logo} alt="Logo" className="h-12 w-auto" />
         </div>
-        <div className="md:w-1/2 p-8 shadow-2xl flex flex-col justify-between">
-          <div className="mb-6 flex flex-col">
-            <h2 className="text-3xl font-bold mb-2 text-center text-blue-900">
-              Enter your mobile number
-            </h2>
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="md:w-2/3 mb-4 md:mb-0">
-                <PhoneInput
-                  country={"in"}
-                  value={phoneNumber}
-                  onChange={(value) => {
-                    setPhoneNumber(value.startsWith("+") ? value : "+" + value);
-                    setPhoneNumberError("");
-                  }}
-                  inputStyle={{
-                    width: "100%",
-                    height: "40px",
-                    padding: "0.5rem",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    marginBottom: "0.5rem",
-                  }}
-                />
-                {phoneNumberError && (
-                  <p className="text-red-500 text-lg mt-2">
-                    {phoneNumberError}
-                  </p>
-                )}
-              </div>
-              <div>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded"
-                  onClick={handleSendOtp}
-                  style={{ marginBottom: "0.5rem" }}
-                >
-                  Send OTP
-                </button>
-              </div>
-            </div>
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">
+          Enter your mobile number
+        </h2>
+        <form onSubmit={handleSendOtp} className="space-y-4">
+          <div>
+            <PhoneInput
+              country={"in"}
+              value={phoneNumber}
+              onChange={(value) => {
+                setPhoneNumber(value.startsWith("+") ? value : "+" + value);
+                setPhoneNumberError("");
+              }}
+              inputStyle={{
+                width: "100%",
+                height: "40px",
+                padding: "0.5rem",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                marginBottom: "0.5rem",
+              }}
+            />
+            {phoneNumberError && (
+              <p className="text-red-500 mt-1">{phoneNumberError}</p>
+            )}
           </div>
+          <div className="flex justify-between">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"
+            >
+              Send OTP
+            </button>
+          </div>
+        </form>
 
-          <div id="recaptcha" className="mb-3"></div>
+        <div id="recaptcha" className="mb-3"></div>
 
-          {showOtpField && (
-            <div className="mb-4 flex flex-col">
-              <input
-                type="text"
-                className="border border-gray-400 rounded py-2 px-4 w-full mb-2"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
+        {showOtpField && (
+          <div className="mt-4 space-y-4">
+            <input
+              type="text"
+              className="border border-gray-400 rounded py-2 px-4 w-full"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <div className="flex justify-between">
               {timer > 0 ? (
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2"
+                  className="bg-gray-400 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300 opacity-50 cursor-not-allowed"
                   disabled
                 >
                   Resend OTP in {timer} seconds
                 </button>
               ) : (
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"
                   onClick={handleResendOtp}
                 >
                   Resend OTP
                 </button>
               )}
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"
                 onClick={handleVerifyOtp}
               >
                 Verify OTP
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

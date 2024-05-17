@@ -8,15 +8,12 @@ import { Toaster, toast } from "react-hot-toast";
 
 import { useNavigate } from "react-router";
 
-
 import {
   changePassword,
   getProviderCard,
 } from "../../service/Provider/LoginService";
 
 const ProviderCard = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-
   let token = localStorage.getItem("providerAccessToken");
 
   const newToken = JSON.parse(token);
@@ -32,28 +29,18 @@ const ProviderCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getProviderCard();
-
-      console.log(response);
-      console.log(response.data);
-      const provider = response.data;
+      console.log("Provider===>", response);
 
       if (response.status === 200) {
-        setProvider(provider);
+        setProvider(response.data.providerData);
         console.log("Provider", provider);
       }
     };
     fetchData();
   }, []);
-
-  console.log(provider.providerImage?.length);
-  console.log(provider.providerImage?.length);
-  provider.providerImage?.map((image) => {
-    console.log(`${baseUrl}` + "/" + image);
-  });
-
-  const handleEditProfile = () => {
+  function handleEditProfile() {
     setIsEditing(true);
-  };
+  }
 
   const handleSavePassword = async () => {
     if (newPassword.trim() === "" || confirmPassword.trim() === "") {
@@ -69,14 +56,18 @@ const ProviderCard = () => {
 
     try {
       const response = await changePassword(data);
+      console.log("Password change",response)
 
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsEditing(false);
+      }else{
+        toast.error(response.response.data.message);
+
       }
     } catch (error) {
       console.error("Error updating password:", error);
-      toast.error(error.response.data.message);
+      toast.error(error.response.response.data.message);
     }
   };
 
@@ -91,39 +82,13 @@ const ProviderCard = () => {
         </div>
         <div className="p-6">
           <div className="flex items-center mb-6 relative">
-            {/* <Slider
-              dots={true}
-              infinite={true}
-              speed={500}
-              slidesToShow={1}
-              slidesToScroll={1}
-              autoplay={true}
-              autoplaySpeed={2000}
-            >
-              {provider.providerImage?.map((image, index) => (
-                <div key={index} className="w-full h-full relative">
-                  {image ? (
-                    <img
-                      src="http://localhost:1997/uploads\images-1711947497867-1.jpeg"
-                      alt={`Image ${index}`}
-                      className="w-full h-full object-contain rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <img
-                        src="http://localhost:1997/uploads\images-1711947497867-1.jpeg"
-                        alt={`Image ${index}`}
-                        className="w-full h-full object-contain rounded-lg"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </Slider> */}
-            <img
-              src={`${baseUrl}` + "/uploads/images-1711947497867-1.jpeg"}
-              alt=""
-            />
+            {provider.providerImage && provider.providerImage.length > 0 ? (
+              <img src={provider.providerImage[0]} alt="" />
+            ) : (
+              <div className="w-48 h-48 bg-gray-200 flex items-center justify-center rounded-lg">
+                <span className="text-gray-400">No Image</span>
+              </div>
+            )}
 
             <div className="flex flex-col ml-40">
               <h3 className="text-5xl font-bold text-gray-800">
@@ -137,6 +102,7 @@ const ProviderCard = () => {
               </p>
             </div>
           </div>
+
           <div className="flex items-center mt-2 mb-4">
             {isEditing ? (
               <div className="flex items-center">

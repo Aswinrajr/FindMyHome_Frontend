@@ -1,45 +1,54 @@
-import { useState } from "react";
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../../../assets/logo.png";
 import profilePic from "../../../assets/roomimage.webp";
+import { useEffect, useState } from "react";
+import { verifyProvider } from "../../../service/Provider/LoginService";
+import { logoutProvider } from "../../../features/providerAuth";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const Topbar = () => {
-  const [searchInput, setSearchInput] = useState("");
+  const [email, setEmail] = useState();
+  const dispatch = useDispatch()
+  const navigate= useNavigate()
 
-  const handleSearch = () => {};
+  useEffect(() => {
+    const fetchProvider = async () => {
+      try {
+        const response = await verifyProvider();
+        console.log("---->",response)
+
+        setEmail(response.data.providerData);
+      } catch (err) {
+        console.log("Error in fetch provider0", err);
+        if (err) {
+          toast.error("Some thing Went wrong please contact admin")
+          dispatch(logoutProvider());
+          navigate("/provider");
+        }
+      }
+    };
+    fetchProvider();
+  }, []);
 
   return (
-    <div className="bg-fuchsia-700 text-white px-4 py-2 flex items-center justify-between sm:px-6 lg:px-8">
+    <div className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between">
       <div className="flex items-center">
         <img src={logoImage} alt="Logo" className="h-8 mr-4" />
       </div>
 
-      <div className="flex flex-grow items-center justify-center">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search..."
-            className="bg-white text-gray-800 rounded-md pl-8 pr-3 py-2 focus:outline-none sm:text-sm"
-            style={{ minWidth: "200px" }}
+      <div className="flex items-center space-x-6">
+        <Link
+          to="/provider/account"
+          className="flex items-center text-sm hover:text-yellow-400 transition-colors duration-300"
+        >
+          <img
+            src={profilePic}
+            alt="Profile"
+            className="h-8 mr-4 rounded-full"
           />
-          <button
-            className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 focus:outline-none"
-            onClick={handleSearch}
-          >
-            Search
-          </button>
-        </div>
-      </div>
-
-      <div className="flex items-center">
-        <p className="text-sm mr-4">{"providerEmail"}</p>
-        <Link to="/provider/account" className="text-sm mr-4">
-          Account
+          <p>{email?.providerEmail}</p>
         </Link>
-        <img src={profilePic} alt="Profile" className="h-8 rounded-full" />
       </div>
     </div>
   );

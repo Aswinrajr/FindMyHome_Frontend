@@ -9,8 +9,15 @@ import { useNavigate, useParams } from "react-router";
 import TopBar from "../Sample/TopBar";
 import Footer from "../Sample/Footer";
 import logo from "../../assets/logo.png";
+import { toast, Toaster } from "react-hot-toast";
 
-import { bookRoomPage, roomViewPage } from "../../service/User/UserService";
+import {
+  bookRoomPage,
+  isBooked,
+  roomViewPage,
+  saveToCart,
+} from "../../service/User/UserService";
+import UserReview from "../../Pages/Users/UserReview";
 
 const facilitiesData = [
   { icon: FaWifi, text: "Free Wi-Fi" },
@@ -28,12 +35,16 @@ const FullDetails = () => {
   const [roomData, setRoomData] = useState(null);
   const user = localStorage.getItem("userAccessToken");
 
+  const newToken = JSON.parse(user);
+  const token = newToken?.userAccessToken;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await roomViewPage(id);
 
         setRoomData(response.data);
+        console.log(roomData);
       } catch (error) {
         console.error("Error fetching room data:", error);
       }
@@ -41,23 +52,98 @@ const FullDetails = () => {
     fetchData();
   }, [baseRoute, id]);
 
-  const handleBookNow = async () => {
+  const handleBookNow = async (roomid) => {
     const { value: formValues } = await Swal.fire({
       title: "Enter Booking Details",
-      html:
-        '<input id="checkInDate" class="swal2-input" type="date"  placeholder="Check-in Date">' +
-        '<input id="checkOutDate" class="swal2-input" type="date"  placeholder="Check-out Date">' +
-        '<input id="adults" class="swal2-input" type="number" placeholder="Number of Adults">' +
-        '<input id="children" class="swal2-input" type="number" placeholder="Number of Children">',
+      html: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="checkInDate" class="block text-gray-700 font-semibold mb-1">Check-in Date</label>
+            <input id="checkInDate" class="swal2-input form-input w-2/4 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="date" placeholder="Check-in Date" required>
+          </div>
+          <div>
+            <label for="checkOutDate" class="block text-gray-700 font-semibold mb-1">Check-out Date</label>
+            <input id="checkOutDate" class="swal2-input form-input w-2/4 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="date" placeholder="Check-out Date" required>
+          </div>
+          <div>
+            <label for="adults" class="block text-gray-700 font-semibold mb-1">Number of Adults</label>
+            <input id="adults" class="swal2-input form-input w-2/4 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="number" placeholder="Number of Adults" min="1" required>
+          </div>
+          <div>
+            <label for="children" class="block text-gray-700 font-semibold mb-1">Number of Children</label>
+            <input id="children" class="swal2-input form-input w-2/4 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="number" placeholder="Number of Children" min="0" required>
+          </div>
+        </div>
+      `,
       focusConfirm: false,
       preConfirm: () => {
-        return {
-          checkInDate: document.getElementById("checkInDate").value,
-          checkOutDate: document.getElementById("checkOutDate").value,
-          adults: document.getElementById("adults").value,
-          children: document.getElementById("children").value,
-        };
+        const children = document.getElementById("children").value;
+        if (!children) {
+          Swal.showValidationMessage("All fields are required.");
+          return false;
+        }
+        const currentDate = new Date().toISOString().split("T")[0];
+        const checkInDate = new Date(
+          document.getElementById("checkInDate")?.value
+        )
+          .toISOString()
+          .split("T")[0];
+        const checkOutDate = new Date(
+          document.getElementById("checkOutDate")?.value
+        )
+          .toISOString()
+          .split("T")[0];
+        const adults = document.getElementById("adults").value;
+
+        if (parseInt(adults) < 1) {
+          Swal.showValidationMessage("Number of adults cannot be less than 1.");
+          return false;
+        }
+        if (parseInt(children) < 0) {
+          Swal.showValidationMessage(
+            "Number of children cannot be less than 0."
+          );
+          return false;
+        }
+
+        const checkInDateTime = new Date(checkInDate).getTime();
+        const checkOutDateTime = new Date(checkOutDate).getTime();
+
+        if (
+          checkInDateTime < new Date(currentDate).getTime() ||
+          checkOutDateTime < new Date(currentDate).getTime()
+        ) {
+          Swal.showValidationMessage(
+            "Check-in and check-out dates cannot be before today's date."
+          );
+          return false;
+        }
+        if (checkOutDateTime <= checkInDateTime) {
+          Swal.showValidationMessage(
+            "Check-out date must be after check-in date."
+          );
+          return false;
+        }
+
+        return { checkInDate, checkOutDate, adults, children };
       },
+      confirmButtonText: "Book Now",
+      confirmButtonColor: "#4f46e5",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#d1d5db",
+      customClass: {
+        container: "swal2-container",
+        popup: "swal2-popup rounded-lg",
+        title: "swal2-title text-2xl font-semibold mb-4",
+        htmlContainer: "swal2-html-container",
+        content: "swal2-content",
+        confirmButton:
+          "swal2-confirm-button px-6 py-3 rounded-md font-semibold",
+        cancelButton: "swal2-cancel-button px-6 py-3 rounded-md font-semibold",
+      },
+      width: "70%",
+      maxWidth: "800px",
     });
 
     if (formValues) {
@@ -65,26 +151,54 @@ const FullDetails = () => {
         formData: formValues,
         user,
       };
-      console.log(formValues);
-      console.log(roomData._id);
+      console.log("Data==>", data);
+
       const response = await bookRoomPage(roomData._id, data);
 
-      console.log(response);
+      console.log("==>", response);
       if (response.status === 200) {
         const bookingDetails = response.data.bookingDetails;
 
         const htmlContent = `
-          <div>
-            <p><strong>Room Type:</strong> ${bookingDetails.roomType}</p>
-            <p><strong>Adults:</strong> ${bookingDetails.adults}</p>
-            <p><strong>Children:</strong> ${bookingDetails.children}</p>
-            <p><strong>Number of Days:</strong> ${bookingDetails.numberOfDays}</p>
-            <p><strong>Check-in Date:</strong> ${bookingDetails.checkInDate}</p>
-            <p><strong>Check-out Date:</strong> ${bookingDetails.checkOutDate}</p>
-            <p><strong>Amount:</strong> ${bookingDetails.amount}</p>
-            <p><strong>Total Amount to Pay:</strong> ${bookingDetails.totalAmounttoPay}</p>
-            <p><strong>City:</strong> ${bookingDetails.city}</p>
+        <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center gap-4">
+        <h3 class="text-lg font-bold text-gray-800">Booking Summary</h3>
+      
+        <div class="flex flex-col gap-2">
+          <span class="font-medium text-gray-700">Room Type:</span>
+          <span class="text-gray-600">${bookingDetails.roomType}</span>
+        </div>
+      
+        <div class="flex flex-col gap-2">
+          <span class="font-medium text-gray-700">Guests:</span>
+          <span class="text-gray-600">Adults: ${bookingDetails.adults}, Children: ${bookingDetails.children}</span>
+        </div>
+      
+        <div class="flex flex-col gap-2">
+          <span class="font-medium text-gray-700">Stay:</span>
+          <span class="text-gray-600">Number of Days: ${bookingDetails.numberOfDays}</span>
+        </div>
+      
+        <div class="flex flex-col gap-2">
+          <span class="font-medium text-gray-700">Dates:</span>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-gray-600">Check-in: ${bookingDetails.checkInDate}</span>
+            <span class="text-gray-600">Check-out: ${bookingDetails.checkOutDate}</span>
           </div>
+        </div>
+      
+        <div class="flex justify-between items-center gap-4">
+          <span class="font-medium text-gray-700">Amount per day:</span>
+          <span class="text-teal-500 font-medium">${bookingDetails.amount}</span>
+        </div>
+      
+        <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
+          <span>Total Amount to Pay for ${bookingDetails.numberOfDays} days:</span>
+          <span>${bookingDetails.totalAmounttoPay}</span>
+        </div>
+      
+       
+      </div>
+      
         `;
 
         Swal.fire({
@@ -100,6 +214,7 @@ const FullDetails = () => {
           if (result.isConfirmed) {
             placeOrder(bookingDetails, "Cash");
           } else if (result.isDenied) {
+            console.log("denied", bookingDetails);
             showRazorpay(roomData._id, bookingDetails);
           }
         });
@@ -108,7 +223,18 @@ const FullDetails = () => {
   };
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
-      const orderUrl = await axios.post(`${baseRoute}/verifybooking/${roomId}`);
+      console.log("Welcome to razorpay", bookingDetails);
+      const orderUrl = await axios.post(
+        `${baseRoute}/verifybooking/${roomId}`,
+        { bookingDetails },
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       const { data } = orderUrl;
 
       const options = {
@@ -121,9 +247,16 @@ const FullDetails = () => {
         order_id: data.id,
         handler: async () => {
           try {
+            console.log("Place the order", bookingDetails);
             const result = await axios.post(
               `${baseRoute}/placeorder`,
-              bookingDetails
+              bookingDetails,
+              {
+                headers: {
+                  "Cache-Control": "no-cache, no-store, must-revalidate",
+                  Authorization: `Bearer ${token}`,
+                },
+              }
             );
             console.log(result);
             Swal.fire({
@@ -132,7 +265,7 @@ const FullDetails = () => {
               confirmButtonText: "OK",
             });
             setTimeout(() => {
-              navigate("/home");
+              navigate("/successpage", { state: { data: result?.data?.order,adress:result?.data?.adress } });
             }, 2000);
           } catch (err) {
             console.log("Error in verify order", err);
@@ -145,6 +278,28 @@ const FullDetails = () => {
 
       const razorpay = new window.Razorpay(options);
       razorpay.open();
+
+      razorpay.on("payment.failed", async function (response) {
+        try {
+          console.log("Error Response:", response);
+          if (response) {
+            console.log("Inside payment failed handler", bookingDetails);
+            const newResponse = await saveToCart(bookingDetails);
+            console.log("Response from saveToCart:", newResponse);
+            if (newResponse && newResponse.status === 200) {
+              razorpay.close();
+              toast.error("Payment failed !! Details added to cart");
+              setTimeout(() => {
+                navigate("/failurepage",{state:{data:bookingDetails,adress:newResponse.data.adress}});
+              }, 1500);
+            } else {
+              throw new Error("Error saving to cart or invalid response.");
+            }
+          }
+        } catch (error) {
+          console.error("Error handling payment failure:", error);
+        }
+      });
     } catch (error) {
       console.error("Error in fetching order URL:", error);
     }
@@ -154,16 +309,22 @@ const FullDetails = () => {
     try {
       const orderResponse = await axios.post(
         `${baseRoute}/placeorder`,
-        bookingDetails
+        bookingDetails,
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Order placed:", orderResponse.data);
       Swal.fire({
-        title: "Room Booked Successfully",
+        title: "Room Booked Successfully, Booking details is sent to mail Id",
         icon: "success",
         confirmButtonText: "OK",
       });
       setTimeout(() => {
-        navigate("/home");
+        navigate("/successpage",{state:{data:orderResponse.data.order,adress:orderResponse.data.adress}});
       }, 2000);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -174,6 +335,7 @@ const FullDetails = () => {
     <>
       <TopBar />
       <div className="container mx-auto mt-6 px-4">
+        <Toaster position="top-center" reverseOrder={false} />
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <div className="p-4 bg-gray-200">
             <h2 className="text-2xl font-semibold text-gray-800">
@@ -225,7 +387,10 @@ const FullDetails = () => {
                     stay for discerning travelers.
                   </p>
                   <p className="text-gray-600 mb-2">
-                    Price: ${roomData.amount} per night
+                    Price: ₹{roomData.amount} per night
+                  </p>
+                  <p className="text-gray-900 mb-2">
+                    Address: {roomData.status}
                   </p>
                   <button
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
@@ -253,6 +418,7 @@ const FullDetails = () => {
               </div>
             </div>
           </div>
+          <UserReview />
         </div>
       </div>
       <Footer className="mt-6" />

@@ -9,14 +9,11 @@ import Footer from "../../components/Sample/Footer";
 import { getUsersRoom } from "../../service/User/UserService";
 
 const UserRoom = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const userEmail = localStorage.getItem("userAccessToken");
-  const emailObject = JSON.parse(userEmail);
-  const email = emailObject?.user;
+
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
 
   const settings = {
     dots: true,
@@ -33,9 +30,8 @@ const UserRoom = () => {
         return;
       }
       try {
-        const response = await getUsersRoom()
-
-      
+        const response = await getUsersRoom();
+        console.log("response in fetching the room data",response)
 
         setRooms(response.data);
       } catch (error) {
@@ -46,14 +42,14 @@ const UserRoom = () => {
     };
 
     fetchRooms();
-  }, [baseUrl, email]);
-  if(!userEmail) return <Navigate to="/"/>
+  }, []);
+  if (!userEmail) return <Navigate to="/" />;
 
   return (
     <>
       <TopBar />
-      <div className="flex flex-col min-h-screen mt-5">
-        <div className="flex-grow">
+      <div className="flex flex-col min-h-screen mt-5 ">
+        <div className="flex-grow mb-6">
           <div className="container mx-auto px-4">
             <h1 className="text-2xl font-semibold mb-4">User Rooms</h1>
             <button
@@ -81,7 +77,7 @@ const UserRoom = () => {
                           key={index}
                           src={`${image}`}
                           alt={room.roomType}
-                          className="w-full h-40 object-contain"
+                          className="w-full h-40 object-contain mt-6"
                         />
                       ))}
                     </Slider>
@@ -96,22 +92,22 @@ const UserRoom = () => {
                         Amenities:
                         {Object.entries(room.amenities).map(
                           ([amenity, value]) =>
-                            value && <span key={amenity}>{amenity}, </span>
+                            value && <span key={amenity}>{amenity} </span>
                         )}
                       </p>
                     </div>
                     <div className="p-4 flex justify-end">
                       <button
                         className="bg-blue-500 text-white px-4 py-2 rounded shadow mr-2 hover:bg-blue-600"
-                        onClick={() =>
-                          navigate(`/usereditroom/${room._id}`)
-                        }
+                        onClick={() => navigate(`/usereditroom/${room._id}`)}
                       >
                         Edit
                       </button>
                       <button
                         className="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"
-                        onClick={() => navigate(`/addedroompreview/${room._id}`)}
+                        onClick={() =>
+                          navigate(`/addedroompreview/${room._id}`)
+                        }
                       >
                         View More
                       </button>

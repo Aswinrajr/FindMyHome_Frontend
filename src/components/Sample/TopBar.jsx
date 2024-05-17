@@ -11,42 +11,49 @@ const TopBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
+  const [count, setCount] = useState(0);
 
   const userToken = localStorage.getItem("userAccessToken");
-  console.log(userToken);
 
   const newUserToken = JSON.parse(userToken);
   let extractedToken = newUserToken?.userAccessToken;
-  console.log(extractedToken);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await userInstance.post(
+        const response = await userInstance.get(
           `/validateuser`,
-          {},
+
           {
             headers: {
               Authorization: `Bearer ${extractedToken}`,
             },
           }
         );
-        const validUser = response.data;
-        console.log(response);
+        console.log("response in navbar", response);
+        const validUser = response.data.userData;
+        setCount(response.data.count);
+        console.log(validUser);
 
         if (validUser) {
-       
           return;
         }
         if (response.status === 403) {
           toast.error("User is blocked please contact admin");
-          // dispatch(logoutUser());
+          dispatch(logoutUser());
           setTimeout(() => {
             return <Navigate to="/login" />;
           }, 1000);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user data:", error.response.status);
+        if (error.response.status=== 403) {
+          toast.error("User is blocked please contact admin");
+          dispatch(logoutUser());
+          setTimeout(() => {
+            return <Navigate to="/login" />;
+          }, 1000);
+        }
 
         // dispatch(logoutUser());
 
@@ -54,13 +61,15 @@ const TopBar = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    fetchData(); 
+  }, [extractedToken]);
+
   const handleLogout = () => {
     dispatch(logoutUser());
   };
 
   const toggleOptions = () => {
+    console.log("Clicked")
     setShowOptions(!showOptions);
   };
 
@@ -82,8 +91,8 @@ const TopBar = () => {
           <>
             <div className="relative">
               <button
-                onClick={toggleOptions}
-                className="hover:text-gray-700 focus:outline-none"
+                onClick={()=>toggleOptions()}
+                className="hover:text-gray-700  focus:outline-none"
               >
                 Account
               </button>
@@ -97,6 +106,19 @@ const TopBar = () => {
                       Profile
                     </Link>
                   </li>
+                  <Link
+                    onClick={() => {
+                      navigate("/cart");
+                    }}
+                    className="block px-4 py-2 hover:bg-gray-100 relative"
+                  >
+                    Cart
+                    {count > 0 && (
+                      <span className="absolute top-0 right-0 inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                        {count}
+                      </span>
+                    )}
+                  </Link>
 
                   <li>
                     <Link

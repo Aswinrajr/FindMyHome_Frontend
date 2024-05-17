@@ -1,9 +1,17 @@
-import { useDispatch } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logoutProvider } from '../../../features/providerAuth';
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { logoutProvider } from "../../../features/providerAuth";
+import {
+  FaHome,
+  FaBed,
+  FaClipboardList,
+  FaEnvelope,
+  FaCog,
+  FaQuestionCircle,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 const Sidebar = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,35 +21,109 @@ const Sidebar = () => {
     navigate("/provider");
   };
 
-
   return (
-    <div className="bg-fuchsia-700 text-white p-4 flex flex-col h-full justify-between sm:w-1/4 md:w-1/5 lg:w-1/6">
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Menu</h2>
-        <ul>
-     
-          <li className={`mb-2 ${location.pathname === '/provider/rooms' ? 'text-yellow-400' : ''}`}>
-            <Link to="/provider/rooms" className="block py-2 px-4 hover:text-yellow-400">Rooms</Link>
+    <div className="bg-gray-900 text-white h-full flex flex-col">
+      <div className="flex flex-col py-4 px-6 border-b border-gray-800">
+        <h2 className="text-lg font-semibold mb-2">Menu</h2>
+        <ul className="space-y-2">
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/dashboard"
+                ? "text-yellow-400"
+                : ""
+            }`}
+          >
+            <Link
+              to="/provider/dashboard"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaHome className="mr-2" />
+              Dashboard
+            </Link>
           </li>
-          <li className={`mb-2 ${location.pathname === '/provider/bookings' ? 'text-yellow-400' : ''}`}>
-            <Link to="/provider/bookings" className="block py-2 px-4 hover:text-yellow-400">Bookings</Link>
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/rooms" ? "text-yellow-400" : ""
+            }`}
+          >
+            <Link
+              to="/provider/rooms"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaBed className="mr-2" />
+              Rooms
+            </Link>
           </li>
-          <li className={`mb-2 ${location.pathname === '/provider/messages' ? 'text-yellow-400' : ''}`}>
-            <Link to="/provider/messages" className="block py-2 px-4 hover:text-yellow-400">Message</Link>
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/bookings"
+                ? "text-yellow-400"
+                : ""
+            }`}
+          >
+            <Link
+              to="/provider/bookings"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaClipboardList className="mr-2" />
+              Bookings
+            </Link>
           </li>
-         
-          <li className={`mb-2 ${location.pathname === '/provider/settings' ? 'text-yellow-400' : ''}`}>
-            <Link to="/provider/settings" className="block py-2 px-4 hover:text-yellow-400">Settings</Link>
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/messages"
+                ? "text-yellow-400"
+                : ""
+            }`}
+          >
+            <Link
+              to="/provider/messages"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaEnvelope className="mr-2" />
+              Messages
+            </Link>
           </li>
-          <li className={`mb-2 ${location.pathname === '/provider/help' ? 'text-yellow-400' : ''}`}>
-            <Link to="/provider/help" className="block py-2 px-4 hover:text-yellow-400">Help</Link>
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/settings"
+                ? "text-yellow-400"
+                : ""
+            }`}
+          >
+            <Link
+              to="/provider/settings"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaCog className="mr-2" />
+              Settings
+            </Link>
           </li>
-          <li onClick={handleLogout} className="mb-2 block py-2 px-4 cursor-pointer hover:text-yellow-400">
-            Logout
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/help" ? "text-yellow-400" : ""
+            }`}
+          >
+            <Link
+              to="/provider/help"
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaQuestionCircle className="mr-2" />
+              Help
+            </Link>
           </li>
         </ul>
       </div>
       <div className="flex-grow"></div>
+      <div className="py-4 px-6 border-t border-gray-800">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-start text-left text-sm hover:text-yellow-400"
+        >
+          <FaSignOutAlt className="mr-2" />
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

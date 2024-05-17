@@ -6,6 +6,8 @@ token = newToken?.accessToken;
 
 export const getUserData = async () => {
   try {
+    
+    
     const response = await axiosInstance.get(`/admin/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -91,6 +93,69 @@ export const providerActions = async (providerId) => {
 export const getBookingData = async () => {
   try {
     const response = await axiosInstance.get(`/admin/getallbookingdata`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in Get booking data", err);
+    return err;
+  }
+};
+
+
+export const singleBookingDetails = async (id) => {
+  try {
+    console.log(id)
+    const response = await axiosInstance.get(`/admin/singlebookingdetails/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in Get booking data", err);
+    return err;
+  }
+};
+
+export const fetchOverallSalesData = async () => {
+  try {
+    console.log("Welcome to admin dashboard")
+
+     const response = await axiosInstance.get(`/admin/getdashboarddata`, {
+      headers: {
+         Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+     console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in admin dashboard==>", err);
+    return err;
+  }
+};
+
+
+export const fetchSalesDataGraph = async (period) => {
+  try {
+    console.log(period)
+    const response = await axiosInstance.post(`/admin/getgraphdata`,{period}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -102,16 +102,38 @@ const ProviderDetails = () => {
     console.log(imageUrl);
     setLoading(true);
     const uploadedImages = [];
-    for (let i = 0; i < imageUrl.length; i++) {
-      const data = await uploadCloudinary(imageUrl[i]);
-      const { url } = data;
-      console.log("Data=======>", url);
-      uploadedImages.push(url);
-    }
 
-    setLoading(false);
-    console.log("Link=========>", uploadedImages);
-    setFiles(uploadedImages);
+    if (imageUrl.length <= 4) {
+      toast.error("Image should be 5 in numbers");
+      setLoading(false);
+      return;
+    }
+  
+    try {
+      for (let i = 0; i < imageUrl.length; i++) {
+        const data = await uploadCloudinary(imageUrl[i]);
+        const { url } = data;
+
+        if (!url.includes(".jpg" || ".jpeg" || "png")) {
+          toast.error(
+            "Selected image is not valid please select .png or .jpg or .jpeg format "
+          );
+          setLoading(false);
+          return;
+        }
+
+        console.log("Data=======>", url);
+        uploadedImages.push(url);
+      }
+
+      setLoading(false);
+      console.log("Link=========>", uploadedImages);
+      setFiles(uploadedImages);
+    } catch (err) {
+      console.log("errror", err.response.data.error);
+      toast.error(err.response.data.error.message);
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {

@@ -1,25 +1,21 @@
 import axios from "axios";
 
 export const providerInstance = axios.create({
-  baseURL: import.meta.env.VITE_PROVIDER_ROUTE ,
+  baseURL: import.meta.env.VITE_PROVIDER_ROUTE,
 });
-
-
-let providerToken = localStorage.getItem("providerAccessToken");
-
-const newProviderToken = JSON.parse(providerToken);
-let extractedToken = newProviderToken?.providerAccessToken;
-
-
 
 providerInstance.interceptors.request.use(
   (config) => {
-   
+    let providerToken = localStorage.getItem("providerAccessToken");
+    const extractedToken = providerToken ? JSON.parse(providerToken).providerAccessToken : null;
 
-    if (providerToken) {
+    // const newProviderToken = JSON.parse(providerToken);
+    // let extractedToken = newProviderToken?.providerAccessToken;
+
+    if (extractedToken) {
       console.log("In provider token");
       config.headers.Authorization = `Bearer ${extractedToken}`;
-    } 
+    }
     return config;
   },
   (error) => {

@@ -22,7 +22,7 @@ const AddedRoomPreview = () => {
   useEffect(() => {
     const fetchData = async()=>{
         const response = await roomViewPage(id)
-        console.log(response)
+        console.log("response in added room ",response)
         setRoomData(response.data);
     }
     fetchData()
@@ -41,7 +41,7 @@ const AddedRoomPreview = () => {
           </div>
 
           <div className="p-6">
-            <div className="flex items-center justify-around mb-6">
+            <div className="flex items-center justify-around mb-6 ">
               <div className="w-2/4 h-64">
                 <Slider
                   dots
@@ -65,9 +65,7 @@ const AddedRoomPreview = () => {
                 <h3 className="text-xl font-semibold text-gray-800">
                   {roomData.roomType}
                 </h3>
-                <p className="text-red-600 mb-2">
-                  Address: <span className="text-pink-600">{roomData.status}</span>
-                </p>
+           
                 <p className="text-gray-600 mb-2">
                   The room data description encapsulates the essence of a deluxe
                   accommodation, promising a lavish and comfortable stay.
@@ -86,6 +84,9 @@ const AddedRoomPreview = () => {
                 </p>
                 <p className="text-gray-600 mb-2">
                   Price: ₹{roomData.amount} per night
+                </p>
+                <p className="text-black-600  font-semibold mb-2">
+                  Address: {roomData.status} 
                 </p>
               </div>
             </div>

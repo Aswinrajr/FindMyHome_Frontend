@@ -1,81 +1,104 @@
 import { useState } from "react";
 
 const Sidebar = ({ onFilterChange }) => {
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState({
+    roomType: "",
+    sortBy: "",
+    rating: "",
+  });
 
-  const handleFilterChange = (value) => {
-    setSelectedFilter(value);
+  const handleFilterChange = (key, value) => {
+    if(key==="clear"){
+      setSelectedFilter("")
+      
+    }
+    setSelectedFilter((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
     onFilterChange(value);
   };
 
   return (
-    <div className="bg-gray-800 text-white rounded-lg p-4 h-full flex flex-col gap-4">
-      <div className="font-bold">
-        <h3 className="text-lg mb-2">Filters</h3>
+    <div className="bg-gray-900 text-white rounded-lg shadow-lg p-6 h-full relative">
+      <h3 className="text-xl font-semibold mb-6">Filters</h3>
+      <button
+      onClick={()=>handleFilterChange("clear","clear")}
+
+        className="absolute top-4 right-2 bg-slate-500 text-white px-4 py-2 rounded-lg shadow hover:bg-slate-600"
+      >
+        Clear selection
+      </button>
+
+
+      <div className="mb-8">
+        <h4 className="text-lg font-medium mb-4">Room Type</h4>
+        <div className="flex flex-col gap-2">
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              className="form-radio text-blue-500 focus:ring-blue-500"
+              name="roomType"
+              value="Single"
+              checked={selectedFilter.roomType === "Single"}
+              onClick={() => handleFilterChange("roomType", "Single")}
+            />
+            <span className="ml-2 text-sm">Single</span>
+          </label>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              className="form-radio text-blue-500 focus:ring-blue-500"
+              name="roomType"
+              value="Double"
+              checked={selectedFilter.roomType === "Double"}
+              onClick={() => handleFilterChange("roomType", "Double")}
+            />
+            <span className="ml-2 text-sm">Double</span>
+          </label>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              className="form-radio text-blue-500 focus:ring-blue-500"
+              name="roomType"
+              value="Suite"
+              checked={selectedFilter.roomType === "Suite"}
+              onClick={() => handleFilterChange("roomType", "Suite")}
+            />
+            <span className="ml-2 text-sm">Suite</span>
+          </label>
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <label className="flex items-center">
-          <input
-            type="radio"
-            className="form-radio mr-2"
-            name="roomType"
-            value="Single"
-            checked={selectedFilter === "Single"}
-            onChange={() => handleFilterChange("Single")}
-          />
-          <span className="text-sm">Single</span>
-        </label>
-        <label className="flex items-center">
-          <input
-            type="radio"
-            className="form-radio mr-2"
-            name="roomType"
-            value="Double"
-            checked={selectedFilter === "Double"}
-            onChange={() => handleFilterChange("Double")}
-          />
-          <span className="text-sm">Double</span>
-        </label>
-        <label className="flex items-center">
-          <input
-            type="radio"
-            className="form-radio mr-2"
-            name="roomType"
-            value="Suite"
-            checked={selectedFilter === "Suite"}
-            onChange={() => handleFilterChange("Suite")}
-          />
-          <span className="text-sm">Suite</span>
-        </label>
+
+      <div className="mb-8">
+        <h4 className="text-lg font-medium mb-4">Sort By</h4>
+        <select
+          name="sortBy"
+          className="w-full bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          value={selectedFilter.sortBy}
+          onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+        >
+          <option value="">Select Option</option>
+          <option value="low_to_high">Low to High</option>
+          <option value="high_to_low">High to Low</option>
+        </select>
       </div>
-      <div className="flex flex-col gap-2">
-        <label>
-          Sort By:
-          <select
-            name="sortBy"
-            className="border rounded bg-gray-700 text-white p-2 ml-4"
-            value={selectedFilter}
-            onChange={(e) => handleFilterChange(e.target.value)}
-          >
-            <option value="low_to_high">Low to High</option>
-            <option value="high_to_low">High to Low</option>
-          </select>
-        </label>
-        <label>
-          Rating:
-          <select
-            name="rating"
-            className="border rounded bg-gray-700 text-white p-2 ml-5 mt-3"
-            value={selectedFilter}
-            onChange={(e) => handleFilterChange(e.target.value)}
-          >
-            <option value="1">1 star</option>
-            <option value="2">2 stars</option>
-            <option value="3">3 stars</option>
-            <option value="4">4 stars</option>
-            <option value="5">5 stars</option>
-          </select>
-        </label>
+
+      <div className="mb-6">
+        <h4 className="text-lg font-medium mb-4">Rating</h4>
+        <select
+          name="rating"
+          className="w-full bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          value={selectedFilter.rating}
+          onChange={(e) => handleFilterChange("rating", e.target.value)}
+        >
+          <option value="">Select Rating</option>
+          <option value="1">1 star</option>
+          <option value="2">2 stars</option>
+          <option value="3">3 stars</option>
+          <option value="4">4 stars</option>
+          <option value="5">5 stars</option>
+        </select>
       </div>
     </div>
   );

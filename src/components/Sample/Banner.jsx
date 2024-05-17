@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import imageUrl from "../../assets/istockphoto-1050564510-2048x2048.jpg";
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 const Banner = () => {
   const navigate = useNavigate();
@@ -16,14 +16,9 @@ const Banner = () => {
           <p className="text-lg md:text-xl mb-8">
             Find your perfect room with ease
           </p>
-          {user ? (
-            <button
-              onClick={()=>toast.error("Fill the creditials")}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-            >
-              Book now
-            </button>
-          ) : (
+          {user ? 
+           
+          "" : (
             <button
               onClick={() => navigate("/login")}
               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
@@ -32,6 +27,7 @@ const Banner = () => {
             </button>
           )}
         </div>
+        
       </div>
     </section>
   );

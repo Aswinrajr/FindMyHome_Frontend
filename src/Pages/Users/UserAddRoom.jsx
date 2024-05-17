@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router";
 import TopBar from "../../components/Sample/TopBar";
@@ -10,11 +9,10 @@ import { userAddsRoom } from "../../service/User/UserService";
 
 const UserAddRoom = () => {
   const email = localStorage.getItem("userAccessToken");
-  console.log(email);
+
   const navigate = useNavigate();
-  const [files, setFiles] = useState([]);
-  // const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const [imageUrl, setImageUrl] = useState();
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [imageErr, setImageErr] = useState("");
@@ -47,26 +45,38 @@ const UserAddRoom = () => {
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
       setTimeout(() => {
-        setAdultErr("")
-        
+        setAdultErr("");
       }, 3000);
-     
+    }
+    if (name === "adults" && value > 10) {
+      setAdultErr("Number of adults cannot be greater than 10");
+      setTimeout(() => {
+        setAdultErr("");
+      }, 3000);
     }
     if (name === "children" && value < 0) {
       setChildErr("Number of children cannot be less than 0");
       setTimeout(() => {
-        setChildErr("")
-        
+        setChildErr("");
       }, 3000);
-
+    }
+    if (name === "children" && value > 10) {
+      setChildErr("Number of children cannot be greater than 10");
+      setTimeout(() => {
+        setChildErr("");
+      }, 3000);
     }
     if (name === "amount" && value < 300) {
       setAmountErr(" amount cannot be less than 300");
       setTimeout(() => {
-        setAmountErr("")
-        
+        setAmountErr("");
       }, 3000);
-    
+    }
+    if (name === "amount" && value >= 10000) {
+      setAmountErr(" amount cannot be greater than 10000");
+      setTimeout(() => {
+        setAmountErr("");
+      }, 3000);
     }
 
     if (type === "checkbox") {
@@ -84,30 +94,51 @@ const UserAddRoom = () => {
       }));
     }
   };
+
   const handleUploadImage = async (e) => {
     e.preventDefault();
 
-    if (imageUrl.length < 4) {
-      setImageErr("Image shoulb be 5 in nos");
-      setTimeout(() => {
-        setImageErr("")
-        
-      }, 1000);
-      return
+    if (uploadedFiles.length + selectedFiles.length < 4) {
+      // setImageErr("Image should be at least 5 in number");
+      toast.error("Image should be at least 5 in number")
+      // setTimeout(() => {
+      //   setImageErr("");
+      // }, 1000);
+      return;
     }
-    console.log(imageUrl);
+
     setLoading(true);
     const uploadedImages = [];
-    for (let i = 0; i < imageUrl.length; i++) {
-      const data = await uploadCloudinary(imageUrl[i]);
-      const { url } = data;
-      console.log("Data=======>", url);
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const data = await uploadCloudinary(selectedFiles[i]);
+      const { url, format } = data;
+
+      if (format !== "jpg") {
+        setImageErr("Selected file is not applicable");
+        setTimeout(() => {
+          setImageErr("");
+          setLoading(false);
+        }, 1000);
+        return;
+      }
+
       uploadedImages.push(url);
     }
 
+    setUploadedFiles((prevFiles) => [...prevFiles, ...uploadedImages]);
+    console.log("======>",uploadedFiles)
+    setSelectedFiles([]);
     setLoading(false);
-    console.log("Link=========>", uploadedImages);
-    setFiles(uploadedImages);
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFiles([...selectedFiles, ...Array.from(e.target.files)]);
+  };
+
+  const handleRemoveFile = (fileToRemove) => {
+    setSelectedFiles(selectedFiles.filter((file) => file !== fileToRemove));
+    setUploadedFiles(uploadedFiles.filter((file) => file !== fileToRemove));
   };
 
   const handleSubmit = async (e) => {
@@ -120,7 +151,7 @@ const UserAddRoom = () => {
       !roomData.status ||
       !roomData.amount
     ) {
-      setErr("Required all the  fields");
+      setErr("Required all the fields");
 
       setTimeout(() => {
         setErr("");
@@ -129,10 +160,17 @@ const UserAddRoom = () => {
       return;
     }
 
- 
+    if (uploadedFiles.length < 4) {
+      // setImageErr("Image should be at least 5 in number");
+      toast.error("Image should be at least 5 in number")
+      setTimeout(() => {
+        setImageErr("");
+      }, 1000);
+      return;
+    }
 
     const formData = new FormData();
-    files.forEach((file) => {
+    uploadedFiles.forEach((file) => {
       formData.append("images", file);
     });
 
@@ -146,14 +184,13 @@ const UserAddRoom = () => {
 
     const data = {
       roomData,
-      files,
+      files: uploadedFiles,
     };
 
     try {
-      console.log(data);
       const response = await userAddsRoom(data);
 
-      console.log(response);
+      console.log("Response in add rooms", response);
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {
@@ -208,9 +245,11 @@ const UserAddRoom = () => {
               value={roomData.adults}
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter number of adults"
-              />
-  
+              placeholder="Enter number of adult"
+              max={10}
+              min={1}
+            />
+
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
             {adultErr && (
               <p className="text-red-500 text-lg mt-2">{adultErr}</p>
@@ -231,6 +270,8 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of children"
+              min={0}
+              max={10}
             />
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
             {childErr && (
@@ -252,6 +293,9 @@ const UserAddRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter amount"
+              min={300}
+              max={10000}
+              maxLength={4}
             />
             {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
             {amountErr && (
@@ -313,7 +357,7 @@ const UserAddRoom = () => {
               </label>
               <input
                 type="file"
-                onChange={(e) => setImageUrl(e.target.files)}
+                onChange={handleFileChange}
                 name="images"
                 id="images"
                 accept="image/*"
@@ -325,15 +369,38 @@ const UserAddRoom = () => {
               <p className="text-red-500 text-sm mt-1">{imageErr}</p>
             )}
             {loading && <BeatLoader color="#36d7b7" />}
-            <div className="flex space-x-2">
-              {files.map((file, index) => (
-                <img
-                  key={index}
-                  src={`${file}`}
-                  alt={`Image ${index + 1}`}
-                  className="max-w-xs max-h-xs"
-                  style={{ maxWidth: "100px", maxHeight: "100px" }}
-                />
+            <div className="flex flex-wrap space-x-2">
+              {uploadedFiles.map((file, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={file}
+                    alt={`Image ${index + 1}`}
+                    className="max-w-xs max-h-xs"
+                    style={{ width: "150px", height: "100px" }}
+                  />
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={() => handleRemoveFile(file)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+              {selectedFiles.map((file, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Selected Image ${index + 1}`}
+                    className="max-w-xs max-h-xs"
+                    style={{ width: "150px", height: "100px" }}
+                  />
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={() => handleRemoveFile(file)}
+                  >
+                    &times;
+                  </button>
+                </div>
               ))}
             </div>
           </div>

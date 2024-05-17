@@ -13,11 +13,12 @@ const UserEditRoom = () => {
   const { roomId } = useParams();
 
   const [files, setFiles] = useState([]);
-  const [imageUrl, setImageUrl] = useState();
+  const [imageUrl, setImageUrl] = useState([]);
   const [loading, setLoading] = useState(false);
   const [adultErr, setAdultErr] = useState();
   const [childErr, setChildErr] = useState();
   const [amountErr, setAmountErr] = useState();
+  const [imageErr, setImageErr] = useState("");
   const [roomData, setRoomData] = useState({
     roomType: "",
     adults: "",
@@ -38,6 +39,7 @@ const UserEditRoom = () => {
     const fetchRoomData = async () => {
       try {
         const response = await editUserRoom(roomId);
+        console.log("Response in user edit rooms fetching data", response);
         setRoomData(response.data);
         setFiles(response.data.images);
       } catch (error) {
@@ -55,26 +57,20 @@ const UserEditRoom = () => {
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
       setTimeout(() => {
-        setAdultErr("")
-        
+        setAdultErr("");
       }, 3000);
-     
     }
     if (name === "children" && value < 0) {
       setChildErr("Number of children cannot be less than 0");
       setTimeout(() => {
-        setChildErr("")
-        
+        setChildErr("");
       }, 3000);
-
     }
     if (name === "amount" && value < 300) {
       setAmountErr(" amount cannot be less than 300");
       setTimeout(() => {
-        setAmountErr("")
-        
+        setAmountErr("");
       }, 3000);
-    
     }
 
     if (type === "checkbox") {
@@ -93,26 +89,64 @@ const UserEditRoom = () => {
     }
   };
 
+  const handleImageDelete = (index) => {
+    const newImages = [...roomData.images];
+    newImages.splice(index, 1);
+    setRoomData((prevData) => ({
+      ...prevData,
+      images: newImages,
+    }));
+  };
+
   if (!user) return <Navigate to="/" />;
+  
   const handleUploadImage = async (e) => {
     e.preventDefault();
-    console.log(imageUrl);
     setLoading(true);
-    const uploadedImages = [];
+    const uploadedImages = [...roomData.images]; 
+    const newImageUrls = [];
+  
     for (let i = 0; i < imageUrl.length; i++) {
       const data = await uploadCloudinary(imageUrl[i]);
-      const { url } = data;
-      console.log("Data=======>", url);
+      const { url, format } = data;
+  
+      if (format !== "jpg") {
+        setImageErr("Selected file is not applicable");
+        setTimeout(() => {
+          setImageErr("");
+          setLoading(false);
+        }, 1000);
+        return;
+      }
+  
+      if (uploadedImages.length >= 5) {
+        setImageErr("Maximum 5 images are allowed");
+        setTimeout(() => {
+          setImageErr("");
+          setLoading(false);
+        }, 1000);
+        return;
+      }
+  
       uploadedImages.push(url);
+      newImageUrls.push(url);
     }
-
+  
     setLoading(false);
-    console.log("Link=========>", uploadedImages);
     setFiles(uploadedImages);
+    setRoomData((prevData) => ({
+      ...prevData,
+      images: uploadedImages,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (roomData.images.length !== 5) {
+      setImageErr("Exactly 5 images are required");
+      return;
+    }
 
     const formData = new FormData();
     files.forEach((file) => {
@@ -133,7 +167,7 @@ const UserEditRoom = () => {
       };
 
       const response = await userUpdateRoom(roomData._id, data);
-      console.log(response);
+      console.log("response in saving the edited rooms ", response);
       if (response.status === 200) {
         toast.success("Room Updated Successfully");
         setTimeout(() => {
@@ -188,6 +222,9 @@ const UserEditRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of adults"
+              min={1}
+              max={10}
+              maxLength={1}
             />
             {adultErr && (
               <p className="text-red-500 text-lg mt-2">{adultErr}</p>
@@ -208,6 +245,9 @@ const UserEditRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter number of children"
+              min={0}
+              max={10}
+              maxLength={1}
             />
             {childErr && (
               <p className="text-red-500 text-lg mt-2">{childErr}</p>
@@ -228,8 +268,11 @@ const UserEditRoom = () => {
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter amount"
+              max={9999}
+              min={300}
+              maxLength={4}
             />
-             {amountErr && (
+            {amountErr && (
               <p className="text-red-500 text-lg mt-2">{amountErr}</p>
             )}
           </div>
@@ -294,17 +337,27 @@ const UserEditRoom = () => {
                 multiple
                 className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
+              {imageErr && (
+                <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+              )}
               {loading && <BeatLoader color="#36d7b7" />}
             </div>
             <div className="flex space-x-2">
-              {files.map((file, index) => (
-                <img
-                  key={index}
-                  src={`${file}`}
-                  alt={`Image ${index + 1}`}
-                  className="max-w-xs max-h-xs"
-                  style={{ maxWidth: "100px", maxHeight: "100px" }}
-                />
+              {roomData.images.map((file, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={file}
+                    alt={`Image ${index + 1}`}
+                    className="max-w-xs max-h-xs"
+                    style={{ width: "150px", height: "100px" }}
+                  />
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={() => handleImageDelete(index)}
+                  >
+                    &times;
+                  </button>
+                </div>
               ))}
             </div>
             <button
@@ -316,13 +369,13 @@ const UserEditRoom = () => {
           </div>
           <button
             type="submit"
-            className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple "
           >
             Update Room
           </button>
         </form>
       </div>
-      <Footer />
+      <Footer/>
     </>
   );
 };

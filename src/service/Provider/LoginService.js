@@ -160,3 +160,65 @@ export const getAllbookingData = async () => {
     return err;
   }
 };
+
+export const verifyProvider = async () => {
+  try {
+    const response = await providerInstance.get(
+      `/getprovider`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(response);
+
+    return response;
+  } catch (err) {
+    console.log("Error in provider login", err);
+    return err;
+  }
+};
+
+export const singleBookingProvider = async (id) => {
+  try {
+    const response = await providerInstance.get(
+      `/singlebooking/${id}`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(response);
+
+    return response;
+  } catch (err) {
+    console.log("Error in provider login", err);
+    return err;
+  }
+};
+
+export const providerDashboard = async () => {
+  try {
+    const response = await providerInstance.get(
+      `/providerdashboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(response);
+
+    return response;
+  } catch (err) {
+    console.log("Error in provider login", err);
+    return err;
+  }
+};

@@ -5,12 +5,15 @@ import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import profileImage from "../../assets/profile_demo.avif";
 import { Navigate, useNavigate } from "react-router";
-import {editUserProfile,userUpdateData} from "../../service/User/UserService"
+import {
+  editUserProfile,
+  userUpdateData,
+} from "../../service/User/UserService";
 
 const UserEditProfile = () => {
   const user = localStorage.getItem("userAccessToken");
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
-  const navigate =useNavigate()
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,9 +30,8 @@ const UserEditProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await editUserProfile()
-        
-        // axios.post(`${baseUrl}/getuserdata`, { user });
+        const response = await editUserProfile();
+        console.log("Response in user Edit fetch data",response)
 
         const userData = response.data.data;
         setFormData((prevData) => ({
@@ -44,7 +46,7 @@ const UserEditProfile = () => {
           image: userData.image || null,
           imageUrl: userData.image ? `${baseUrl}/${userData.image}` : null,
         }));
-        console.log(userData)
+        console.log(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -66,7 +68,7 @@ const UserEditProfile = () => {
       }));
     });
   }, []);
-  if(!user) return <Navigate to="/"/>
+  if (!user) return <Navigate to="/" />;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +79,15 @@ const UserEditProfile = () => {
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
+    console.log(file)
+    if(file.type!="image/jpeg"){
+      console.log("Not valid")
+      toast.error("Image is not a valid format")
+      setTimeout(() => {
+      navigate("/userprofile")
+      }, 1500);
+    }
     setFormData((prevData) => ({
       ...prevData,
       image: file,
@@ -93,7 +103,6 @@ const UserEditProfile = () => {
     }
 
     try {
-   
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           formData.city
@@ -114,15 +123,12 @@ const UserEditProfile = () => {
         formDataToSend.append("city", formData.city);
         formDataToSend.append("coordinates", `${lat},${lng}`);
 
-        const updateResponse = await userUpdateData(formDataToSend)
-        
-       
+        const updateResponse = await userUpdateData(formDataToSend);
 
         if (updateResponse.status === 200) {
           toast.success(updateResponse.data.message);
           setTimeout(() => {
-            navigate("/userprofile")
-            
+            navigate("/userprofile");
           }, 1000);
         }
       }

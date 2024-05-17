@@ -36,15 +36,15 @@ const UserChangePassword = () => {
         return;
       }
 
-      console.log("Old Password:", oldPassword);
-      console.log("New Password:", newPassword);
-      console.log("Confirm Password:", confirmPassword);
+      // console.log("Old Password:", oldPassword);
+      // console.log("New Password:", newPassword);
+      // console.log("Confirm Password:", confirmPassword);
 
       const response = await changeUserPassword(data);
 
       // axios.put(`${baseRoute}/changepassword`, data);
 
-      console.log("Respomse", response);
+      console.log("Respomse in change password", response);
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {

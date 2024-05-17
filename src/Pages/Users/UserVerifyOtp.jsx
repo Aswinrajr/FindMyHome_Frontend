@@ -1,4 +1,5 @@
-import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
+import logo from "../../assets/logo.png";
+import otpImage from "../../assets/3d-mobile-phone-with-security-code-padlock_107791-16180.avif"
 import axios from "axios";
 import { useNavigate, Navigate, useLocation } from "react-router";
 import { useDispatch } from "react-redux";
@@ -10,11 +11,13 @@ import { Toaster, toast } from "react-hot-toast";
 const UserVerifyOtp = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const location = useLocation()
-  const {mobile}= location.state||""
+  const { mobile } = location.state ? location.state : {};
   const [otp, setOtp] = useState("");
   const [err, setErr] = useState("");
   const [resendDisabled, setResendDisabled] = useState(false);
   const [timer, setTimer] = useState(60);
+  console.log(mobile)
+ 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,16 +41,23 @@ const UserVerifyOtp = () => {
 
     setResendDisabled(true);
     setTimer(30);
+    console.log(mobile)
 
     try {
       const response = await axios.post(`${baseRoute}/reqotp`, {
         mobile,
       });
+      console.log("==>",response)
       if (response.status === 200) {
         toast.success("OTP resent successfully");
       }
+      if(response.status===401){
+        console.log("in err")
+        setErr(response.data.msg)
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.response);
+     
       toast.error("Failed to resend OTP.");
     }
   };
@@ -77,6 +87,12 @@ const UserVerifyOtp = () => {
       }
     } catch (error) {
       console.error("Error:", error);
+      setErr(error.response.data.msg)
+
+      setTimeout(() => {
+        setErr("")
+        
+      }, 1500);
     }
   };
 
@@ -91,26 +107,39 @@ const UserVerifyOtp = () => {
   if (user) return <Navigate to="/" />;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
+    <div
+    className="flex items-center justify-center min-h-screen"
+    style={{
+      backgroundImage: "linear-gradient(to bottom, #141e30, #243b55)",
+    }}
+  >
+    <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
-        <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
+    <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex items-center justify-center">
           <img
-            src={logo}
-            alt="Logo"
-            className="w-auto h-auto max-h-full object-contain"
+            src={otpImage}
+            alt="Forgot Password"
+            className="h-auto w-full max-w-sm"
           />
         </div>
-        <div className="md:w-1/2 p-8 shadow-2xl">
-          <h2 className="text-3xl font-bold mb-4 text-center text-blue-900">
+        <div className="flex flex-col justify-center p-4"> 
+          <div className="flex justify-center mb-4"> 
+            <img
+              src={logo}
+              alt="Company Logo"
+              className="h-12 w-auto"
+            />
+          </div>
+          <h2 className="text-3xl font-bold mb-4 text-center text-gray-700">
             Verify OTP
           </h2>
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
-                htmlFor="mobile"
-                className="block text-gray-700 font-bold text-sm mb-2"
+                htmlFor="otp"
+                className="block font-semibold mb-2 text-gray-700"
               >
                 Enter OTP
               </label>
@@ -121,35 +150,31 @@ const UserVerifyOtp = () => {
                 onChange={handleInputChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter OTP"
-                max={5}
-                pattern="\d*"
+                maxLength={6}
                 inputMode="numeric"
               />
-              {err && <p className="text-red-500 text-lg mt-2">{err}</p>}
+              {err && <p className="text-red-500 mt-1">{err}</p>}
             </div>
-
-            <button
-              type="submit"
-              className="bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Verify OTP
-            </button>
+            <div className="flex justify-between items-center">
+              <button
+                type="submit"
+                className="bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Verify OTP
+              </button>
+              <p
+                onClick={handleResendOtp}
+                disabled={resendDisabled}
+                className="bg-yellow-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded "
+              >
+                Resend OTP {resendDisabled && `(${timer}s)`}
+              </p>
+            </div>
           </form>
-          <div className="flex items-center justify-between mt-4">
-            <button
-              onClick={handleResendOtp}
-              disabled={resendDisabled}
-              className="text-blue-600 hover:underline focus:outline-none"
-            >
-              Resend OTP ({timer}s)
-            </button>
-            {resendDisabled && (
-              <p className="text-gray-500">Resend OTP in {timer}s</p>
-            )}
-          </div>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

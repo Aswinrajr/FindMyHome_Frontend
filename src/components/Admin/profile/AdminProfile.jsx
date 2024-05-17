@@ -105,6 +105,7 @@ const AdminProfile = () => {
     setLoading(true);
     const data = new FormData();
     data.append("file", imageFile);
+    console.log("Image filr",imageFile)
     data.append("upload_preset", "image_preset");
     try {
       console.log("Haii");
@@ -129,6 +130,10 @@ const AdminProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     console.log("=======>", file);
+    if(file.type!=="image/jpeg"){
+      toast.error("Selected image is invalid")
+      return
+    }
     setImageFile(file);
     setPreviewImage(URL.createObjectURL(file));
     setImageSelected(true);
@@ -154,7 +159,7 @@ const AdminProfile = () => {
 
       toast.success("Image uploaded successfully!");
       setTimeout(() => {
-        navigate("/admin/profile");
+        navigate("/admin/dashboard");
       }, 1000);
     } catch (error) {
       console.error("Image upload error:", error);

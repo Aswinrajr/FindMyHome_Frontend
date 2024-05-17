@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-
 import Swal from "sweetalert2";
 import profilePic from "../../../assets/profile_demo.avif";
-
 import { Navigate } from "react-router";
 import {
   getUserData,
@@ -11,20 +9,23 @@ import {
 
 const Users = () => {
   let token = localStorage.getItem("accessToken");
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
 
   const newToken = JSON.parse(token);
   token = newToken?.accessToken;
-  console.log(token)
 
   const [users, setUsers] = useState([]);
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 3;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+ 
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await getUserData();
         setUsers(response.data);
-        console.log(users);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -33,9 +34,46 @@ const Users = () => {
     if (token) {
       fetchUsers();
     }
-  }, []);
+  }, [token]);
 
   if (!token) return <Navigate to="/admin" />;
+
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    const filtered = users.filter((user) =>
+      user.userName.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPaginationButtons = () => {
+    const totalPages = Math.ceil(
+      (searchTerm ? filteredUsers.length : users.length) / perPage
+    );
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 ${
+            currentPage === i
+              ? "bg-gray-500 text-white"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pages;
+  };
 
   const userAction = async (userId) => {
     const confirmation = await Swal.fire({
@@ -53,7 +91,6 @@ const Users = () => {
     if (confirmation.isConfirmed) {
       try {
         const response = await userActions(userId);
-
         console.log(response);
 
         const updatedUsers = users.map((user) => {
@@ -69,8 +106,24 @@ const Users = () => {
     }
   };
 
+  const indexOfLastUser = currentPage * perPage;
+  const indexOfFirstUser = indexOfLastUser - perPage;
+  const currentUsers = searchTerm
+    ? filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
+    : users.slice(indexOfFirstUser, indexOfLastUser);
+
   return (
     <div className="overflow-x-auto">
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="border border-gray-300 rounded-md px-3 py-2 w-72 focus:outline-none focus:border-blue-500"
+        />
+        <div className="flex space-x-2">{renderPaginationButtons()}</div>
+      </div>
       <table className="w-full whitespace-nowrap bg-white divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -113,12 +166,12 @@ const Users = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {users?.map((user) => (
+          {currentUsers.map((user) => (
             <tr key={user._id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={
-                    user.image ? `${baseUrl}/${user.image}` : `${profilePic}`
+                  src={user.image?
+                   `${baseUrl}/${user.image}` : `${profilePic}`
                   }
                   alt={user.name}
                   className="h-10 w-10 rounded-full"
@@ -140,9 +193,6 @@ const Users = () => {
                   {user.status === "Active" ? "Block" : "Unblock"}
                 </button>
               </td>
-              {/* <td className="px-6 py-4 whitespace-nowrap text-red-600 underline">
-                View More
-              </td> */}
             </tr>
           ))}
         </tbody>

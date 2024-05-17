@@ -44,7 +44,7 @@ const ProviderRooms = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-2xl font-semibold mb-4">Provider Rooms</h1>
+
       <button
         className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
         onClick={() => navigate("/provider/rooms/addrooms")}
@@ -63,11 +63,11 @@ const ProviderRooms = () => {
                   key={index}
                   src={`${image}`}
                   alt={room.roomType}
-                  className="w-full h-40 object-contain"
+                  className="w-full h-40 object-contain mt-4 mb-7"
                 />
               ))}
             </Slider>
-            <div className="p-4">
+            <div className="p-4 mt-4">
               <h2 className="text-lg font-semibold">
                 Room Type: {room.roomType}
               </h2>
@@ -78,7 +78,7 @@ const ProviderRooms = () => {
                 Amenities:
                 {Object.entries(room.amenities).map(
                   ([amenity, value]) =>
-                    value && <span key={amenity}>{amenity}, </span>
+                    value && <span key={amenity}>{amenity} </span>
                 )}
               </p>
             </div>
@@ -91,12 +91,12 @@ const ProviderRooms = () => {
               >
                 Edit
               </button>
-              <button
+              {/* <button
                 className="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"
                 onClick={() => navigate(`/provider/rooms/${room._id}`)}
               >
                 View More
-              </button>
+              </button> */}
             </div>
           </div>
         ))}

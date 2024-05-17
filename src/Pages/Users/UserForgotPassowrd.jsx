@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
+import companyLogo from "../../assets/logo.png";
+import forgotPasswordImage from "../../assets/3d-render-secure-login-password-illustration_107791-16640.avif";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { FaMobileAlt } from "react-icons/fa";
 
 const UserForgotPassword = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE ;
+  const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const navigate = useNavigate();
   const [mobile, setMobile] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
+  console.log(mobile)
 
   function validNumber(number) {
     const regex = /^[6-9]\d{9}$/;
@@ -36,7 +39,6 @@ const UserForgotPassword = () => {
       setPhoneNumberError("Please enter a valid mobile number.");
       return;
     }
-   
 
     try {
       const response = await axios.post(`${baseUrl}/reqotp`, {
@@ -45,7 +47,7 @@ const UserForgotPassword = () => {
       if (response.status === 200) {
         toast.success("OTP sent to registered mobile number");
         setTimeout(() => {
-          navigate("/verifyotp",{state:mobile});
+          navigate("/verifyotp", { state: {mobile} });
         }, 2000);
       }
     } catch (error) {
@@ -55,58 +57,66 @@ const UserForgotPassword = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div
+      className="flex items-center justify-center min-h-screen "
+      style={{
+        backgroundImage: "linear-gradient(to bottom, #141e30, #243b55)",
+      }}
+    >
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex flex-col md:flex-row rounded-lg shadow-md w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white">
-        <div className="md:w-1/2 bg-fuchsia-700 flex items-center justify-center rounded-t-lg">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-auto h-auto max-h-full object-contain"
-          />
-        </div>
-        <div className="md:w-1/2 p-8 shadow-2xl">
-          <h2 className="text-3xl font-bold mb-4 text-center text-blue-900">
-            Forgot Password !
-          </h2>
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-            <div>
-              <label
-                htmlFor="mobile"
-                className="block text-gray-700 font-bold text-sm mb-2"
-              >
-                Enter Your Mobile Number
-              </label>
-              <input
-                type="text"
-                id="mobile"
-                value={mobile}
-                onChange={handleMobileChange}
-                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                  mobile.trim() === "" ? "border-gray-400" : phoneNumberError ? "border-red-500" : "border-green-500"
-                }`}
-                placeholder="Enter your mobile number"
+
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="flex items-center justify-center">
+            <img
+              src={forgotPasswordImage}
+              alt="Forgot Password"
+              className="h-auto w-full max-w-sm"
+            />
+          </div>
+          <div className="flex flex-col justify-center p-1 ">
+            <div className="flex justify-center mb-6">
+              <img
+                src={companyLogo}
+                alt="Company Logo"
+                className="h-12 w-auto"
               />
-              {phoneNumberError && (
-                <p className="text-red-500 text-lg mt-2">
-                  {phoneNumberError}
-                </p>
-              )}
             </div>
-
-            <button
-              type="submit"
-              className={`bg-orange-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                mobile.trim() === "" || phoneNumberError ? "cursor-not-allowed opacity-50" : ""
-              }`}
-              disabled={mobile.trim() === "" || phoneNumberError}
-            >
-              Request for OTP
-            </button>
-
-            
-          </form>
-
+            <h2 className="text-3xl font-bold mb-6 text-center  text-gray-700">
+              Forgot Password
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="mobile"
+                  className="block font-semibold mb-2 text-gray-700"
+                >
+                  Enter Your Mobile Number
+                </label>
+                <div className="relative">
+                  <FaMobileAlt className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    id="mobile"
+                    value={mobile}
+                    onChange={handleMobileChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 pl-10 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Enter your mobile number"
+                    maxLength={10}
+                  />
+                </div>
+                {phoneNumberError && (
+                  <p className="text-red-500 mt-1">{phoneNumberError}</p>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300 w-full"
+              >
+                Request for OTP
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

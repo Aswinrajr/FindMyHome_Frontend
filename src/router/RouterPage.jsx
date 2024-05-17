@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
+
 //ADMIN
 import Login from "../components/Admin/Login.jsx";
 import Dashboard from "../components/Admin/profile/Dashboard.jsx";
@@ -11,6 +12,8 @@ import AdminVerifyOtp from "../components/Admin/AdminVerifyOtp";
 import AdminChangePassword from "../components/Admin/AdminChangePassword";
 import MessageList from "../Pages/Admin/MessageList.jsx";
 import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
+import AdminSingleBookingView from "../Pages/Admin/AdminSingleBookingView.jsx";
+import AdminSalesOverView from "../Pages/Admin/AdminSalesOverView.jsx";
 
 //PROVIDER
 import ProviderLogin from "../components/Provider/ProviderLogin";
@@ -25,6 +28,8 @@ import ProviderVerifyOtp from "../components/Provider/ProviderVerifyOtp";
 import FirebaseMobile from "../components/Provider/FirebaseMobile";
 import ProviderProfile from "../Pages/Provider/ProviderProfile";
 import LoginByOtp from "../components/Provider/LoginByOtp";
+import ProviderViewBookings from "../Pages/Provider/ProviderViewBookings.jsx";
+import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 
 //USER
 import UserLogin from "../Pages/Users/UserLogin";
@@ -46,14 +51,19 @@ import UserContact from "../Pages/Users/UserContact";
 import PageNotFound from "../components/PageNotFound";
 import UserAddRoom from "../Pages/Users/UserAddRoom";
 import UserEditRoom from "../Pages/Users/UserEditRoom";
-import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 import UserMobileSignup from "../Pages/Users/UserMobileSignup";
 import UserAddedRoomDetails from "../Pages/Users/UserAddedRoomDetails.jsx";
+import UserWallet from "../Pages/Users/UserWallet.jsx";
+import UserCart from "../Pages/Users/UserCart.jsx";
+import SuccessPage from "../components/User/SuccessPage.jsx";
+import FailurePage from "../components/User/FailurePage.jsx";
+
 
 const routerPage = createBrowserRouter([
   {
     path: "/*",
     element: <PageNotFound />,
+  
   },
   {
     path: "/",
@@ -104,8 +114,16 @@ const routerPage = createBrowserRouter([
     element: <MessageList />,
   },
   {
-    path:"/admin/profile",
-    element:<AdminProfilePage/>
+    path: "/admin/profile",
+    element: <AdminProfilePage />,
+  },
+  {
+    path: "/singlebookingdetails",
+    element: <AdminSingleBookingView />,
+  },
+  {
+    path:"/admin/sales",
+    element:<AdminSalesOverView/>
 
   },
 
@@ -160,9 +178,12 @@ const routerPage = createBrowserRouter([
     element: <FirebaseMobile />,
   },
   {
-    path:"/provider/account",
-    element:<ProviderCardPage/>
-
+    path: "/provider/account",
+    element: <ProviderCardPage />,
+  },
+  {
+    path: "/provider/singlebookingdetails",
+    element: <ProviderViewBookings/>,
   },
 
   //Users
@@ -245,11 +266,26 @@ const routerPage = createBrowserRouter([
     element: <UserEditRoom />,
   },
   {
-    path:"/register",
-    element:<UserMobileSignup/>
+    path: "/register",
+    element: <UserMobileSignup />,
+  },
+  {
+    path: "/addedroompreview/:id",
+    element: <UserAddedRoomDetails />,
+  },
+  {
+    path:"wallet",
+    element:<UserWallet/>
+  },
+  {
+    path:"/cart",
+    element:<UserCart/>
   },{
-    path:"/addedroompreview/:id",
-    element:<UserAddedRoomDetails/>
+    path:"/successpage",
+    element:<SuccessPage/>
+  },{
+    path:"/failurepage",
+    element:<FailurePage/>
   }
 ]);
 

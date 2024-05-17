@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
-
+import  { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { Navigate } from "react-router";
-
-import {
-  getProviderData,
-  providerActions,
-} from "../../../service/Admin/ManagementService";
+import { getProviderData, providerActions } from "../../../service/Admin/ManagementService";
+import profilePic from "../../../assets/profile_demo.avif"
 
 const Providers = () => {
   let token = localStorage.getItem("accessToken");
@@ -15,12 +11,15 @@ const Providers = () => {
   token = newToken?.accessToken;
 
   const [providers, setProviders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 3;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProviders, setFilteredProviders] = useState([]);
 
   useEffect(() => {
     const fetchProviders = async () => {
       try {
         const response = await getProviderData();
-
         setProviders(response.data);
       } catch (error) {
         console.error("Error fetching providers:", error);
@@ -32,7 +31,38 @@ const Providers = () => {
 
   if (!token) return <Navigate to="/admin" />;
 
-  console.log("Providers", providers);
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    const filtered = providers.filter((provider) =>
+      provider.providerName.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredProviders(filtered);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPaginationButtons = () => {
+    const totalPages = Math.ceil((searchTerm ? filteredProviders.length : providers.length) / perPage);
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 ${
+            currentPage === i ? "bg-gray-500 text-white" : "bg-white text-gray-700"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pages;
+  };
 
   const providerAction = async (providerId) => {
     const confirmation = await Swal.fire({
@@ -53,9 +83,7 @@ const Providers = () => {
     if (confirmation.isConfirmed) {
       try {
         const response = await providerActions(providerId);
-
-        console.log("response", response);
-
+        console.log(response)
         const updatedProviders = providers.map((provider) => {
           if (provider._id === providerId) {
             provider.status =
@@ -70,8 +98,22 @@ const Providers = () => {
     }
   };
 
+  const indexOfLastProvider = currentPage * perPage;
+  const indexOfFirstProvider = indexOfLastProvider - perPage;
+  const currentProviders = searchTerm ? filteredProviders.slice(indexOfFirstProvider, indexOfLastProvider) : providers.slice(indexOfFirstProvider, indexOfLastProvider);
+
   return (
     <div className="overflow-x-auto">
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search providers..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="border border-gray-300 rounded-md px-3 py-2 w-72 focus:outline-none focus:border-blue-500"
+        />
+        <div className="flex space-x-2">{renderPaginationButtons()}</div>
+      </div>
       <table className="w-full whitespace-nowrap bg-white divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -120,11 +162,11 @@ const Providers = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {providers?.map((provider) => (
+          {currentProviders.map((provider) => (
             <tr key={provider._id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <img
-                  src={`${provider.providerImage[0]}`}
+                  src={provider.image?`${provider.providerImage[0]}`:profilePic}
                   alt={provider.name}
                   className="h-10 w-10 rounded-full"
                 />
