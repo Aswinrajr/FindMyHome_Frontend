@@ -47,7 +47,7 @@ const TopBar = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error.response.status);
-        if (error.response.status=== 403) {
+        if (error.response.status === 403) {
           toast.error("User is blocked please contact admin");
           dispatch(logoutUser());
           setTimeout(() => {
@@ -61,7 +61,7 @@ const TopBar = () => {
       }
     };
 
-    fetchData(); 
+    fetchData();
   }, [extractedToken]);
 
   const handleLogout = () => {
@@ -69,7 +69,7 @@ const TopBar = () => {
   };
 
   const toggleOptions = () => {
-    console.log("Clicked")
+    console.log("Clicked");
     setShowOptions(!showOptions);
   };
 
@@ -91,7 +91,7 @@ const TopBar = () => {
           <>
             <div className="relative">
               <button
-                onClick={()=>toggleOptions()}
+                onClick={() => toggleOptions()}
                 className="hover:text-gray-700  focus:outline-none"
               >
                 Account

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const ProtectedRoute = () => {
+const ProtectedRouteAdmin = () => {
   const data =
     localStorage.getItem("providerAccessToken") ||
     localStorage.getItem("accessToken") ||
@@ -9,32 +9,33 @@ const ProtectedRoute = () => {
 
   const token = JSON.parse(data);
   const role = token?.providerRole || token?.userRole || token?.adminRole;
-  console.log("userRole Token", role);
-  let userRole = "user";
-  console.log("passed in", userRole === role);
-  const accessGrand = userRole === role;
+  console.log("proviadminder Token", role);
+  let adminRole = "admin";
+
+  console.log("passed in", adminRole === role);
+  const accessGrand = adminRole === role;
 
   if (!accessGrand) {
     console.log("Not allowedRoles provider===>:", role);
-    if (role === "provider") {
+    if (role === "user") {
       Swal.fire({
         icon: "error",
         title: "Unauthorized Access",
         text: "You are accessing an unauthorized route",
       });
-      return <Navigate to="/provider/dashboard" replace />;
+      return <Navigate to="/" replace />;
     }
-    if (role === "admin") {
+    if (role === "provider") {
         Swal.fire({
           icon: "error",
           title: "Unauthorized Access",
           text: "You are accessing an unauthorized route",
         });
-        return <Navigate to="/admin/dashboard" replace />;
+        return <Navigate to="/provider/dashboard" replace />;
       }
   }
 
   return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRouteAdmin;

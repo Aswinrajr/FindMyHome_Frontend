@@ -1,352 +1,302 @@
-import { useEffect, useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
-import { Navigate, useNavigate, useParams } from "react-router";
-import Footer from "../../components/Sample/Footer";
-import TopBar from "../../components/Sample/TopBar";
-import { editUserRoom, userUpdateRoom } from "../../service/User/UserService";
-import { uploadCloudinary } from "../../Helper/Upload";
-import { BeatLoader } from "react-spinners";
+import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "../utils/ProtectedRoute.jsx";
 
-const UserEditRoom = () => {
-  const user = localStorage.getItem("userAccessToken");
-  const navigate = useNavigate();
-  const { roomId } = useParams();
+//ADMIN
+import Login from "../components/Admin/Login.jsx";
+import Dashboard from "../components/Admin/profile/Dashboard.jsx";
+import UserPage from "../Pages/Admin/UserPage";
+import ProvidersPage from "../Pages/Admin/ProvidersPage";
+import BookingPage from "../Pages/Admin/BookingPage";
+import AdminForgotPassword from "../components/Admin/AdminForgotPassword";
+import AdminVerifyOtp from "../components/Admin/AdminVerifyOtp";
+import AdminChangePassword from "../components/Admin/AdminChangePassword";
+import MessageList from "../Pages/Admin/MessageList.jsx";
+import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
+import AdminSingleBookingView from "../Pages/Admin/AdminSingleBookingView.jsx";
+import AdminSalesOverView from "../Pages/Admin/AdminSalesOverView.jsx";
 
-  const [files, setFiles] = useState([]);
-  const [imageUrl, setImageUrl] = useState();
-  const [loading, setLoading] = useState(false);
-  const [adultErr, setAdultErr] = useState();
-  const [childErr, setChildErr] = useState();
-  const [amountErr, setAmountErr] = useState();
-  const [imageErr, setImageErr] = useState("");
-  const [roomData, setRoomData] = useState({
-    roomType: "",
-    adults: "",
-    children: "",
-    amount: "",
-    status: "",
-    amenities: {
-      food: false,
-      ac: false,
-      wifi: false,
-      tv: false,
-      hotWater: false,
-    },
-    images: [],
-  });
+//PROVIDER
+import ProviderLogin from "../components/Provider/ProviderLogin";
+import ProviderSignUp from "../components/Provider/ProviderSignupPage";
+import ProviderDashboard from "../Pages/Provider/ProviderDashboard";
+import ProviderBookings from "../Pages/Provider/ProviderBookings";
+import ProviderRooms from "../Pages/Provider/ProviderRooms";
+import ProviderAddRooms from "../Pages/Provider/ProviderAddRooms";
+import ProviderEditRooms from "../Pages/Provider/ProviderEditRoms";
+import ProviderForgotPassword from "../components/Provider/ProviderForgotPassword";
+import ProviderVerifyOtp from "../components/Provider/ProviderVerifyOtp";
+import FirebaseMobile from "../components/Provider/FirebaseMobile";
+import ProviderProfile from "../Pages/Provider/ProviderProfile";
+import LoginByOtp from "../components/Provider/LoginByOtp";
+import ProviderViewBookings from "../Pages/Provider/ProviderViewBookings.jsx";
+import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 
-  useEffect(() => {
-    const fetchRoomData = async () => {
-      try {
-        const response = await editUserRoom(roomId);
-        console.log("Response in user edit rooms fetching data",response)
-        setRoomData(response.data);
-        setFiles(response.data.images);
-      } catch (error) {
-        console.error("Error fetching room data:", error);
-      }
-    };
+//USER
+import UserLogin from "../Pages/Users/UserLogin";
+import UserSignUpPage from "../Pages/Users/UserSignUpPage";
+import UserForgotPassowrd from "../Pages/Users/UserForgotPassowrd";
+import VerifyOtp from "../Pages/Users/UserVerifyOtp";
+import SamplePage from "../components/Sample/SamplePage";
+import SearchedRoom from "../Pages/Users/SearchedRoom";
+import FullDetails from "../components/User/FullDetails";
+import UserProfile from "../Pages/Users/UserProfile";
+import UserDashboard from "../Pages/Users/UserDashboard";
+import UserChangePassword from "../Pages/Users/UserChangePassword";
+import UserNotification from "../Pages/Users/UserNotification";
+import UserPreviewBooking from "../Pages/Users/UserPreviewBooking";
+import UserEditProfile from "../Pages/Users/UserEditProfile";
+import UserRoom from "../Pages/Users/UserRoom";
+import UserRentify from "../Pages/Users/UserRentify";
+import UserContact from "../Pages/Users/UserContact";
+import PageNotFound from "../components/PageNotFound";
+import UserAddRoom from "../Pages/Users/UserAddRoom";
+import UserEditRoom from "../Pages/Users/UserEditRoom";
+import UserMobileSignup from "../Pages/Users/UserMobileSignup";
+import UserAddedRoomDetails from "../Pages/Users/UserAddedRoomDetails.jsx";
+import UserWallet from "../Pages/Users/UserWallet.jsx";
+import UserCart from "../Pages/Users/UserCart.jsx";
+import SuccessPage from "../components/User/SuccessPage.jsx";
+import FailurePage from "../components/User/FailurePage.jsx";
 
-    fetchRoomData();
-  }, [roomId]);
+const routerPage = createBrowserRouter([
+  {
+    path: "/*",
+    element: <PageNotFound />,
+  },
+  {
+    path: "/",
+    element: <SamplePage />,
+  },
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    console.log(name, value);
+  //Admin Public Routes
+  {
+    path: "/admin",
+    element: <Login />,
+  },
 
-    if (name === "adults" && value < 1) {
-      setAdultErr("Number of adults cannot be less than 1");
-      setTimeout(() => {
-        setAdultErr("")
-        
-      }, 3000);
-     
-    }
-    if (name === "children" && value < 0) {
-      setChildErr("Number of children cannot be less than 0");
-      setTimeout(() => {
-        setChildErr("")
-        
-      }, 3000);
+  {
+    path: "/admin/forgotpassword",
+    element: <AdminForgotPassword />,
+  },
+  {
+    path: "/admin/verifyotp",
+    element: <AdminVerifyOtp />,
+  },
+  {
+    path: "/admin/changepassword",
+    element: <AdminChangePassword />,
+  },
 
-    }
-    if (name === "amount" && value < 300) {
-      setAmountErr(" amount cannot be less than 300");
-      setTimeout(() => {
-        setAmountErr("")
-        
-      }, 3000);
-    
-    }
+  //Admin Protected Routes
+  {
+    path: "/admin/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/admin/users",
+    element: <UserPage />,
+  },
+  {
+    path: "/admin/providers",
+    element: <ProvidersPage />,
+  },
 
-    if (type === "checkbox") {
-      setRoomData((prevData) => ({
-        ...prevData,
-        amenities: {
-          ...prevData.amenities,
-          [name]: checked,
-        },
-      }));
-    } else {
-      setRoomData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
+  {
+    path: "/admin/providers",
+    element: <ProvidersPage />,
+  },
+  {
+    path: "/admin/bookings",
+    element: <BookingPage />,
+  },
 
-  if (!user) return <Navigate to="/" />;
-  const handleUploadImage = async (e) => {
-    e.preventDefault();
-    console.log(imageUrl);
-    setLoading(true);
-    const uploadedImages = [];
-    for (let i = 0; i < imageUrl.length; i++) {
-      const data = await uploadCloudinary(imageUrl[i]);
-      const { url,format } = data;
-      console.log("Data=======>", url);
-      if (format!=="jpg") {
-        setImageErr("Selected file is not applicable");
-        setTimeout(() => {
-          setImageErr("");
-          setLoading(false);
-        }, 1000);
-        return;
-      }
-      uploadedImages.push(url);
-    }
+  {
+    path: "/admin/messages",
+    element: <MessageList />,
+  },
+  {
+    path: "/admin/profile",
+    element: <AdminProfilePage />,
+  },
+  {
+    path: "/singlebookingdetails",
+    element: <AdminSingleBookingView />,
+  },
+  {
+    path: "/admin/sales",
+    element: <AdminSalesOverView />,
+  },
 
-    setLoading(false);
-    console.log("Link=========>", uploadedImages);
-    setFiles(uploadedImages);
-  };
+  //Provider Public Routes
+  {
+    path: "/provider",
+    element: <ProviderLogin />,
+  },
+  {
+    path: "/provider/register",
+    element: <FirebaseMobile />,
+  },
+  {
+    path: "/provider/signup",
+    element: <ProviderSignUp />,
+  },
+  {
+    path: "/provider/forgotpassword",
+    element: <ProviderForgotPassword />,
+  },
+  {
+    path: "/provider/verifyOtp",
+    element: <ProviderVerifyOtp />,
+  },
+  {
+    path: "/provider/otplogin",
+    element: <LoginByOtp />,
+  },
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //Provider Protected Routes
+  {
+    path: "/provider/dashboard",
+    element: <ProviderDashboard />,
+  },
+  {
+    path: "/provider/bookings",
+    element: <ProviderBookings />,
+  },
 
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
+  {
+    path: "/provider/rooms",
+    element: <ProviderRooms />,
+  },
+  {
+    path: "/provider/rooms/addrooms",
+    element: <ProviderAddRooms />,
+  },
+  {
+    path: "/provider/rooms/editrooms/:roomId",
+    element: <ProviderEditRooms />,
+  },
 
-    formData.append("roomType", roomData.roomType);
-    formData.append("adults", roomData.adults);
-    formData.append("children", roomData.children);
-    formData.append("amount", roomData.amount);
-    formData.append("status", roomData.status);
-    formData.append("amenities", JSON.stringify(roomData.amenities));
+  {
+    path: "/provider/profileedit",
+    element: <ProviderProfile />,
+  },
 
-    try {
-      const data = {
-        roomData,
-        files,
-      };
+  {
+    path: "/provider/account",
+    element: <ProviderCardPage />,
+  },
+  {
+    path: "/provider/singlebookingdetails",
+    element: <ProviderViewBookings />,
+  },
 
-      const response = await userUpdateRoom(roomData._id, data);
-      console.log("response in saving the edited rooms ",response);
-      if (response.status === 200) {
-        toast.success("Room Updated Successfully");
-        setTimeout(() => {
-          navigate("/room");
-        }, 2000);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error Occurred while updating the room");
-    }
-  };
+  //Users Public Routes
+  {
+    path: "/login",
+    element: <UserLogin />,
+  },
 
-  return (
-    <>
-      <TopBar />
-      <div className="container mx-auto px-4 mt-5 mb-6">
-        <Toaster position="top-center" reverseOrder={false} />
-        <h1 className="text-2xl font-semibold mb-4">Edit Room</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          <div className="mb-4">
-            <label
-              htmlFor="roomType"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Room Type
-            </label>
-            <select
-              id="roomType"
-              name="roomType"
-              value={roomData.roomType}
-              onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Select a room type</option>
-              <option value="Single">Single</option>
-              <option value="Double">Double</option>
-              <option value="Dormitory">Dormitory</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="adults"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Adults
-            </label>
-            <input
-              type="number"
-              id="adults"
-              name="adults"
-              value={roomData.adults}
-              onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter number of adults"
-              min={1}
-              max={10}
-              maxLength={1}
-            />
-            {adultErr && (
-              <p className="text-red-500 text-lg mt-2">{adultErr}</p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="children"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Children
-            </label>
-            <input
-              type="number"
-              id="children"
-              name="children"
-              value={roomData.children}
-              onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter number of children"
-              min={0}
-              max={10}
-              maxLength={1}
-            />
-            {childErr && (
-              <p className="text-red-500 text-lg mt-2">{childErr}</p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="amount"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Amount
-            </label>
-            <input
-              type="text"
-              id="amount"
-              name="amount"
-              value={roomData.amount}
-              onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter amount"
-              max={9999}
-              min={300}
-              maxLength={4}
-            />
-             {amountErr && (
-              <p className="text-red-500 text-lg mt-2">{amountErr}</p>
-            )}
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="status"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              value={roomData.status}
-              onChange={handleChange}
-              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="available">Available</option>
-              <option value="not-available">Not Available</option>
-            </select>
-          </div>
-          <div className="col-span-2">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Amenities
-              </label>
-              <div className="mt-1 grid grid-cols-2 gap-4">
-                {Object.entries(roomData.amenities).map(
-                  ([amenity, checked], index) => (
-                    <div key={index} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={amenity}
-                        name={amenity}
-                        checked={checked}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
-                      />
-                      <label
-                        htmlFor={amenity}
-                        className="ml-2 text-sm text-gray-700"
-                      >
-                        {amenity}
-                      </label>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="col-span-2">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Images
-              </label>
-              <input
-                type="file"
-                onChange={(e) => setImageUrl(e.target.files)}
-                name="images"
-                id="images"
-                accept="image/*"
-                multiple
-                className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-               {imageErr && (
-              <p className="text-red-500 text-sm mt-1">{imageErr}</p>
-            )}
-              {loading && <BeatLoader color="#36d7b7" />}
-            </div>
-            <div className="flex space-x-2">
-              {files.map((file, index) => (
-                <img
-                  key={index}
-                  src={`${file}`}
-                  alt={`Image ${index + 1}`}
-                  className="max-w-xs max-h-xs"
-                  style={{ maxWidth: "100px", maxHeight: "100px" }}
-                />
-              ))}
-            </div>
-            <button
-              className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-              onClick={handleUploadImage}
-            >
-              Upload image
-            </button>
-          </div>
-          <button
-            type="submit"
-            className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-          >
-            Update Room
-          </button>
-        </form>
-      </div>
-      <Footer />
-    </>
-  );
-};
+  {
+    path: "/signup",
+    element: <UserSignUpPage />,
+  },
+  {
+    path: "/forgotpassword",
+    element: <UserForgotPassowrd />,
+  },
+  {
+    path: "/verifyotp",
+    element: <VerifyOtp />,
+  },
+  {
+    path: "/register",
+    element: <UserMobileSignup />,
+  },
 
-export default UserEditRoom;
+  {
+    path: "/home",
+    element: <SamplePage />,
+  },
+  {
+    path: "/searchedroom",
+    element: <SearchedRoom />,
+  },
+
+  //User Protected Routes
+  {
+    path: "/searchedroom/roompreview/:id",
+    element: <FullDetails />,
+  },
+  {
+    path: "/userprofile",
+    element: <UserProfile />,
+  },
+  {
+    path: "/dashboard",
+    element: <UserDashboard />,
+  },
+  {
+    path: "/editprofile",
+    element: <UserProfile />,
+  },
+  {
+    path: "/change_password",
+    element: <UserChangePassword />,
+  },
+  {
+    path: "/notification",
+    element: <UserNotification />,
+  },
+  {
+    path: "/bookings",
+    element: <UserPreviewBooking />,
+  },
+  {
+    path: "/edit_profile",
+    element: <UserEditProfile />,
+  },
+  {
+    path: "/room",
+    element: <UserRoom />,
+  },
+  {
+    path: "/rentify",
+    element: <UserRentify />,
+  },
+  {
+    path: "/contact",
+    element: <UserContact />,
+  },
+  {
+    path: "/addroom",
+    element: <UserAddRoom />,
+  },
+
+  {
+    path: "/usereditroom/:roomId",
+    element: <UserEditRoom />,
+  },
+
+  {
+    path: "/addedroompreview/:id",
+    element: <UserAddedRoomDetails />,
+  },
+  {
+    path: "wallet",
+    element: <UserWallet />,
+  },
+  {
+    path: "/cart",
+    element: <UserCart />,
+  },
+  {
+    path: "/successpage",
+    element: <SuccessPage />,
+  },
+  {
+    path: "/failurepage",
+    element: <FailurePage />,
+  },
+]);
+
+export default routerPage;

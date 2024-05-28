@@ -16,7 +16,7 @@ const adminAuthSlice = createSlice({
   reducers: {
     setAdmin: (state, action) => {
       state.admin = action.payload;
-      localStorage.setItem("accessToken", JSON.stringify({ accessToken: action.payload }));
+      localStorage.setItem("accessToken", JSON.stringify({ accessToken: action.payload,adminRole:"admin" }));
     },
     logoutAdmin: (state) => {
       state.accessToken = null;

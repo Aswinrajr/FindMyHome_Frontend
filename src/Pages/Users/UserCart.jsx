@@ -62,7 +62,7 @@ const UserCart = () => {
               confirmButtonText: "OK",
             });
             setTimeout(() => {
-              navigate("/home");
+              navigate("/successpage",{state:{data:bookingDetails}});
             }, 2000);
           } catch (err) {
             console.log("Error in verify order", err);

@@ -65,7 +65,7 @@ const BookingList = () => {
 
   const handleViewMore = async (id) => {
     console.log(id);
-    navigate("/singlebookingdetails", { state: { id: id } });
+    navigate("/admin/singlebookingdetails", { state: { id: id } });
   };
 
   return (

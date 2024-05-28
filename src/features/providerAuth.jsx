@@ -19,7 +19,7 @@ const providerAuthSlice = createSlice({
       state.provider = action.payload;
       localStorage.setItem(
         "providerAccessToken",
-        JSON.stringify({ providerAccessToken: action.payload })
+        JSON.stringify({ providerAccessToken: action.payload,providerRole:"provider" })
       );
     },
     logoutProvider: (state) => {

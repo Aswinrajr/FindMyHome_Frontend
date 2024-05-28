@@ -5,20 +5,19 @@ import {
   FaDollarSign,
   FaCalendarCheck,
   FaCalendarTimes,
-  // FaChartLine,
 } from "react-icons/fa";
-
 import {
   completeDatas,
   providerDashboard,
 } from "../../service/Provider/LoginService";
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [salesData, setSalesData] = useState({});
-
   let token = localStorage.getItem("providerAccessToken");
-
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
 
@@ -26,7 +25,6 @@ const Dashboard = () => {
     const completeData = async () => {
       try {
         const response = await completeDatas();
-
         console.log(response);
         if (response.data.msg === "Complete your profile Data") {
           Swal.fire({
@@ -47,6 +45,7 @@ const Dashboard = () => {
         console.error("Error completing data:", error);
       }
     };
+
     const fetchData = async () => {
       const data = await providerDashboard();
       console.log("Data==>", data.data.salesData);
@@ -54,7 +53,6 @@ const Dashboard = () => {
     };
 
     fetchData();
-
     if (token) {
       completeData();
     }
@@ -62,15 +60,14 @@ const Dashboard = () => {
 
   if (!token) return <Navigate to="/provider" />;
 
+  const chartData = [
+    { name: "Orders", value: salesData.orderNo },
+    { name: "Bookings", value: salesData.totalBooked },
+    { name: "Cancellations", value: salesData.cancelledOrders },
+  ];
+
   return (
     <div className="container p-2 mx-auto mt-10">
-      {/* <button
-        onClick={() => navigate("/admin/sales")}
-        className="absolute top-20  right-8 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md"
-      >
-        <FaChartLine className="mr-2" />
-        Sales Analytics
-      </button> */}
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
           <FaDollarSign className="text-4xl text-blue-500 mb-2" />
@@ -92,6 +89,27 @@ const Dashboard = () => {
           <div className="text-lg font-semibold">Total Confirmed</div>
           <div className="text-xl">{salesData.totalBooked}</div>
         </div>
+      </div>
+      <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold mb-4">Order, Booking, and Cancellation Analysis</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              outerRadius={120}
+              fill="#8884d8"
+              dataKey="value"
+              label
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

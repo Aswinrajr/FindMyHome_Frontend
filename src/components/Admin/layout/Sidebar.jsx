@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logoutAdmin } from "../../../features/adminAuth";
-import { FaHome, FaUser, FaUsers, FaBriefcase, FaEnvelope, FaCog, FaQuestionCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaUser, FaUsers, FaBriefcase, FaEnvelope, FaCog, FaQuestionCircle, FaSignOutAlt ,FaTag } from "react-icons/fa";
 import axios from "axios";
 
 const Sidebar = () => {
@@ -131,6 +131,20 @@ const Sidebar = () => {
               Settings
             </Link>
           </li>
+          <li
+            className={`mb-4 ${
+              location.pathname === "/admin/offers" ? "text-yellow-400" : ""
+            }`}
+          >
+            <Link
+              to="/admin/offers"
+              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+            >
+              <FaTag className="mr-2" />
+              Offers
+            </Link>
+          </li>
+
           <li
             className={`mb-4 ${
               location.pathname === "/admin/help" ? "text-yellow-400" : ""

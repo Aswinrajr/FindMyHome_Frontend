@@ -13,7 +13,7 @@ import { toast, Toaster } from "react-hot-toast";
 
 import {
   bookRoomPage,
-  isBooked,
+
   roomViewPage,
   saveToCart,
 } from "../../service/User/UserService";
@@ -33,6 +33,7 @@ const FullDetails = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
   const { id } = useParams();
   const [roomData, setRoomData] = useState(null);
+  const [discountamount,setDiscountAmount]=useState(0)
   const user = localStorage.getItem("userAccessToken");
 
   const newToken = JSON.parse(user);
@@ -43,7 +44,8 @@ const FullDetails = () => {
       try {
         const response = await roomViewPage(id);
 
-        setRoomData(response.data);
+        setRoomData(response.data.roomData);
+        setDiscountAmount(response.data.amount)
         console.log(roomData);
       } catch (error) {
         console.error("Error fetching room data:", error);
@@ -193,7 +195,7 @@ const FullDetails = () => {
       
         <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
           <span>Total Amount to Pay for ${bookingDetails.numberOfDays} days:</span>
-          <span>${bookingDetails.totalAmounttoPay}</span>
+          <span>${bookingDetails.numberOfDays*bookingDetails.amount}</span>
         </div>
       
        
@@ -386,9 +388,29 @@ const FullDetails = () => {
                     convenience, style, and luxury that promises a memorable
                     stay for discerning travelers.
                   </p>
-                  <p className="text-gray-600 mb-2">
+                  {/* <p className="text-gray-600 mb-2">
                     Price: ₹{roomData.amount} per night
+                  </p> */}
+
+                  {discountamount> 100 ? (
+                  <div className="flex items-center mb-2">
+                    <p className="text-lg font-semibold text-gray-800">
+                      Amount:
+                    </p>
+                    <div className="ml-2 flex items-center">
+                      <span className="text-lg text-gray-500 line-through">
+                        ₹{roomData.amount}
+                      </span>
+                      <span className="text-xl font-bold text-green-600 ml-2">
+                        ₹{roomData.amount - discountamount}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-lg font-semibold text-gray-800 mb-2">
+                    Amount: ₹{roomData.amount}
                   </p>
+                )}
                   <p className="text-gray-900 mb-2">
                     Address: {roomData.status}
                   </p>

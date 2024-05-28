@@ -171,3 +171,85 @@ export const fetchSalesDataGraph = async (period) => {
     return err;
   }
 };
+
+export const getAllOffers = async () => {
+  try {
+   
+    const response = await axiosInstance.get(`/admin/getalloffers`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in Get oofers", err);
+    return err;
+  }
+};
+
+export const saveOfferData = async (offer) => {
+  try {
+   
+    const response = await axiosInstance.post(`/admin/saveofferdata`,offer, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in save oofers", err);
+    return err;
+  }
+};
+
+export const getProvider = async () => {
+  try {
+   
+    const response = await axiosInstance.get(`/admin/getallprovider`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in get provider", err);
+    return err;
+  }
+};
+
+
+export const deleteOffer = async (id) => {
+  try {
+    console.log(id)
+   
+    const response = await axiosInstance.delete(`/admin/deleteoffer/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in delete offer", err);
+    return err;
+  }
+};

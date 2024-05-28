@@ -555,3 +555,49 @@ export const isBooked = async (roomId,formData) => {
     return error;
   }
 };
+
+
+
+
+
+//Chat
+
+export const getAllMessages = async (providerId,bookingId,roomId) => {
+  try {
+    console.log("Welcome to get is booked rooms");
+
+    const response = await userInstance.get(`/messages/${providerId}`,{bookingId:bookingId,roomId:roomId},{
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("response", response);
+
+    return response;
+  } catch (error) {
+    console.log("Error in get all message", error);
+    return error;
+  }
+};
+
+export const saveMessage = async (providerId,bookingId,roomId) => {
+  try {
+    console.log("Welcome to get is booked rooms");
+
+    const response = await userInstance.get(`/messages/${providerId}`,{bookingId:bookingId,roomId:roomId},{
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("response", response);
+
+    return response;
+  } catch (error) {
+    console.log("Error in get all message", error);
+    return error;
+  }
+};

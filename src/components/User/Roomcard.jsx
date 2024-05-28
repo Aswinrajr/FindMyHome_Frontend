@@ -24,7 +24,7 @@ const Roomcard = ({ filteredDatas }) => {
   const [roomData, setRoomData] = useState([]);
   const [newRoomData, setNewRoomData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2);
+  const [itemsPerPage] = useState(3);
   const [searchTerm, setSearchTerm] = useState("");
   const token = localStorage.getItem("userAccessToken");
 
@@ -118,8 +118,6 @@ const Roomcard = ({ filteredDatas }) => {
       setRoomData(newRoomData);
     }
   }, [filteredDatas, newRoomData, roomData]);
-
-
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -259,7 +257,6 @@ const Roomcard = ({ filteredDatas }) => {
       razorpay.open();
 
       razorpay.on("payment.failed", async function (response) {
-      
         try {
           console.log("Error Response:", response);
           if (response) {
@@ -270,8 +267,7 @@ const Roomcard = ({ filteredDatas }) => {
               toast.error("Payment failed !! Details added to cart");
               setTimeout(() => {
                 razorpay.close();
-               
-           
+
                 navigate("/failurepage", { state: { data: bookingDetails } });
               }, 1500);
             } else {
@@ -282,10 +278,7 @@ const Roomcard = ({ filteredDatas }) => {
           console.error("Error handling payment failure:", error);
           razorpay.close();
         }
-    
-      }
-  
-    );
+      });
     } catch (error) {
       console.error("Error in fetching order URL:", error);
     }
@@ -403,9 +396,30 @@ const Roomcard = ({ filteredDatas }) => {
                 <h3 className="text-xl font-semibold mb-2">
                   {item.room.roomType}
                 </h3>
-                <p className="text-lg text-black mb-2">
+                {/* <p className="text-lg text-black mb-2">
                   Amount: ₹{item.room.amount}
-                </p>
+                </p> */}
+
+                {item?.offerAmount > 100 ? (
+                  <div className="flex items-center mb-2">
+                    <p className="text-lg font-semibold text-gray-800">
+                      Amount:
+                    </p>
+                    <div className="ml-2 flex items-center">
+                      <span className="text-lg text-gray-500 line-through">
+                        ₹{item.room.amount}
+                      </span>
+                      <span className="text-xl font-bold text-green-600 ml-2">
+                        ₹{item.room.amount - item.offerAmount}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-lg font-semibold text-gray-800 mb-2">
+                    Amount: ₹{item.room.amount}
+                  </p>
+                )}
+
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm">Adults: {item.room.adults}</span>
                   <span className="text-sm">

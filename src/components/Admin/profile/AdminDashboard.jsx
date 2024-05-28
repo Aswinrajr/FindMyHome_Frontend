@@ -1,40 +1,63 @@
 import { useState, useEffect } from "react";
-import { Navigate,  } from "react-router";
+import { Navigate } from "react-router";
 import {
   FaDollarSign,
   FaCalendarCheck,
   FaCalendarTimes,
   FaUsers,
   FaUserTie,
-  // FaChartLine,
 } from "react-icons/fa";
 import { fetchOverallSalesData } from "../../../service/Admin/ManagementService";
+import { Line } from "react-chartjs-2";
+import { Chart, registerables } from "chart.js";
+
+Chart.register(...registerables);
+
+const SalesChart = ({ salesData }) => {
+  const chartData = {
+    labels: ["Total Sales", "Orders"],
+    datasets: [
+      {
+        label: "Sales Data",
+        data: [salesData.totalSales, salesData.orderNo],
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  return (
+    <div className="chart-container">
+      <Line data={chartData} options={options} />
+    </div>
+  );
+};
 
 const AdminDashboard = () => {
   const [salesData, setSalesData] = useState({});
   const token = localStorage.getItem("accessToken");
-  // const navigate= useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchOverallSalesData();
-      console.log("Data==>",data.data.salesData)
+      console.log("Data==>", data.data.salesData);
       setSalesData(data.data.salesData);
     };
-
     fetchData();
   }, []);
-
- 
 
   if (!token) return <Navigate to="/admin" />;
 
   return (
     <div className="container mx-auto mt-10">
-      {/* <button onClick={()=>navigate("/admin/sales")} className="absolute top-16 right-8 flex items-center px-3 py-2 bg-blue-500 text-white rounded-md">
-        <FaChartLine className="mr-2" />
-        Sales Analytics
-      </button> */}
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
           <FaDollarSign className="text-4xl text-blue-500 mb-2" />
@@ -66,6 +89,9 @@ const AdminDashboard = () => {
           <div className="text-lg font-semibold">Number of Providers</div>
           <div className="text-xl">{salesData.providerNo}</div>
         </div>
+      </div>
+      <div className="mt-8">
+        <SalesChart salesData={salesData} />
       </div>
     </div>
   );
