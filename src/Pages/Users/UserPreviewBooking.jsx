@@ -12,6 +12,7 @@ import {
   userBookingPreview,
 } from "../../service/User/UserService";
 import Swal from "sweetalert2";
+import { createRoom } from "../../service/ChatService/ChatService";
 
 const UserPreviewBooking = () => {
   const user = localStorage.getItem("userAccessToken");
@@ -124,6 +125,21 @@ const UserPreviewBooking = () => {
     }
   };
 
+
+  const handleCreateChatRoom= async(receiverId,senderId,bookingId)=>{
+    console.log("Create room....",receiverId,senderId,bookingId)
+    const data= {receiverId,senderId,bookingId
+
+    }
+    const createChatRoom = await createRoom(receiverId,senderId,bookingId)
+    console.log("createChatRoom",createChatRoom)
+    if(createChatRoom.statusText){
+      navigate("/chat",{state:data})
+
+    }
+
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <TopBar />
@@ -233,17 +249,17 @@ const UserPreviewBooking = () => {
                         ? "Booking Canceled"
                         : "Cancel Booking"}
                     </button>
-                    <button
-                      onClick={() =>
-                        navigate("/chat", {
-                          state: {
-                            providerId: booking.providerId,
-                            bookingId: booking._id,
-                            roomId: booking.roomId,
-                            userId: booking.userId,
-                          },
-                        })
-                      }
+                    <button onClick={()=>handleCreateChatRoom(booking.providerId,booking.userId,booking._id)}
+                      // onClick={() =>
+                      //   navigate("/chat", {
+                      //     state: {
+                      //       providerId: booking.providerId,
+                      //       bookingId: booking._id,
+                      //       roomId: booking.roomId,
+                      //       userId: booking.userId,
+                      //     },
+                      //   })
+                      // }
                       className="py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
                     >
                       <FaCommentAlt className="mr-2" />

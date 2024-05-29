@@ -34,7 +34,6 @@ import LoginByOtp from "../components/Provider/LoginByOtp";
 import ProviderViewBookings from "../Pages/Provider/ProviderViewBookings.jsx";
 import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
 
-
 //USER
 import UserLogin from "../Pages/Users/UserLogin";
 import UserSignUpPage from "../Pages/Users/UserSignUpPage";
@@ -61,8 +60,9 @@ import UserWallet from "../Pages/Users/UserWallet.jsx";
 import UserCart from "../Pages/Users/UserCart.jsx";
 import SuccessPage from "../components/User/SuccessPage.jsx";
 import FailurePage from "../components/User/FailurePage.jsx";
-import Chat from "../components/Chat/Chat.jsx";
+import Chat from "../components/Chat/userChat/Chat.jsx";
 import Invoice from "../Pages/Users/Invoice.jsx";
+import ProviderChat from "../components/Chat/Provider/ProviderChat.jsx";
 
 const routerPage = createBrowserRouter([
   {
@@ -151,7 +151,7 @@ const routerPage = createBrowserRouter([
       { path: "register", element: <FirebaseMobile /> },
       { path: "account", element: <ProviderCardPage /> },
       { path: "singlebookingdetails", element: <ProviderViewBookings /> },
-    
+      { path: "chat", element: <ProviderChat /> },
     ],
   },
 

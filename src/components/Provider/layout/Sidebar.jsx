@@ -10,11 +10,35 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { verifyProvider } from "../../../service/Provider/LoginService";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [providerId,setProviderId] = useState()
+
+  useEffect(() => {
+    const fetchProvider = async () => {
+      try {
+        const response = await verifyProvider();
+        console.log("---->",response)
+        setProviderId(response.data.providerData._id)
+
+       
+      } catch (err) {
+        console.log("Error in fetch provider0", err);
+        if (err) {
+         
+          dispatch(logoutProvider());
+          navigate("/provider");
+        }
+      }
+    };
+    fetchProvider();
+  }, []);
 
   const handleLogout = () => {
     dispatch(logoutProvider());
@@ -97,6 +121,21 @@ const Sidebar = () => {
             >
               <FaCog className="mr-2" />
               Settings
+            </Link>
+          </li>
+          <li
+            className={`hover:text-yellow-400 ${
+              location.pathname === "/provider/chat"
+                ? "text-yellow-400"
+                : ""
+            }`}
+          >
+            <Link
+              to={`/provider/chat`}
+              className="flex items-center px-4 py-2 rounded-md"
+            >
+              <FaCog className="mr-2" />
+              Chat
             </Link>
           </li>
           <li
