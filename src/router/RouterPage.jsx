@@ -63,6 +63,7 @@ import FailurePage from "../components/User/FailurePage.jsx";
 import Chat from "../components/Chat/userChat/Chat.jsx";
 import Invoice from "../Pages/Users/Invoice.jsx";
 import ProviderChat from "../components/Chat/Provider/ProviderChat.jsx";
+import UserBookingReviewPage from "../Pages/Users/UserBookingReviewPage.jsx";
 
 const routerPage = createBrowserRouter([
   {
@@ -214,6 +215,7 @@ const routerPage = createBrowserRouter([
       { path: "failurepage", element: <FailurePage /> },
       { path: "chat", element: <Chat /> },
       { path: "invoice", element: <Invoice /> },
+      { path: "getpreviewpage/:id", element: <UserBookingReviewPage /> },
     ],
   },
 ]);

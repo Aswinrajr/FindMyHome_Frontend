@@ -17,7 +17,7 @@ import {
   roomViewPage,
   saveToCart,
 } from "../../service/User/UserService";
-import UserReview from "../../Pages/Users/UserReview";
+
 
 const facilitiesData = [
   { icon: FaWifi, text: "Free Wi-Fi" },
@@ -332,6 +332,21 @@ const FullDetails = () => {
       console.error("Error placing order:", error);
     }
   };
+  const StarRating = ({ rating }) => {
+    console.log("Current", rating);
+    const stars = [];
+  
+    const ratingValue = rating;
+  
+    for (let i = 1; i <= 5; i++) {
+      const starClass =
+        i <= ratingValue
+          ? "fas fa-star text-yellow-500"
+          : "fas fa-star text-gray-300";
+      stars.push(<i key={i} className={starClass} />);
+    }
+    return <div className="flex items-center">{stars}</div>;
+  };
 
   return (
     <>
@@ -440,7 +455,23 @@ const FullDetails = () => {
               </div>
             </div>
           </div>
-          <UserReview />
+          <div className="mt-8">
+        <h3 className="text-xl font-bold mb-4 ml-10">Review List</h3>
+        {roomData?.reviews?.map((review) => (
+          <div
+            key={review._id}
+            className="bg-white shadow-md rounded-md p-4 mb-4"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <h5 className="font-bold">
+                {review?.userName ? review.userName : "You"}
+              </h5>
+              <StarRating rating={review.rating} />
+            </div>
+            <p className="text-gray-700">{review.description}</p>
+          </div>
+        ))}
+      </div>
         </div>
       </div>
       <Footer className="mt-6" />

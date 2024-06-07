@@ -9,6 +9,7 @@ import {
   FaCog,
   FaQuestionCircle,
   FaSignOutAlt,
+  FaComments
 } from "react-icons/fa";
 import { verifyProvider } from "../../../service/Provider/LoginService";
 import { useEffect } from "react";
@@ -93,7 +94,7 @@ const Sidebar = () => {
               Bookings
             </Link>
           </li>
-          <li
+          {/* <li
             className={`hover:text-yellow-400 ${
               location.pathname === "/provider/messages"
                 ? "text-yellow-400"
@@ -107,8 +108,8 @@ const Sidebar = () => {
               <FaEnvelope className="mr-2" />
               Messages
             </Link>
-          </li>
-          <li
+          </li> */}
+          {/* <li
             className={`hover:text-yellow-400 ${
               location.pathname === "/provider/settings"
                 ? "text-yellow-400"
@@ -122,7 +123,7 @@ const Sidebar = () => {
               <FaCog className="mr-2" />
               Settings
             </Link>
-          </li>
+          </li> */}
           <li
             className={`hover:text-yellow-400 ${
               location.pathname === "/provider/chat"
@@ -134,13 +135,13 @@ const Sidebar = () => {
               to={`/provider/chat`}
               className="flex items-center px-4 py-2 rounded-md"
             >
-              <FaCog className="mr-2" />
+              <FaComments className="mr-2" />
               Chat
             </Link>
           </li>
           <li
             className={`hover:text-yellow-400 ${
-              location.pathname === "/provider/help" ? "text-yellow-400" : ""
+              location.pathname === "/provider/contact" ? "text-yellow-400" : ""
             }`}
           >
             <Link

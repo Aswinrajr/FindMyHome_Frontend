@@ -1,25 +1,43 @@
 import { useEffect, useState } from "react";
-import { FaWallet, FaMoneyBillAlt, FaMoneyCheckAlt, FaCoins } from "react-icons/fa";
+import {
+  FaWallet,
+  FaMoneyBillAlt,
+  FaMoneyCheckAlt,
+  FaCoins,
+} from "react-icons/fa";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
-import { userWalletBalence } from "../../service/User/UserService";
+import {
+  userWalletBalence,
+
+} from "../../service/User/UserService";
+import WalletTransactionPagination from "./WalletTransactionPagination";
 
 const UserWallet = () => {
   const [walletBalance, setWalletBalance] = useState();
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
 
-  useEffect(()=>{
-    const fetchData = async()=>{
-      const response = await userWalletBalence()
-      console.log(response)
-      if(response.status===200){
-        setWalletBalance(response.data.walletBalance)
-      }
-    }
-    fetchData()
 
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await userWalletBalence();
+      console.log(response);
+      if (response.status === 200) {
+        setWalletBalance(response.data.walletBalance);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchwalletTransaction = async () => {
+  //     const transactions = await walletTransactions();
+  //     console.log("Transcations", transactions);
+  //     setTransactionList(transactions.data.transactions);
+  //   };
+  //   fetchwalletTransaction();
+  // }, []);
 
   const handleDeposit = () => {
     if (depositAmount > 0) {
@@ -103,6 +121,9 @@ const UserWallet = () => {
           Secure and instant transactions with our wallet.
         </p>
       </div>
+
+      <WalletTransactionPagination />
+
       <Footer className="mt-auto" />
     </div>
   );

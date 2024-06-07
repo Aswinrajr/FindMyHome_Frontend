@@ -253,3 +253,24 @@ export const deleteOffer = async (id) => {
     return err;
   }
 };
+
+export const getAdminSaleAnalysis = async (period) => {
+  try {
+ 
+   
+    const response = await axiosInstance.get(`/admin/getgraphdata/${period}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("...........................................")
+    // console.log("response", response);
+    // console.log(" response.data", response.data);
+    // console.log("response.data.msg", response.data.msg);
+    // console.log("........................................")
+    return response;
+  } catch (err) {
+    console.log("Error in delete offer", err);
+    return err;
+  }
+};

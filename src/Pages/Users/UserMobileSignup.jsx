@@ -70,6 +70,7 @@ const UserMobileSignup = () => {
     setOtpError("");
   };
 
+
   const handleResendOtp = async () => {
     try {
       const response = await axios.post(`${baseUrl}/reqloginotp`, {

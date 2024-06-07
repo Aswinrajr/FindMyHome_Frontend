@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { useParams } from "react-router";
+
 import { getAllReviews, submitReview } from "../../service/User/UserService";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -20,7 +20,7 @@ import { Toaster, toast } from "react-hot-toast";
 // ];
 
 const StarRating = ({ rating }) => {
-  console.log("Current",rating)
+  console.log("Current", rating);
   const stars = [];
 
   const ratingValue = rating;
@@ -35,17 +35,17 @@ const StarRating = ({ rating }) => {
   return <div className="flex items-center">{stars}</div>;
 };
 
-const UserReview = () => {
+const UserReview = ({ roomId }) => {
   const [roomRating, setRoomRating] = useState(0);
+  console.log("Welcome to user review page")
 
   const [description, setDescription] = useState("");
   const [reviews, setReviews] = useState([]);
-  const roomId = useParams();
-  console.log(roomId.id);
+  console.log("roomId in review", roomId);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getAllReviews(roomId.id);
+      const response = await getAllReviews(roomId);
       console.log("review", response);
       if (response.status === 200) {
         setReviews(response.data.reviews.reviews);
@@ -53,11 +53,10 @@ const UserReview = () => {
       }
     };
     fetchData();
-  }, [roomId.id]);
+  }, [roomId]);
 
   const handleRatingChange = (e) => {
     setRoomRating(e.target.value);
-    
   };
 
   const handleSubmit = async (e) => {
@@ -74,12 +73,11 @@ const UserReview = () => {
     if (response.status === 200) {
       console.log("toast");
       toast.success(response.data.message);
-     
     }
 
     const newReview = {
       id: reviews.length + 1,
-      rating:roomRating,
+      rating: roomRating,
       description,
       author: "You",
     };
@@ -142,7 +140,9 @@ const UserReview = () => {
             className="bg-white shadow-md rounded-md p-4 mb-4"
           >
             <div className="flex justify-between items-center mb-2">
-              <h5 className="font-bold">{review?.userName?review.userName:"You"}</h5>
+              <h5 className="font-bold">
+                {review?.userName ? review.userName : "You"}
+              </h5>
               <StarRating rating={review.rating} />
             </div>
             <p className="text-gray-700">{review.description}</p>

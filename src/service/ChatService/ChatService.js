@@ -131,3 +131,24 @@ export const ProviderChats = async (userId) => {
     return error;
   }
 };
+
+
+export const getLastMessage = async (recipientChatId) => {
+  try {
+    console.log("Welcome to provider Chats", recipientChatId);
+
+    const response = await providerInstance.get(`/lastmessage/${recipientChatId}`, {
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("response", response);
+
+    return response;
+  } catch (error) {
+    console.log("Error in provider chats", error);
+    return error;
+  }
+};

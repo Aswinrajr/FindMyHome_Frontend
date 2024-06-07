@@ -205,14 +205,29 @@ export const singleBookingProvider = async (id) => {
 
 export const providerDashboard = async () => {
   try {
-    const response = await providerInstance.get(
-      `/providerdashboard`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await providerInstance.get(`/providerdashboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(response);
+
+    return response;
+  } catch (err) {
+    console.log("Error in provider login", err);
+    return err;
+  }
+};
+
+export const getSaleAnalysisProvider = async (period) => {
+  try {
+    console.log("welcome to provider chart")
+    const response = await providerInstance.get(`/providerchartdata/${period}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     console.log(response);
 
