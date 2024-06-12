@@ -191,33 +191,7 @@ const ProviderDetails = () => {
         throw new Error("No results found for the city");
       }
 
-      // const formData = new FormData();
-
-      // formData.append("images", link);
-      // formData.append("providerName", providerDetails.providerName);
-      // formData.append("providerRooms", providerDetails.providerRooms);
-      // formData.append("providerAddress", providerDetails.providerAddress);
-      // formData.append("ProviderCity", providerDetails.ProviderCity);
-      // formData.append("facilities", JSON.stringify(providerDetails.facilities));
-
-      // console.log("==-=====>", formData);
-      // const data = {
-      //   providerDetails,
-      //   link,
-      // };
-
-      // const response = await axiosInstance.post(`provider/savedata`, data, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // });
-
-      // if (response.status === 200) {
-      //   toast.success(response.data.message);
-      //   setTimeout(() => {
-      //     navigate("/provider/rooms");
-      //   }, 2000);
-      // }
+      
     } catch (error) {
       console.error(error);
       toast.error(error.response.data.message);
