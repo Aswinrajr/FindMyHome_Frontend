@@ -45,7 +45,7 @@ const SingleBookingDetails = () => {
           </div>
           <div className="bg-teal-100 rounded-md p-4 col-span-2">
             <h2 className="text-lg font-bold text-blue-600">Booking Details</h2>
-            <p className="text-red-600">Booking ID: {bookingData[2]._id}</p>
+            <p className="text-red-600">Booking ID: {bookingData[2].bookingId}</p>
             <p className="text-gray-800">Room Type: {bookingData[2].roomType}</p>
             <p className="text-gray-800">Amount: {bookingData[2].amount}</p>
             <p className="text-gray-800">Check in Date: {bookingData[2].checkInDate}</p>

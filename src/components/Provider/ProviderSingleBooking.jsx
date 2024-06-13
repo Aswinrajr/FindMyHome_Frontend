@@ -61,7 +61,7 @@ const ProviderSingleBooking = () => {
             <div className="space-y-2">
               <p className="text-red-600">
                 <span className="font-bold">Booking ID:</span>{" "}
-                {bookingData[1]._id}
+                {bookingData[1].bookingId}
               </p>
               <p className="text-gray-800">
                 <span className="font-bold">Room Type:</span>{" "}
