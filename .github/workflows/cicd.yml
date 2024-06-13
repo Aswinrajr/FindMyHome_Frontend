@@ -49,5 +49,5 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 5173:80 --name react_app-container  ${{ secrets.DOCKER_USERNAME }}/react_app:latest 
+          docker run -d -p 5173:80 --name react_app ${{ secrets.DOCKER_USERNAME }}/react_app:latest 
   
