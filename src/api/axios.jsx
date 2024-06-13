@@ -8,12 +8,8 @@ export const axiosInstance = axios.create({
   baseURL: route_url,
 });
 
-// let authToken = localStorage.getItem("accessToken");
 
-
-// const newToken = JSON.parse(authToken);
-// let token = newToken?.accessToken;
-
+ 
 
 
 

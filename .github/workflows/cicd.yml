@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,13 +34,18 @@ jobs:
             VITE_SERVER_ADMIN_ROUTE=${{ secrets.VITE_SERVER_ADMIN_ROUTE }}
             VITE_SERVER_PROVIDER_ROUTE=${{ secrets.VITE_SERVER_PROVIDER_ROUTE }}
 
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/react_app:latest
 
       - name: Stop and remove old container
         run: |
           docker stop react_app || true
-          docker rm react_app || true
+          docker rm react_app || true ffgf
 
       - name: Run Docker Container
         run: |
