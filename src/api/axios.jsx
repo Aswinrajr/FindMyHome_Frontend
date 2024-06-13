@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const route_url = import.meta.env.VITE_APP_NODE_ENV==="development"?import.meta.env.
+VITE_ADMIN_ROUTE :import.meta.env.
+VITE_SERVER_ADMIN_ROUTE 
+
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL_ROUTE,
+  baseURL: route_url,
 });
 
 // let authToken = localStorage.getItem("accessToken");

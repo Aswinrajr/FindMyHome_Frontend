@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const route_url = import.meta.env.VITE_APP_NODE_ENV==="development"?import.meta.env.VITE_PROVIDER_ROUTE:import.meta.env.VITE_SERVER_PROVIDER_ROUTE
+
 export const providerInstance = axios.create({
-  baseURL: import.meta.env.VITE_PROVIDER_ROUTE,
+  baseURL: route_url ,
 });
 
 providerInstance.interceptors.request.use(

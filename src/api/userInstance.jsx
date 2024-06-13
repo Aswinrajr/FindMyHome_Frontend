@@ -1,12 +1,14 @@
 import axios from "axios";
 
+const route_url = import.meta.env.VITE_APP_NODE_ENV==="development"?import.meta.env.VITE_BASE_URL_ROUTE:import.meta.env.VITE_SERVER_URL_ROUTE
+
 // let userToken = localStorage.getItem("userToken");
 
 // const newUserToken = JSON.parse(userToken);
 // let extractedToken = newUserToken?.userToken;
 
 export const userInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL_ROUTE,
+  baseURL: route_url,
 
 });
 
