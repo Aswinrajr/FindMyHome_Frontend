@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 5173:80 --name react_app \
+          docker run -d -p 5173:80 ${{ secrets.DOCKER_USERNAME }}/react_app:latest \
             -e VITE_ADMIN_ROUTE=${{ secrets.VITE_ADMIN_ROUTE }} \
             -e VITE_PROVIDER_ROUTE=${{ secrets.VITE_PROVIDER_ROUTE }} \
             -e VITE_BASE_URL_ROUTE=${{ secrets.VITE_BASE_URL_ROUTE }} \
