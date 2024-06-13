@@ -45,7 +45,7 @@ jobs:
       - name: Stop and remove old container
         run: |
           docker stop react_app || true
-          docker rm react_app || true ffgf
+          docker rm react_app || true
 
       - name: Run Docker Container
         run: |
