@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,11 +34,6 @@ jobs:
             VITE_SERVER_ADMIN_ROUTE=${{ secrets.VITE_SERVER_ADMIN_ROUTE }}
             VITE_SERVER_PROVIDER_ROUTE=${{ secrets.VITE_SERVER_PROVIDER_ROUTE }}
 
-  deploy:
-    needs: build
-    runs-on: self-hosted
-
-    steps:
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/react_app:latest
 
