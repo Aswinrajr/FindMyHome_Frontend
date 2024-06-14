@@ -8,7 +8,7 @@ export const getUserData = async () => {
   try {
     
     
-    const response = await axiosInstance.get(`/admin/users`, {
+    const response = await axiosInstance.get(`/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -28,7 +28,7 @@ export const getUserData = async () => {
 export const userActions = async (userId) => {
   try {
     const response = await axiosInstance.post(
-      `/admin/users/action`,
+      `/users/action`,
       { userId },
       {
         headers: {
@@ -50,7 +50,7 @@ export const userActions = async (userId) => {
 
 export const getProviderData = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/providers`, {
+    const response = await axiosInstance.get(`/providers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -70,7 +70,7 @@ export const getProviderData = async () => {
 export const providerActions = async (providerId) => {
   try {
     const response = await axiosInstance.get(
-      `/admin/providers/action/${providerId}`,
+      `/providers/action/${providerId}`,
 
       {
         headers: {
@@ -92,7 +92,7 @@ export const providerActions = async (providerId) => {
 
 export const getBookingData = async () => {
   try {
-    const response = await axiosInstance.get(`/admin/getallbookingdata`, {
+    const response = await axiosInstance.get(`/getallbookingdata`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -113,7 +113,7 @@ export const getBookingData = async () => {
 export const singleBookingDetails = async (id) => {
   try {
     console.log(id)
-    const response = await axiosInstance.get(`/admin/singlebookingdetails/${id}`, {
+    const response = await axiosInstance.get(`/singlebookingdetails/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -134,7 +134,7 @@ export const fetchOverallSalesData = async () => {
   try {
     console.log("Welcome to admin dashboard")
 
-     const response = await axiosInstance.get(`/admin/getdashboarddata`, {
+     const response = await axiosInstance.get(`/getdashboarddata`, {
       headers: {
          Authorization: `Bearer ${token}`,
       },
@@ -155,7 +155,7 @@ export const fetchOverallSalesData = async () => {
 export const fetchSalesDataGraph = async (period) => {
   try {
     console.log(period)
-    const response = await axiosInstance.post(`/admin/getgraphdata`,{period}, {
+    const response = await axiosInstance.post(`/getgraphdata`,{period}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -175,7 +175,7 @@ export const fetchSalesDataGraph = async (period) => {
 export const getAllOffers = async () => {
   try {
    
-    const response = await axiosInstance.get(`/admin/getalloffers`, {
+    const response = await axiosInstance.get(`/getalloffers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -195,7 +195,7 @@ export const getAllOffers = async () => {
 export const saveOfferData = async (offer) => {
   try {
    
-    const response = await axiosInstance.post(`/admin/saveofferdata`,offer, {
+    const response = await axiosInstance.post(`/saveofferdata`,offer, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -215,7 +215,7 @@ export const saveOfferData = async (offer) => {
 export const getProvider = async () => {
   try {
    
-    const response = await axiosInstance.get(`/admin/getallprovider`, {
+    const response = await axiosInstance.get(`/getallprovider`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -237,7 +237,7 @@ export const deleteOffer = async (id) => {
   try {
     console.log(id)
    
-    const response = await axiosInstance.delete(`/admin/deleteoffer/${id}`, {
+    const response = await axiosInstance.delete(`/deleteoffer/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -258,7 +258,7 @@ export const getAdminSaleAnalysis = async (period) => {
   try {
  
    
-    const response = await axiosInstance.get(`/admin/getgraphdata/${period}`, {
+    const response = await axiosInstance.get(`/getgraphdata/${period}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

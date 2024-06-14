@@ -3,8 +3,8 @@ import { axiosInstance } from "../../api/axios";
 export const adminLogin = async (email, password) => {
   try {
     console.log("Welcome to admin login")
-    console.log(email,password);
-    const response = await axiosInstance.post(`/admin/login`, {
+    console.log(email,password,axiosInstance);
+    const response = await axiosInstance.post(`/login`, {
       email,
       password,
     });

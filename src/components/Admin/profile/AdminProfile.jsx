@@ -27,7 +27,7 @@ const AdminProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axiosInstance.post(`/admin/adminprofile`, {
+      const response = await axiosInstance.post(`/adminprofile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -83,7 +83,7 @@ const AdminProfile = () => {
     };
 
     try {
-      const response = await axiosInstance.post(`/admin/changepassword`, data, {
+      const response = await axiosInstance.post(`/changepassword`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -149,7 +149,7 @@ const AdminProfile = () => {
         imageUrl,
       };
 
-      const response = await axiosInstance.post(`/admin/uploadimage`, data, {
+      const response = await axiosInstance.post(`/uploadimage`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
