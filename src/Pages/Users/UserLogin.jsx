@@ -190,6 +190,18 @@ const UserLogin = () => {
             >
               Forgot Password?
             </p>
+            <p
+              onClick={() => navigate("/provider")}
+              className="text-indigo-600 text-sm cursor-pointer hover:underline"
+            >
+             provider
+            </p>
+            <p
+              onClick={() => navigate("/admin")}
+              className="text-indigo-600 text-sm cursor-pointer hover:underline"
+            >
+              Admin
+            </p>
           </div>
         </form>
       </div>
