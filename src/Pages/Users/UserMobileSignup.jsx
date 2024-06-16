@@ -70,7 +70,6 @@ const UserMobileSignup = () => {
     setOtpError("");
   };
 
-
   const handleResendOtp = async () => {
     try {
       const response = await axios.post(`${baseUrl}/reqloginotp`, {
@@ -116,128 +115,134 @@ const UserMobileSignup = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-600 to-purple-800 flex justify-center items-center px-4 py-12">
-    <Toaster position="top-center" reverseOrder={false} />
-    <div className="bg-white rounded-xl shadow-xl overflow-hidden max-w-6xl w-full lg:grid lg:grid-cols-2 lg:max-h-[700px]">
-      <div className="relative lg:max-h-[700px]">
-        <img
-          src={imageUrl}
-          alt="Background Image"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center px-4">
-            Welcome to Our Community
-          </h1>
-        </div>
-      </div>
-      <div className="p-8 md:p-12 lg:p-16 lg:max-h-[700px] lg:overflow-y-auto flex flex-col justify-center">
-        <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="Logo" className="h-10 md:h-14 mb-4" />
-          <h2 className="text-2xl md:text-3xl font-bold text-indigo-600">
-            Join Our Community
-          </h2>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-8 mt-4">
-          <div className="space-y-4">
-            <label
-              htmlFor="mobile"
-              className="block text-gray-700 font-bold mb-1"
-            >
-              Mobile Number
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <FaMobileAlt className="text-gray-400" />
-              </div>
-              <input
-                type="text"
-                id="mobile"
-                value={mobile}
-                onChange={handleMobileChange}
-                maxLength={10}
-                className={`w-full py-3 pl-10 pr-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
-                  mobile.trim() === ""
-                    ? "border-gray-300"
-                    : phoneNumberError
-                    ? "border-red-500"
-                    : "border-green-500"
-                }`}
-                placeholder="Enter your mobile number"
-              />
-            </div>
-            {phoneNumberError && (
-              <p className="text-red-500 text-sm">{phoneNumberError}</p>
-            )}
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="bg-white rounded-xl shadow-xl overflow-hidden max-w-6xl w-full lg:grid lg:grid-cols-2 lg:max-h-[700px]">
+        <div className="relative lg:max-h-[700px]">
+          <img
+            src={imageUrl}
+            alt="Background Image"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-white text-center px-4">
+              Welcome to Our Community
+            </h1>
           </div>
-  
-          {!showOtpInput && (
-            <button
-              type="submit"
-              className={`bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
-                mobile.trim() === "" || phoneNumberError
-                  ? "cursor-not-allowed opacity-50"
-                  : ""
-              }`}
-              disabled={mobile.trim() === "" || phoneNumberError}
-            >
-              Request OTP
-            </button>
-          )}
-  
-          {showOtpInput && (
+        </div>
+        <div className="p-8 md:p-12 lg:p-16 lg:max-h-[700px] lg:overflow-y-auto flex flex-col justify-center">
+          <div className="flex flex-col items-center mb-8">
+            <img src={logo} alt="Logo" className="h-10 md:h-14 mb-4" />
+            <h2 className="text-2xl md:text-3xl font-bold text-indigo-600">
+              Join Our Community
+            </h2>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-8 mt-4">
             <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="otp"
-                  className="block text-gray-700 font-bold mb-1"
-                >
-                  Enter OTP
-                </label>
+              <label
+                htmlFor="mobile"
+                className="block text-gray-700 font-bold mb-1"
+              >
+                Mobile Number
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <FaMobileAlt className="text-gray-400" />
+                </div>
                 <input
                   type="text"
-                  id="otp"
-                  value={otp}
-                  onChange={handleOtpChange}
-                  className={`w-full py-3 px-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
-                    otp.trim() === ""
+                  id="mobile"
+                  value={mobile}
+                  onChange={handleMobileChange}
+                  maxLength={10}
+                  className={`w-full py-3 pl-10 pr-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
+                    mobile.trim() === ""
                       ? "border-gray-300"
-                      : otpError
+                      : phoneNumberError
                       ? "border-red-500"
                       : "border-green-500"
                   }`}
-                  placeholder="Enter OTP"
+                  placeholder="Enter your mobile number"
                 />
-                {otpError && (
-                  <p className="text-red-500 text-sm">{otpError}</p>
-                )}
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  disabled={remainingTime > 0}
-                  className={`text-indigo-600 text-sm hover:underline focus:outline-none ${
-                    remainingTime > 0 ? "cursor-not-allowed opacity-50" : ""
-                  }`}
-                >
-                  {remainingTime > 0
-                    ? `Resend OTP in ${remainingTime} seconds`
-                    : "Resend OTP"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirmOtp}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-300"
-                >
-                  Confirm OTP
-                </button>
-              </div>
+
+              {phoneNumberError && (
+                <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                  {phoneNumberError}
+                </p>
+              )}
             </div>
-          )}
-        </form>
+
+            {!showOtpInput && (
+              <button
+                type="submit"
+                className={`bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
+                  mobile.trim() === "" || phoneNumberError
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={mobile.trim() === "" || phoneNumberError}
+              >
+                Request OTP
+              </button>
+            )}
+
+            {showOtpInput && (
+              <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="otp"
+                    className="block text-gray-700 font-bold mb-1"
+                  >
+                    Enter OTP
+                  </label>
+                  <input
+                    type="text"
+                    id="otp"
+                    value={otp}
+                    onChange={handleOtpChange}
+                    className={`w-full py-3 px-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
+                      otp.trim() === ""
+                        ? "border-gray-300"
+                        : otpError
+                        ? "border-red-500"
+                        : "border-green-500"
+                    }`}
+                    placeholder="Enter OTP"
+                  />
+
+                  {otpError && (
+                    <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                      {otpError}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={remainingTime > 0}
+                    className={`text-indigo-600 text-sm hover:underline focus:outline-none ${
+                      remainingTime > 0 ? "cursor-not-allowed opacity-50" : ""
+                    }`}
+                  >
+                    {remainingTime > 0
+                      ? `Resend OTP in ${remainingTime} seconds`
+                      : "Resend OTP"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmOtp}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-300"
+                  >
+                    Confirm OTP
+                  </button>
+                </div>
+              </div>
+            )}
+          </form>
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 
