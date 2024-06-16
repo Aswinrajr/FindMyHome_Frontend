@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const SearchRooms = () => {
@@ -55,7 +55,6 @@ const SearchRooms = () => {
       !formData.adults ||
       !formData.children
     ) {
-      // toast.error("All fields are required");
       setError("All fields are required");
       setTimeout(() => {
         setError("");
@@ -65,7 +64,6 @@ const SearchRooms = () => {
 
     if (formData.checkIn > formData.checkOut) {
       setError("Selected date is invalid");
-      // toast.error("Selected date is invlid");
       setTimeout(() => {
         setError("");
       }, 1000);
@@ -74,8 +72,6 @@ const SearchRooms = () => {
 
     if (formData.checkIn < formattedDate || formData.checkOut < formattedDate) {
       setError("Selected date is invalid");
-
-      // toast.error("Selected date is invalid");
       setTimeout(() => {
         setError("");
       }, 1000);
@@ -121,8 +117,6 @@ const SearchRooms = () => {
       fetchData();
     } catch (err) {
       console.log(err);
-
-      // return toast.error("All fields are required")
     }
   };
 
@@ -150,54 +144,50 @@ const SearchRooms = () => {
   };
 
   return (
-    <section className="py-16 px-8 bg-gray-200">
+    <section className="py-16 px-4 md:px-8 bg-gray-200">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Search Rooms</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">Search Rooms</h2>
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col md:flex-row md:space-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               id="city"
               name="city"
               placeholder="City"
-              className="flex-1 p-2 border"
+              className="p-2 border rounded"
               onChange={handleChange}
             />
-
             <input
               type="date"
               name="checkIn"
               placeholder="Check-in"
-              className="flex-1 p-2 border"
+              className="p-2 border rounded"
               onChange={handleChange}
             />
-            <h1 className="text-red-500">{date}</h1>
             <input
               type="date"
               name="checkOut"
               placeholder="Check-out"
-              className="flex-1 p-2 border"
+              className="p-2 border rounded"
               onChange={handleChange}
             />
-            <h1 className="text-red-500">{date}</h1>
           </div>
-          <div className="flex flex-col md:flex-row md:space-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="number"
               name="adults"
               placeholder="Adults"
-              className="flex-1 p-2 border appearance-none"
+              className="p-2 border rounded"
               min="1"
               max="10"
               onChange={handleChange}
             />
-
             <input
               type="number"
               name="children"
               placeholder="Children"
-              className="flex-1 p-2 border appearance-none"
+              className="p-2 border rounded"
               min="0"
               max="10"
               onChange={handleChange}
