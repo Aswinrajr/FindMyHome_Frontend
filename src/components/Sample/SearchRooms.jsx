@@ -148,7 +148,7 @@ const SearchRooms = () => {
   };
 
   return (
-    <section className="py-16 px-4 md:px-8 bg-blue-100">
+<section className="py-16 px-4 md:px-8 bg-blue-50">
   <Toaster position="top-center" reverseOrder={false} />
   <div className="max-w-4xl mx-auto">
     <h2 className="text-3xl font-bold mb-8 text-blue-800 text-center">
@@ -166,20 +166,20 @@ const SearchRooms = () => {
         />
         <div className="grid grid-cols-2 gap-4">
           <input
-            type="date"
+            type="text"
             name="checkIn"
             className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
             onChange={handleChange}
-            placeholder="Select check-in date"
+            placeholder="Check-in Date"
             onFocus={(e) => (e.target.type = "date")}
             onBlur={(e) => (e.target.type = e.target.value ? "date" : "text")}
           />
           <input
-            type="date"
+            type="text"
             name="checkOut"
             className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
             onChange={handleChange}
-            placeholder="Select check-out date"
+            placeholder="Check-out Date"
             onFocus={(e) => (e.target.type = "date")}
             onBlur={(e) => (e.target.type = e.target.value ? "date" : "text")}
           />
@@ -205,7 +205,11 @@ const SearchRooms = () => {
           onChange={handleChange}
         />
       </div>
-      {error && <p className="text-red-500 text-lg mt-4">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
         className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
@@ -215,7 +219,6 @@ const SearchRooms = () => {
     </form>
   </div>
 </section>
-
   );
 };
 
