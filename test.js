@@ -1,161 +1,101 @@
-import { useState, useEffect, useRef } from "react";
-import { providerInstance } from "../../../api/providerAxiosInstance";
-import {
-  ProviderChats,
-  userChats,
-} from "../../../service/ChatService/ChatService";
-import ProviderConversation from "./ProviderConversation";
-import ProviderChatBox from "./ProviderChatBox";
 
-import { io } from "socket.io-client";
+// # FROM node:alpine3.18 as build
 
-const ProviderChat = () => {
-  const socket = useRef(null);
 
-  const [chats, setChats] = useState([]);
-  const [userData, setUserData] = useState(null);
-  const [currentChat, setCurrentChat] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState(null);
-  const [sendMessage, setSentMessage] = useState(null);
-  const [receiveMessage, setReceiveMessage] = useState(null);
-  const [provider, setProvider] = useState(false);
+// # ARG VITE_APP_NODE_ENV
+// # ARG VITE_SERVER_URL_ROUTE
+// # ARG VITE_SERVER_ADMIN_ROUTE
+// # ARG VITE_SERVER_PROVIDER_ROUTE
 
-  useEffect(() => {
-    const userToken = localStorage.getItem("providerAccessToken");
-    const newUserToken = userToken ? JSON.parse(userToken) : null;
-    const extractedToken = newUserToken?.providerAccessToken;
 
-    const fetchUserData = async () => {
-      if (extractedToken) {
-        try {
-          const response = await providerInstance.get(`/getprovider`, {
-            headers: {
-              Authorization: `Bearer ${extractedToken}`,
-            },
-          });
-          console.log("response in chat", response);
-          if (response.status === 200) {
-            setUserData(response.data.providerData);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error.response?.status);
-        }
-      }
-    };
+// # ENV VITE_APP_NODE_ENV =$VITE_APP_NODE_ENV
+// # ENV VITE_SERVER_URL_ROUTE=$VITE_SERVER_URL_ROUTE
+// # ENV VITE_SERVER_ADMIN_ROUTE = $VITE_SERVER_ADMIN_ROUTE
+// # ENV VITE_SERVER_PROVIDER_ROUTE=$VITE_SERVER_PROVIDER_ROUTE
 
-    fetchUserData();
 
-    return () => {
-      if (socket.current) {
-        socket.current.off("user-added");
-        socket.current.off("receive-message");
-        socket.current.disconnect();
-      }
-    };
-  }, []);
-  useEffect(() => {
-    if (chats.length > 0) {
-      setCurrentChat(chats[0]);
-    }
-  }, [chats]);
+// # WORKDIR /app
 
-  useEffect(() => {
-    if (userData) {
-      console.log("ProviderData", userData);
-      socket.current = io("http://localhost:8800");
-      socket.current.emit("new-user-add", userData._id);
 
-      socket.current.on("get-users", (user) => {
-        console.log("user", user);
-        setOnlineUsers((prevUsers) => [...(prevUsers || []), user]);
-      });
+// # COPY package.json package-lock.json ./
 
-      socket.current.on("receive-message", (data) => {
-        setReceiveMessage(data);
-      });
 
-      const getChats = async () => {
-        try {
-          const response = await ProviderChats(userData._id);
-          console.log("Response in fetching chat data", response.data);
-          setChats(response.data);
-          console.log("Total Chats", response.data);
-        } catch (error) {
-          console.error("Error fetching chat data:", error);
-        }
-      };
+// # RUN npm install
 
-      getChats();
-    }
-  }, [userData]);
 
-  useEffect(() => {
-    if (userData && socket.current) {
-      socket.current.emit("new-user-add", userData._id);
-    }
-  }, [userData]);
+// # COPY . .
 
-  useEffect(() => {
-    if (sendMessage !== null && socket.current) {
-      socket.current.emit("send-message", sendMessage);
-    }
-  }, [sendMessage]);
 
-  const checkOnlineStatus = (chat) => {
-    console.log("Chat===>", chat);
-    const chatMember = chat?.members?.find((member) => member !== userData._id);
-    console.log("chatmember", chatMember);
-    console.log("onlineusers", onlineUsers);
+// # RUN npm run build
 
-    const online = onlineUsers?.some(
-      (user) => user.userId === chatMember && user.socketId
-    );
-    return online;
-  };
+// # FROM nginx:1.23-alpine
 
-  const selectMessage = (chat) => {
-    setProvider(true);
-    setCurrentChat(chat);
-  };
 
-  return (
-    <div className="flex h-screen">
-      <div className="w-1/3 bg-gray-100 p-4">
-        <h2 className="text-xl font-semibold mb-4">Chat</h2>
-        {chats?.length > 0 ? (
-          chats.map((chat) => (
-            <div
-              key={chat._id}
-              onClick={() => selectMessage(chat)}
-              className="mb-2 cursor-pointer"
-            >
-              <ProviderConversation
-                data={chat}
-                currentUser={userData?._id}
-                online={checkOnlineStatus(chat)}
-              />
-            </div>
-          ))
-        ) : (
-          <p>No chats available</p>
-        )}
-      </div>
-      <div className="w-2/3 bg-gray-200 p-4">
-        {provider ? (
-          <ProviderChatBox
-            chat={currentChat}
-            currentUser={userData?._id}
-            userData={userData}
-            setSentMessage={setSentMessage}
-            receiveMessage={receiveMessage}
-            socket={socket}
-          />
-        ) : (
-          <p>Select a chat to start messaging</p>
-        )}
-      </div>
-    </div>
-  );
-};
+// # WORKDIR /usr/share/nginx/html
 
-export default ProviderChat;
+
+// # RUN rm -rf ./*
+
+
+// # COPY --from=build /app/dist .
+
+
+// # EXPOSE 80
+
+
+// # ENTRYPOINT ["nginx", "-g", "daemon off;"]
+
+
+// # name: Deploy React Application
+
+// # on:
+// #   push:
+// #     branches:
+// #       - master
+
+// # jobs:
+// #   build:
+// #     runs-on: ubuntu-latest
+
+// #     steps:
+// #       - name: Checkout Source
+// #         uses: actions/checkout@v2
+
+// #       - name: Set up Docker Buildx
+// #         uses: docker/setup-buildx-action@v1
+
+// #       - name: Log in to Docker Hub
+// #         uses: docker/login-action@v2
+// #         with:
+// #           username: ${{ secrets.DOCKER_USERNAME }}
+// #           password: ${{ secrets.DOCKER_PASSWORD }}
+
+// #       - name: Build and push Docker image
+// #         uses: docker/build-push-action@v2
+// #         with:
+// #           context: .
+// #           push: true
+// #           tags: ${{ secrets.DOCKER_USERNAME }}/react_app:latest
+// #           build-args: |
+// #             VITE_APP_NODE_ENV=production
+// #             VITE_SERVER_URL_ROUTE=${{ secrets.VITE_SERVER_URL_ROUTE }}
+// #             VITE_SERVER_ADMIN_ROUTE=${{ secrets.VITE_SERVER_ADMIN_ROUTE }}
+// #             VITE_SERVER_PROVIDER_ROUTE=${{ secrets.VITE_SERVER_PROVIDER_ROUTE }}
+
+// #   deploy:
+// #     needs: build
+// #     runs-on: self-hosted
+
+// #     steps:
+// #       - name: Pull image from Docker Hub
+// #         run: docker pull ${{ secrets.DOCKER_USERNAME }}/react_app:latest
+
+// #       - name: Stop and remove old container
+// #         run: |
+// #           docker rm -f react_app || true
+          
+
+// #       - name: Run Docker Container
+// #         run: |
+// #           docker run -d -p 5173:80 --name react_app ${{ secrets.DOCKER_USERNAME }}/react_app:latest 
+  
