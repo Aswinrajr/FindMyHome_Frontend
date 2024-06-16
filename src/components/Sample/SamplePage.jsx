@@ -8,7 +8,7 @@ import Footer from "./Footer";
 
 const SamplePage = () => {
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <TopBar />
       <Banner />
       <SearchRooms />
