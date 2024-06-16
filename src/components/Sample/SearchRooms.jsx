@@ -55,6 +55,7 @@ const SearchRooms = () => {
       !formData.adults ||
       !formData.children
     ) {
+      // toast.error("All fields are required");
       setError("All fields are required");
       setTimeout(() => {
         setError("");
@@ -64,6 +65,7 @@ const SearchRooms = () => {
 
     if (formData.checkIn > formData.checkOut) {
       setError("Selected date is invalid");
+      // toast.error("Selected date is invlid");
       setTimeout(() => {
         setError("");
       }, 1000);
@@ -72,6 +74,8 @@ const SearchRooms = () => {
 
     if (formData.checkIn < formattedDate || formData.checkOut < formattedDate) {
       setError("Selected date is invalid");
+
+      // toast.error("Selected date is invalid");
       setTimeout(() => {
         setError("");
       }, 1000);
@@ -144,65 +148,82 @@ const SearchRooms = () => {
   };
 
   return (
-    <section className="py-16 px-4 md:px-8 bg-gray-200">
-      <Toaster position="top-center" reverseOrder={false} />
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-center">Search Rooms</h2>
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              id="city"
-              name="city"
-              placeholder="City"
-              className="p-2 border rounded"
-              onChange={handleChange}
-            />
+    <section className="py-16 px-8 bg-blue-100">
+  <Toaster position="top-center" reverseOrder={false} />
+  <div className="max-w-4xl mx-auto">
+    <h2 className="text-3xl font-bold mb-8 text-blue-800">Search Rooms</h2>
+    <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+      <div className="flex flex-col space-y-4 md:flex-row md:space-x-4">
+        <div className="flex-1">
+          <input
+            type="text"
+            id="city"
+            name="city"
+            placeholder="City"
+            className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="flex-1 flex space-x-4">
+          <div className="flex-1">
             <input
               type="date"
               name="checkIn"
               placeholder="Check-in"
-              className="p-2 border rounded"
+              className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
               onChange={handleChange}
             />
+          </div>
+          <div className="flex-1">
             <input
               type="date"
               name="checkOut"
               placeholder="Check-out"
-              className="p-2 border rounded"
+              className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
               onChange={handleChange}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="number"
-              name="adults"
-              placeholder="Adults"
-              className="p-2 border rounded"
-              min="1"
-              max="10"
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="children"
-              placeholder="Children"
-              className="p-2 border rounded"
-              min="0"
-              max="10"
-              onChange={handleChange}
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Search
-          </button>
-        </form>
+        </div>
       </div>
-    </section>
+
+      <div className="flex flex-col space-y-4 md:flex-row md:space-x-4">
+        <div className="flex-1">
+          <input
+            type="number"
+            name="adults"
+            placeholder="Adults"
+            className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 appearance-none"
+            min="1"
+            max="10"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="flex-1">
+          <input
+            type="number"
+            name="children"
+            placeholder="Children"
+            className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 appearance-none"
+            min="0"
+            max="10"
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
+      >
+        Search
+      </button>
+    </form>
+  </div>
+</section>
   );
 };
 
