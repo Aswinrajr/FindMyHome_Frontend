@@ -46,38 +46,38 @@ const ProviderConversation = ({
   }, []);
 
   return (
-    <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md">
-      <div className="relative">
-        {online && (
-          <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-green-500 ring-2 ring-white" />
-        )}
-        <img
-          className="h-16 w-16 rounded-full object-cover"
-          src={providerData?.profilePicture || imagePic}
-          alt="Profile"
-        />
+    <div className="flex items-center p-4 bg-gray-800 rounded-lg shadow-md sm:flex-col sm:items-start">
+    <div className="relative sm:mb-2">
+      {online && (
+        <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-green-500 ring-2 ring-white" />
+      )}
+      <img
+        className="h-16 w-16 rounded-full object-cover"
+        src={providerData?.profilePicture || imagePic}
+        alt="Profile"
+      />
+    </div>
+    <div className="ml-4 flex-1 sm:ml-0">
+      <div className="font-semibold text-white">
+        {providerData?.providerName || providerData?.userName || "Unknown"}
       </div>
-      <div className="ml-4 flex-1">
-        <div className="font-semibold text-white">
-          {providerData?.providerName || providerData?.userName || "Unknown"}
+      {receiveMessage &&
+      recipientChatId === receiveMessage?.senderId &&
+      data._id === receiveMessage?.chatId ? (
+        <div className="flex justify-between items-center mt-2 mb-2 sm:flex-col sm:items-start">
+          <p className="text-white text-sm sm:mb-1">{receiveMessage?.text || ""}</p>
+          <p className="text-gray-400 text-xs">
+            {format(receiveMessage?.createdAt)}
+          </p>
         </div>
-        {receiveMessage &&
-        recipientChatId === receiveMessage?.senderId &&
-        data._id === receiveMessage?.chatId ? (
-          <div className="flex justify-between items-center mt-2 mb-2">
-            <p className="text-white text-sm">{receiveMessage?.text || ""}</p>
-            <p className="text-gray-400 text-xs">
-              {format(receiveMessage?.createdAt)}
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
-        <div className="text-sm text-gray-400">
-          {online ? "Online" : "Offline"}
-        </div>
+      ) : (
+        ""
+      )}
+      <div className="text-sm text-gray-400">
+        {online ? "Online" : "Offline"}
       </div>
     </div>
+  </div>
   );
 };
 

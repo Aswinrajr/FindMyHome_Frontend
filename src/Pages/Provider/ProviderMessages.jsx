@@ -8,7 +8,7 @@ function ProviderMessage() {
       <Topbar />
 
       <div className="flex flex-1 flex-col sm:flex-row">
-        <div className="w-full sm:w-64 bg-indigo-900">
+        <div className="w-full sm:w-64 bg-gray-900">
           <Sidebar />
         </div>
 

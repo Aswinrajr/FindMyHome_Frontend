@@ -113,9 +113,9 @@ const Chat = () => {
   return (
     <>
       <TopBar />
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100 ">
         <div className="w-full max-w-4xl mx-auto flex flex-col">
-          <div className="flex-grow bg-white shadow-lg overflow-hidden rounded-lg">
+          <div className="flex-grow bg-white shadow-lg overflow-hidden rounded-lg ">
             <ChatBox
               chat={chats}
               currentUser={userData?._id}

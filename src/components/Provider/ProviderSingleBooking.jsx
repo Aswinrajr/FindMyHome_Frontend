@@ -26,12 +26,13 @@ const ProviderSingleBooking = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-blue-600">
-        Booking Details
-      </h1>
-      {bookingData ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-100 rounded-lg p-8 shadow-lg">
-          <div className="bg-white rounded-lg p-6 shadow">
+    <h1 className="text-3xl font-bold text-center mb-8 text-blue-600">
+      Booking Details
+    </h1>
+    {bookingData ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg shadow-lg">
+        <div className="p-6 md:p-8">
+          <div className="bg-gray-100 rounded-lg p-6 shadow">
             <h2 className="text-xl font-bold text-blue-600 mb-4">
               User Details
             </h2>
@@ -54,7 +55,9 @@ const ProviderSingleBooking = () => {
               </p>
             </div>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow">
+        </div>
+        <div className="p-6 md:p-8">
+          <div className="bg-gray-100 rounded-lg p-6 shadow">
             <h2 className="text-xl font-bold text-blue-600 mb-4">
               Booking Details
             </h2>
@@ -98,10 +101,43 @@ const ProviderSingleBooking = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <p className="text-center text-gray-800">Loading...</p>
-      )}
-    </div>
+      </div>
+    ) : (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 6V18"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M16 12L18 14V10L16 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 12L6 10V14L8 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <p className="mt-4 text-gray-800">Loading...</p>
+        </div>
+      </div>
+    )}
+  </div>
   );
 };
 

@@ -22,6 +22,7 @@ const ProviderChat = () => {
   const [receiveMessage, setReceiveMessage] = useState(null);
   const [provider, setProvider] = useState(false);
 
+
   useEffect(() => {
     const providerToken = localStorage.getItem("providerAccessToken");
     const newProviderToken = providerToken ? JSON.parse(providerToken) : null;
@@ -125,58 +126,56 @@ const ProviderChat = () => {
   const selectMessage = (chat) => {
     setProvider(true);
     setCurrentChat(chat);
+ 
   };
 
   return (
-    <>
-      <TopBar />
-
-      <div className="flex h-screen">
-        <div className="w-1/3 bg-gray-100 p-4">
-          <h2 className="text-xl font-semibold mb-4">Chat</h2>
-          {chats?.length > 0 ? (
-            chats.map((chat) => (
-              <div
-                key={chat._id}
-                onClick={() => selectMessage(chat)}
-                className="mb-2 cursor-pointer"
-              >
-                <ProviderConversation
-                  data={chat}
-                  currentUser={providerData?._id}
-                  online={checkOnlineStatus(chat)}
-                  receiveMessage={receiveMessage}
-                />
-              </div>
-            ))
-          ) : (
-            <div className="bg-gray-100 border border-gray-300 rounded-md p-6 my-8">
-            <p className="text-gray-600 font-semibold text-center">
-             No chat available
-            </p>
-          </div>
-          )}
-        </div>
-        <div className="w-2/3 bg-gray-200 p-4">
-          {provider ? (
-            <ProviderChatBox
-              chat={currentChat}
+    <div className="flex flex-col md:flex-row h-screen">
+    <div className="w-full md:w-1/3 bg-gray-100 p-4">
+      <h2 className="text-xl font-semibold mb-4">Chat</h2>
+      {chats?.length > 0 ? (
+        chats.map((chat) => (
+          <div
+            key={chat._id}
+            onClick={() => selectMessage(chat)}
+            className="mb-2 cursor-pointer"
+          >
+            <ProviderConversation
+              data={chat}
               currentUser={providerData?._id}
-              userData={providerData}
-              setSentMessage={setSentMessage}
+              online={checkOnlineStatus(chat)}
               receiveMessage={receiveMessage}
-              socket={socket}
             />
-          ) : (
-            <div className="bg-gray-100 border border-gray-300 rounded-md p-6 my-8">
-              <p className="text-gray-600 font-semibold text-center">
-                Select a chat to start messaging
-              </p>
-            </div>
-          )}
+          </div>
+        ))
+      ) : (
+        <div className="bg-gray-100 border border-gray-300 rounded-md p-6 my-8">
+          <p className="text-gray-600 font-semibold text-center">
+            No chat available
+          </p>
         </div>
-      </div>
-    </>
+      )}
+    </div>
+    <div className="w-full md:w-2/3 bg-gray-200 p-4">
+      {provider ? (
+        <ProviderChatBox
+          chat={currentChat}
+          currentUser={providerData?._id}
+          userData={providerData}
+          setSentMessage={setSentMessage}
+          receiveMessage={receiveMessage}
+          socket={socket}
+         
+        />
+      ) : (
+        <div className="bg-gray-100 border border-gray-300 rounded-md p-6 my-8">
+          <p className="text-gray-600 font-semibold text-center">
+            Select a chat to start messaging
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
   );
 };
 

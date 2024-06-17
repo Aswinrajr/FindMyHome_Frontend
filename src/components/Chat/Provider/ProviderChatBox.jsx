@@ -100,80 +100,78 @@ const ProviderChatBox = ({
   const scroll = useRef();
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="w-3/4 mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-t-lg">
-            <div className="flex items-center">
-              <img
-                src={providerData?.profilePicture || imagePic}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <h2 className="text-lg font-semibold ml-4">
-                {providerData?.providerName ||
-                  providerData?.userName ||
-                  "Unknown"}
-              </h2>
-            </div>
-            <div className="text-gray-300">
-              {providerData ? "Online" : "Offline"}
-            </div>
+    <div className="flex h-screen justify-center items-center bg-gray-100">
+    <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg overflow-hidden sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white rounded-t-lg">
+          <div className="flex items-center">
+            <img
+              src={providerData?.profilePicture || imagePic}
+              alt="Profile"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <h2 className="text-lg font-semibold ml-4 truncate max-w-[150px] sm:max-w-[200px] md:max-w-[250px] lg:max-w-[300px] xl:max-w-none">
+              {providerData?.providerName || providerData?.userName || "Unknown"}
+            </h2>
           </div>
-
-          <div className="flex-grow p-4 overflow-y-auto">
-            {messages?.length > 0 ? (
-              messages?.map((message, index) => (
+          <div className="text-gray-300">
+            {providerData ? "Online" : "Offline"}
+          </div>
+        </div>
+  
+        <div className="flex-grow p-4 overflow-y-auto">
+          {messages?.length > 0 ? (
+            messages?.map((message, index) => (
+              <div
+                key={index}
+                ref={scroll}
+                className={`flex mb-4 ${
+                  message.senderId === currentUser
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
+              >
                 <div
-                  key={index}
-                  ref={scroll}
-                  className={`flex mb-4 ${
+                  className={`max-w-2/3 px-4 py-2 rounded-lg ${
                     message.senderId === currentUser
-                      ? "justify-end"
-                      : "justify-start"
+                      ? "bg-gray-800 text-white"
+                      : "bg-gray-200 text-gray-800"
                   }`}
                 >
-                  <div
-                    className={`max-w-2/3 px-4 py-2 rounded-lg ${
-                      message.senderId === currentUser
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
-                  >
-                    <p className="text-sm leading-tight">{message.text}</p>
-                    <div className="flex items-center mt-2">
-                      <span className="text-xs text-gray-400">
-                        {format(message.createdAt)}
-                      </span>
-                      {message.senderId === currentUser && (
-                        <span className="ml-2 text-xs text-gray-400">Sent</span>
-                      )}
-                    </div>
+                  <p className="text-sm leading-tight">{message.text}</p>
+                  <div className="flex items-center mt-2">
+                    <span className="text-xs text-gray-400">
+                      {format(message.createdAt)}
+                    </span>
+                    {message.senderId === currentUser && (
+                      <span className="ml-2 text-xs text-gray-400">Sent</span>
+                    )}
                   </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">No messages availables</p>
-            )}
-          </div>
-
-          <div className="flex items-center px-4 py-2 bg-gray-100 rounded-b-lg">
-            <InputEmoji
-              value={newMessage}
-              onChange={handleChange}
-              className="flex-grow mr-2 py-2 px-4 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
-              placeholder="Type your message..."
-            />
-            <button
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
-              onClick={handleSend}
-            >
-              Send
-            </button>
-          </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center">No messages available</p>
+          )}
+        </div>
+  
+        <div className="flex items-center px-4 py-2 bg-gray-100 rounded-b-lg">
+          <InputEmoji
+            value={newMessage}
+            onChange={handleChange}
+            className="flex-grow mr-2 py-2 px-4 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-800 sm:py-1 sm:px-2"
+            placeholder="Type your message..."
+          />
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600 sm:px-2 sm:py-1"
+            onClick={handleSend}
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

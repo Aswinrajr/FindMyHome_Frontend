@@ -1,9 +1,8 @@
 import Topbar from "../../components/Provider/layout/Topbar";
 import Sidebar from "../../components/Provider/layout/Sidebar";
+import ProviderChat from "../../components/Chat/Provider/ProviderChat"
 
-import ProviderSingleBooking from "../../components/Provider/ProviderSingleBooking";
-
-function ProviderViewBookings() {
+function ProviderChatPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Topbar />
@@ -15,7 +14,7 @@ function ProviderViewBookings() {
 
         <div className="flex-1 p-4 bg-gray-100">
           <div className="bg-white rounded-lg shadow-md p-4">
-            <ProviderSingleBooking />
+            <ProviderChat />
           </div>
         </div>
       </div>
@@ -23,4 +22,4 @@ function ProviderViewBookings() {
   );
 }
 
-export default ProviderViewBookings;
+export default ProviderChatPage;

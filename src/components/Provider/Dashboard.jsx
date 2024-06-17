@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import { FaDollarSign, FaCalendarCheck, FaCalendarTimes } from "react-icons/fa";
@@ -77,40 +77,40 @@ const Dashboard = () => {
 
   return (
     <div className="container p-2 mx-auto mt-10">
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
-      <FaDollarSign className="text-4xl text-blue-500 mb-2" />
-      <div className="text-lg font-semibold">Total Income</div>
-      <div className="text-xl">{salesData.totalSales}</div>
-    </div>
-    <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
-      <FaCalendarCheck className="text-4xl text-green-500 mb-2" />
-      <div className="text-lg font-semibold">Total Bookings</div>
-      <div className="text-xl">{salesData.orderNo}</div>
-    </div>
-    <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
-      <FaCalendarTimes className="text-4xl text-red-500 mb-2" />
-      <div className="text-lg font-semibold">Total Cancelled</div>
-      <div className="text-xl">{salesData.cancelledOrders}</div>
-    </div>
-  </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
+          <FaDollarSign className="text-4xl text-blue-500 mb-2" />
+          <div className="text-lg font-semibold">Total Income</div>
+          <div className="text-xl">{salesData.totalSales}</div>
+        </div>
+        <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
+          <FaCalendarCheck className="text-4xl text-green-500 mb-2" />
+          <div className="text-lg font-semibold">Total Bookings</div>
+          <div className="text-xl">{salesData.orderNo}</div>
+        </div>
+        <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
+          <FaCalendarTimes className="text-4xl text-red-500 mb-2" />
+          <div className="text-lg font-semibold">Total Cancelled</div>
+          <div className="text-xl">{salesData.cancelledOrders}</div>
+        </div>
+      </div>
 
-  <div className="flex justify-end mb-4 mt-8 mr-9 sm:mr-0">
-    <select
-      value={filterOption}
-      onChange={handleFilterChange}
-      className="p-2 border rounded-md"
-    >
-      <option>Select Period</option>
-      <option value="daily">Daily</option>
-      <option value="monthly">Monthly</option>
-      <option value="yearly">Yearly</option>
-    </select>
-  </div>
-  <div className="mt-8">
-    <ChartComponent data={salesData} />
-  </div>
-</div>
+      <div className="flex justify-end mb-4 mt-8 mr-9 sm:mr-0">
+        <select
+          value={filterOption}
+          onChange={handleFilterChange}
+          className="p-2 border rounded-md"
+        >
+          <option>Select Period</option>
+          <option value="daily">Daily</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div className="mt-8">
+        <ChartComponent data={salesData} />
+      </div>
+    </div>
   );
 };
 

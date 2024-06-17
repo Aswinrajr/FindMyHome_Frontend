@@ -33,6 +33,7 @@ import ProviderProfile from "../Pages/Provider/ProviderProfile";
 import LoginByOtp from "../components/Provider/LoginByOtp";
 import ProviderViewBookings from "../Pages/Provider/ProviderViewBookings.jsx";
 import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
+import ProviderChatPage from "../Pages/Provider/ProviderChatPage.jsx";
 
 //USER
 import UserLogin from "../Pages/Users/UserLogin";
@@ -62,7 +63,6 @@ import SuccessPage from "../components/User/SuccessPage.jsx";
 import FailurePage from "../components/User/FailurePage.jsx";
 import Chat from "../components/Chat/userChat/Chat.jsx";
 import Invoice from "../Pages/Users/Invoice.jsx";
-import ProviderChat from "../components/Chat/Provider/ProviderChat.jsx";
 import UserBookingReviewPage from "../Pages/Users/UserBookingReviewPage.jsx";
 
 const routerPage = createBrowserRouter([
@@ -152,7 +152,7 @@ const routerPage = createBrowserRouter([
       { path: "register", element: <FirebaseMobile /> },
       { path: "account", element: <ProviderCardPage /> },
       { path: "singlebookingdetails", element: <ProviderViewBookings /> },
-      { path: "chat", element: <ProviderChat /> },
+      { path: "chat", element: <ProviderChatPage /> },
     ],
   },
 
