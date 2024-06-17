@@ -12,18 +12,19 @@ const SearchedRoom = () => {
   };
   return (
     <div className="h-screen flex flex-col">
-      <TopBar />
-      <div className="flex flex-grow">
-        <div className="w-1/4 h-full overflow-y-auto">
+    <TopBar />
+    <div className="flex flex-grow">
+      <div className="w-full md:w-1/4 h-full overflow-y-auto">
         <Sidebar onFilterChange={handleFilterChange} />
-        </div>
-        <div className="w-3/4 h-full overflow-y-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+      </div>
+      <div className="w-full md:w-3/4 h-full overflow-y-auto p-4">
+        <div className="grid grid-cols-1 gap-4">
           <Roomcard filteredDatas={filteredDatas} />
-          </div>
         </div>
       </div>
     </div>
+  </div>
+  
   );
 };
 

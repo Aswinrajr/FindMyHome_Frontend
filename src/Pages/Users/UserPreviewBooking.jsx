@@ -150,156 +150,153 @@ const UserPreviewBooking = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      <TopBar />
-      <main className="flex-grow container mx-auto px-4 py-8">
-       
-        <div className="mb-4 flex justify-between">
-          <div>
-            <label htmlFor="sort-order" className="mr-2 font-medium">
-              Sort By:
-            </label>
-            <select
-              id="sort-order"
-              value={sortOrder}
-              onChange={(e) => handleSortChange(e.target.value)}
-              className="px-2 py-1 rounded-md border border-gray-300"
-            >
-              <option value="asc">Low to High Amount</option>
-              <option value="desc">High to Low Amount</option>
-            </select>
-          </div>
-          <div className="mt-4 flex justify-center">
-            <button
-              disabled={currentPage === 1}
-              onClick={goToPrevPage}
-              className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 rounded-md bg-gray-200">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={goToNextPage}
-              className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+    <TopBar />
+    <main className="flex-grow container mx-auto px-4 py-8">
+      <div className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <div className="mb-4 md:mb-0">
+          <label htmlFor="sort-order" className="mr-2 font-medium">
+            Sort By:
+          </label>
+          <select
+            id="sort-order"
+            value={sortOrder}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className="px-2 py-1 rounded-md border border-gray-300"
+          >
+            <option value="asc">Low to High Amount</option>
+            <option value="desc">High to Low Amount</option>
+          </select>
         </div>
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {sortedBookings.map((booking, index) => {
-            if (
-              index >= (currentPage - 1) * limit &&
-              index < currentPage * limit
-            ) {
-              return (
-                <div
-                  key={booking._id}
-                  className="relative p-4 border-b border-gray-200 last:border-b-0"
-                  onClick={() => navigate(`/getpreviewpage/${booking._id}`)}
-                >
-                  {renderSeal(booking.status)}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-5">
-                    <div>
-                      <Slider {...sliderSettings}>
-                        {booking.image.map((imageUrl, index) => (
-                          <div key={index}>
-                            <img
-                              src={`${imageUrl}`}
-                              alt={`Room ${index + 1}`}
-                              style={imageStyle}
-                              className="w-full h-64 rounded-lg object-cover"
-                            />
-                          </div>
-                        ))}
-                      </Slider>
-                    </div>
-                    <div className="flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                          Room Type: {booking.roomType}
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Booking Date:{" "}
-                              {`${booking.bookingDate}`.toString().split("T")[0]}
-                            </p>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Check-In Date:{" "}
-                              {`${booking.checkInDate}`.toString().split("T")[0]}
-                            </p>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Check-Out Date:{" "}
-                              {`${booking.checkOutDate}`.toString().split("T")[0]}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Amount: {booking.totalAmounttoPay}
-                            </p>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Adults: {booking.adults}
-                            </p>
-                            <p className="text-sm text-gray-700 font-medium mb-1">
-                              Children: {booking.children}
-                            </p>
-                          </div>
+        <div className="flex justify-center mt-4 md:mt-0">
+          <button
+            disabled={currentPage === 1}
+            onClick={goToPrevPage}
+            className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 rounded-md bg-gray-200">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={goToNextPage}
+            className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        {sortedBookings.map((booking, index) => {
+          if (index >= (currentPage - 1) * limit && index < currentPage * limit) {
+            return (
+              <div
+                key={booking._id}
+                className="relative p-4 border-b border-gray-200 last:border-b-0 cursor-pointer"
+                onClick={() => navigate(`/getpreviewpage/${booking._id}`)}
+              >
+                {renderSeal(booking.status)}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-5">
+                  <div>
+                    <Slider {...sliderSettings}>
+                      {booking.image.map((imageUrl, index) => (
+                        <div key={index}>
+                          <img
+                            src={`${imageUrl}`}
+                            alt={`Room ${index + 1}`}
+                            style={imageStyle}
+                            className="w-full h-64 rounded-lg object-cover"
+                          />
                         </div>
-                        <p className="text-sm text-gray-700 font-medium mb-2">
-                          Payment Mode: {booking.paymentMethod}
-                        </p>
-                        <p className="text-sm text-gray-700 font-medium mb-2">
-                          Status: {booking.status}
-                        </p>
-                        <p className="text-sm text-red-600 mb-4">
-                          Address: {booking.Adress}
-                        </p>
-                        <p className="text-sm text-red-600 mb-4">
-                          createdAt: {format(booking.createdAt)}
-                        </p>
+                      ))}
+                    </Slider>
+                  </div>
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                        Room Type: {booking.roomType}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Booking Date:{" "}
+                            {`${booking.bookingDate}`.toString().split("T")[0]}
+                          </p>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Check-In Date:{" "}
+                            {`${booking.checkInDate}`.toString().split("T")[0]}
+                          </p>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Check-Out Date:{" "}
+                            {`${booking.checkOutDate}`.toString().split("T")[0]}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Amount: {booking.totalAmounttoPay}
+                          </p>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Adults: {booking.adults}
+                          </p>
+                          <p className="text-sm text-gray-700 font-medium mb-1">
+                            Children: {booking.children}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-end space-x-4">
-                        <button
-                          onClick={() => handleCancel(booking._id)}
-                          className={`py-2 px-4 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                            booking.status === "cancel"
-                              ? "bg-red-500 text-white opacity-50 cursor-not-allowed :"
-                              : "bg-red-500 hover:bg-red-700  text-white"
-                          }`}
-                          disabled={booking.status === "cancel"}
-                        >
-                          {booking.status === "canceled"
-                            ? "Booking Canceled"
-                            : "Cancel Booking"}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleCreateChatRoom(
-                              booking.providerId,
-                              booking.userId,
-                              booking._id
-                            )
-                          }
-                          className="py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
-                        >
-                          <FaCommentAlt className="mr-2" />
-                          Chat
-                        </button>
-                      </div>
+                      <p className="text-sm text-gray-700 font-medium mb-2">
+                        Payment Mode: {booking.paymentMethod}
+                      </p>
+                      <p className="text-sm text-gray-700 font-medium mb-2">
+                        Status: {booking.status}
+                      </p>
+                      <p className="text-sm text-red-600 mb-4">
+                        Address: {booking.Adress}
+                      </p>
+                      <p className="text-sm text-red-600 mb-4">
+                        createdAt: {format(booking.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-end space-x-4">
+                      <button
+                        onClick={() => handleCancel(booking._id)}
+                        className={`py-2 px-4 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                          booking.status === "cancel"
+                            ? "bg-red-500 text-white opacity-50 cursor-not-allowed"
+                            : "bg-red-500 hover:bg-red-700 text-white"
+                        }`}
+                        disabled={booking.status === "cancel"}
+                      >
+                        {booking.status === "canceled"
+                          ? "Booking Canceled"
+                          : "Cancel Booking"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleCreateChatRoom(
+                            booking.providerId,
+                            booking.userId,
+                            booking._id
+                          )
+                        }
+                        className="py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+                      >
+                        <FaCommentAlt className="mr-2" />
+                        Chat
+                      </button>
                     </div>
                   </div>
                 </div>
-              );
-            }
-            return null;
-          })}
-        </div>
-      </main>
-      <Footer />
-    </div>
+              </div>
+            );
+          }
+          return null;
+        })}
+      </div>
+    </main>
+    <Footer />
+  </div>
+  
   );
 };
 

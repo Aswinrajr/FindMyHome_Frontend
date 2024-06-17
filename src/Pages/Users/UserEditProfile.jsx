@@ -140,120 +140,121 @@ const UserEditProfile = () => {
 
   return (
     <>
-      <TopBar />
-      <div className="container mx-auto mt-6 px-4 mb-6">
-        <Toaster position="top-center" reverseOrder={false}></Toaster>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="p-4 bg-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              User Edit Details
-            </h2>
-          </div>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-auto h-auto relative flex-shrink-0">
-                <img
-                  src={
-                    formData.imageUrl
-                      ? formData.imageUrl
-                      : formData.image
-                      ? `${baseUrl}/${formData.image}`
-                      : profileImage
-                  }
-                  alt="Profile"
-                  className="w-96 h-72 object-cover rounded-lg"
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="absolute bottom-0 left-0 cursor-pointer hover:bg-grey-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="flex flex-col flex-grow ml-32">
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Name:
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
+    <TopBar />
+    <div className="container mx-auto mt-6 px-4 mb-6">
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="p-4 bg-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            User Edit Details
+          </h2>
+        </div>
+        <div className="p-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between mb-6">
+            <div className="w-full lg:w-auto h-auto relative flex-shrink-0 mb-4 lg:mb-0">
+              <img
+                src={
+                  formData.imageUrl
+                    ? formData.imageUrl
+                    : formData.image
+                    ? `${baseUrl}/${formData.image}`
+                    : profileImage
+                }
+                alt="Profile"
+                className="w-full lg:w-96 h-72 object-cover rounded-lg"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="absolute bottom-0 left-0 cursor-pointer bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div className="flex flex-col w-full lg:w-auto lg:ml-8">
+              <form onSubmit={handleSubmit} className="w-full lg:w-auto">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Name:
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email:
+                  </label>
+                  <div className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
+                    {formData.email}
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email:
-                    </label>
-                    <div className="mt-1 p-2 w-3/4 border border-gray-300 bg-gray-200  rounded focus:outline-none focus:ring focus:border-blue-500">
-                      {formData.email}
-                    </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Mobile:
+                  </label>
+                  <div className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
+                    {formData.mobile}
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Mobile:
-                    </label>
-                    <div className="mt-1 p-2 w-3/4 border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
-                      {formData.mobile}
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Address:
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      id="address"
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      City:
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Gender:
-                    </label>
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Others">Others</option>
-                    </select>
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Address:
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    id="address"
+                    className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    City:
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Gender:
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full lg:w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
                   >
-                    Save Changes
-                  </button>
-                </form>
-              </div>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Save Changes
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
-      <Footer className="mt-6" />
-    </>
+    </div>
+    <Footer className="mt-6" />
+  </>
+  
   );
 };
 

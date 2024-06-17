@@ -90,36 +90,45 @@ const Roomcard = ({ filteredDatas }) => {
         const bookingDetails = response.data.bookingDetails;
 
         const htmlContent = `
-          <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center gap-4">
-            <h3 class="text-lg font-bold text-gray-800">Booking Summary</h3>
-            <div class="flex flex-col gap-2">
-              <span class="font-medium text-gray-700">Room Type:</span>
-              <span class="text-gray-600">${bookingDetails.roomType}</span>
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-medium text-gray-700">Guests:</span>
-              <span class="text-gray-600">Adults: ${bookingDetails.adults}, Children: ${bookingDetails.children}</span>
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-medium text-gray-700">Stay:</span>
-              <span class="text-gray-600">Number of Days: ${bookingDetails.numberOfDays}</span>
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-medium text-gray-700">Dates:</span>
-              <div class="flex flex-wrap gap-2">
-                <span class="text-gray-600">Check-in: ${bookingDetails.checkInDate}</span>
-                <span class="text-gray-600">Check-out: ${bookingDetails.checkOutDate}</span>
-              </div>
-            </div>
-            <div class="flex justify-between items-center gap-4">
-              <span class="font-medium text-gray-700">Amount:</span>
-              <span class="text-teal-500 font-medium">${bookingDetails.amount}</span>
-            </div>
-            <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
-              <span>Total Amount to Pay for ${bookingDetails.numberOfDays} days:</span>
-              <span>${bookingDetails.totalAmounttoPay} </span>
-            </div>
-          </div>
+          <div class="bg-white rounded-lg shadow-md p-6 sm:p-8 flex flex-col items-center gap-4">
+  <h3 class="text-lg font-bold text-gray-800">Booking Summary</h3>
+  
+  <div class="flex flex-col gap-2 w-full sm:w-auto">
+    <span class="font-medium text-gray-700">Room Type:</span>
+    <span class="text-gray-600">${bookingDetails.roomType}</span>
+  </div>
+  
+  <div class="flex flex-col gap-2 w-full sm:w-auto">
+    <span class="font-medium text-gray-700">Guests:</span>
+    <span class="text-gray-600">Adults: ${bookingDetails.adults}, Children: ${bookingDetails.children}</span>
+  </div>
+  
+  <div class="flex flex-col gap-2 w-full sm:w-auto">
+    <span class="font-medium text-gray-700">Stay:</span>
+    <span class="text-gray-600">Number of Days: ${bookingDetails.numberOfDays}</span>
+  </div>
+  
+  <div class="flex flex-col gap-2 w-full sm:w-auto">
+    <span class="font-medium text-gray-700">Dates:</span>
+    <div class="flex flex-wrap gap-2">
+      <span class="text-gray-600">Check-in: ${bookingDetails.checkInDate}</span>
+      <span class="text-gray-600">Check-out: ${bookingDetails.checkOutDate}</span>
+    </div>
+  </div>
+  
+  <div class="flex flex-col gap-2 w-full sm:w-auto">
+    <div class="flex justify-between items-center gap-4">
+      <span class="font-medium text-gray-700">Amount:</span>
+      <span class="text-teal-500 font-medium">${bookingDetails.amount}</span>
+    </div>
+    
+    <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
+      <span>Total Amount to Pay for ${bookingDetails.numberOfDays} days:</span>
+      <span>${bookingDetails.totalAmounttoPay} </span>
+    </div>
+  </div>
+</div>
+
         `;
 
         Swal.fire({
@@ -163,8 +172,7 @@ const Roomcard = ({ filteredDatas }) => {
                     }
                   } catch (err) {
                     console.log("Error in wallet payments", err);
-                    Swal.fire("Insufficient funds in wallet","", "error");
-                   
+                    Swal.fire("Insufficient funds in wallet", "", "error");
                   }
                 };
 
@@ -293,13 +301,13 @@ const Roomcard = ({ filteredDatas }) => {
   return (
     <div className="room-cards-container">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <input
           type="text"
           placeholder="Search by room type..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 sm:mb-0"
         />
         <div className="pagination flex items-center space-x-2">
           <button
@@ -346,7 +354,7 @@ const Roomcard = ({ filteredDatas }) => {
       {currentPageData?.map((item, index) => (
         <div
           key={index}
-          className="room-card bg-white shadow-md p-8 rounded-lg mb-4 flex flex-col md:flex-row"
+          className="room-card bg-white shadow-md p-4 rounded-lg mb-4 flex flex-col md:flex-row"
         >
           <div className="w-full md:w-1/2 pr-4">
             <Slider {...settings}>
@@ -356,13 +364,13 @@ const Roomcard = ({ filteredDatas }) => {
                     onClick={() => navigate(`roompreview/${item.room._id}`)}
                     src={`${image}`}
                     alt={`Room ${index} Image ${imageIndex}`}
-                    className="w-full h-48 mb-8 object-contain rounded-lg"
+                    className="w-full h-48 object-contain rounded-lg"
                   />
                 </div>
               ))}
             </Slider>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 mt-4 md:mt-0">
             <div className="flex flex-col h-full">
               <div className="bg-white border border-gray-200 rounded-lg shadow-md p-5">
                 <h3 className="text-xl font-semibold mb-2">
