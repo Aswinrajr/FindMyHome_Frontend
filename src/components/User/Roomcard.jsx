@@ -81,6 +81,21 @@ const Roomcard = ({ filteredDatas }) => {
     setCurrentPageData(slicedData);
   }, [currentPage, roomData]);
 
+  useEffect(() => {
+    const handleSearch = () => {
+      if (searchTerm.trim() !== "") {
+        const searchData = roomData.filter((item) =>
+          item.room.roomType.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setCurrentPageData(searchData.slice(0, itemsPerPage));
+        setCurrentPage(1);
+      } else {
+        setCurrentPageData(roomData.slice(0, itemsPerPage));
+      }
+    };
+    handleSearch();
+  }, [searchTerm, roomData]);
+
   const handleBook = async (roomId) => {
     const newData = { data };
 
@@ -242,7 +257,9 @@ const Roomcard = ({ filteredDatas }) => {
                 navigate("/failurepage", { state: { data: bookingDetails } });
               }, 1500);
             } else {
-              throw new Error("Error saving to cart or invalid response.");
+              throw new Error(
+                "Error saving              to cart or invalid response."
+              );
             }
           }
         } catch (error) {
