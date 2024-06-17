@@ -324,7 +324,7 @@ export const roomViewPage = async (id) => {
 
 export const bookRoomPage = async (roomId, data) => {
   try {
-    console.log("Welcome to get User  book room");
+    console.log("Welcome to get User  book room",roomId, data);
 
     const response = await userInstance.post(`/bookrooms/${roomId}`, data, {
       headers: {

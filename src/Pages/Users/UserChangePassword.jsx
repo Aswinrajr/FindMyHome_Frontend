@@ -31,7 +31,7 @@ const UserChangePassword = () => {
       if (newPassword !== confirmPassword) {
         setError("New password and confirm password must match");
         setTimeout(() => {
-          setError("")
+          setError("");
         }, 1000);
         return;
       }
@@ -134,7 +134,11 @@ const UserChangePassword = () => {
                 />
               </div>
 
-              {error && <p className="text-red-500">{error}</p>}
+              {error && (
+                <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                  {error}
+                </p>
+              )}
             </form>
             <div className="flex justify-center">
               <button

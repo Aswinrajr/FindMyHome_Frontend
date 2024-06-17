@@ -85,7 +85,7 @@ const UserWallet = () => {
               />
               <button
                 onClick={handleDeposit}
-                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300"
+                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300" disabled
               >
                 Deposit
               </button>
@@ -107,7 +107,7 @@ const UserWallet = () => {
               />
               <button
                 onClick={handleWithdraw}
-                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300"
+                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300" disabled
               >
                 Withdraw
               </button>

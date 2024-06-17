@@ -105,41 +105,50 @@ const Roomcard = ({ filteredDatas }) => {
         const bookingDetails = response.data.bookingDetails;
 
         const htmlContent = `
-          <div class="bg-white rounded-lg shadow-md p-6 sm:p-8 flex flex-col items-center gap-4">
-  <h3 class="text-lg font-bold text-gray-800">Booking Summary</h3>
+  <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+
   
-  <div class="flex flex-col gap-2 w-full sm:w-auto">
-    <span class="font-medium text-gray-700">Room Type:</span>
-    <span class="text-gray-600">${bookingDetails.roomType}</span>
-  </div>
-  
-  <div class="flex flex-col gap-2 w-full sm:w-auto">
-    <span class="font-medium text-gray-700">Guests:</span>
-    <span class="text-gray-600">Adults: ${bookingDetails.adults}, Children: ${bookingDetails.children}</span>
-  </div>
-  
-  <div class="flex flex-col gap-2 w-full sm:w-auto">
-    <span class="font-medium text-gray-700">Stay:</span>
-    <span class="text-gray-600">Number of Days: ${bookingDetails.numberOfDays}</span>
-  </div>
-  
-  <div class="flex flex-col gap-2 w-full sm:w-auto">
-    <span class="font-medium text-gray-700">Dates:</span>
-    <div class="flex flex-wrap gap-2">
-      <span class="text-gray-600">Check-in: ${bookingDetails.checkInDate}</span>
-      <span class="text-gray-600">Check-out: ${bookingDetails.checkOutDate}</span>
+  <div class="space-y-6">
+    <div class="flex justify-between items-center border-b pb-4">
+      <span class="text-gray-600">Room Type</span>
+      <span class="font-semibold text-gray-800">${bookingDetails.roomType}</span>
     </div>
-  </div>
-  
-  <div class="flex flex-col gap-2 w-full sm:w-auto">
-    <div class="flex justify-between items-center gap-4">
-      <span class="font-medium text-gray-700">Amount:</span>
-      <span class="text-teal-500 font-medium">${bookingDetails.amount}</span>
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Guests</span>
+      <div>
+        <span class="font-semibold text-gray-800">${bookingDetails.adults} Adults</span>
+       
+          <span class="font-semibold text-gray-800 ml-2">${bookingDetails.children} Children</span>
+      
+      </div>
     </div>
-    
-    <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
-      <span>Total Amount to Pay for ${bookingDetails.numberOfDays} days:</span>
-      <span>${bookingDetails.totalAmounttoPay} </span>
+
+    <div class="flex justify-between items-center border-b pb-4">
+      <span class="text-gray-600">Length of Stay</span>
+      <span class="font-semibold text-gray-800">${bookingDetails.numberOfDays} nights</span>
+    </div>
+
+    <div class="space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Check-in</span>
+        <span class="font-semibold text-gray-800">${bookingDetails.checkInDate}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Check-out</span>
+        <span class="font-semibold text-gray-800">${bookingDetails.checkOutDate}</span>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 mt-6">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Room Rate (per night)</span>
+        <span class="font-semibold text-gray-800">₹${bookingDetails.amount}</span>
+      </div>
+      <div class="flex justify-between items-center mt-4">
+        <span class="text-lg font-semibold text-gray-800">Total Amount to pay</span>
+        <span class="text-2xl font-bold text-green-600">₹${bookingDetails.totalAmounttoPay}</span>
+      </div>
     </div>
   </div>
 </div>

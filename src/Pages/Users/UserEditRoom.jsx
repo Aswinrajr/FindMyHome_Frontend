@@ -229,8 +229,11 @@ const UserEditRoom = () => {
               max={10}
               maxLength={1}
             />
+
             {adultErr && (
-              <p className="text-red-500 text-lg mt-2">{adultErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {adultErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -252,8 +255,11 @@ const UserEditRoom = () => {
               max={10}
               maxLength={1}
             />
+
             {childErr && (
-              <p className="text-red-500 text-lg mt-2">{childErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {childErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -275,8 +281,11 @@ const UserEditRoom = () => {
               min={300}
               maxLength={4}
             />
+
             {amountErr && (
-              <p className="text-red-500 text-lg mt-2">{amountErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {amountErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -340,9 +349,13 @@ const UserEditRoom = () => {
                 multiple
                 className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
+
               {imageErr && (
-                <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+                <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                  {imageErr}
+                </p>
               )}
+
               {loading && <BeatLoader color="#36d7b7" />}
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
