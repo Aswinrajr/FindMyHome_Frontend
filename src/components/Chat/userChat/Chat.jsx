@@ -38,7 +38,7 @@ const Chat = () => {
             setUserData(response.data.userData);
             console.log("UserData ===>", response.data.userData);
 
-            socket.current = io("http://13.237.43.242:8800");
+            socket.current = io("https://chat.findmyhomestay.online");
             socket.current.emit("new-user-add", response.data.userData._id);
 
             socket.current.on("user-added", (user) => {
