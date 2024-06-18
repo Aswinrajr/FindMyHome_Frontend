@@ -92,8 +92,8 @@ const AdminProfile = () => {
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsEditing(false);
-        setNewPassword("")
-        setConfirmPassword("")
+        setNewPassword("");
+        setConfirmPassword("");
       }
     } catch (error) {
       console.error("Error updating password:", error);
@@ -105,7 +105,7 @@ const AdminProfile = () => {
     setLoading(true);
     const data = new FormData();
     data.append("file", imageFile);
-    console.log("Image filr",imageFile)
+    console.log("Image filr", imageFile);
     data.append("upload_preset", "image_preset");
     try {
       console.log("Haii");
@@ -130,9 +130,9 @@ const AdminProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     console.log("=======>", file);
-    if(file.type!=="image/jpeg"){
-      toast.error("Selected image is invalid")
-      return
+    if (file.type !== "image/jpeg") {
+      toast.error("Selected image is invalid");
+      return;
     }
     setImageFile(file);
     setPreviewImage(URL.createObjectURL(file));
@@ -170,103 +170,97 @@ const AdminProfile = () => {
   if (!token) return <Navigate to="/admin" />;
   return (
     <div className="container mx-auto mt-6 px-4 mb-6">
-      <Toaster position="top-center" reverseOrder={false} />
-      <div className="bg-white shadow-md rounded-lg overflow-hidden relative">
-        <div className="p-4 bg-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Admin Profile
-          </h2>
+  <Toaster position="top-center" reverseOrder={false} />
+  <div className="bg-white shadow-md rounded-lg overflow-hidden relative">
+    <div className="p-4 bg-gray-200">
+      <h2 className="text-2xl font-semibold text-gray-800">Admin Profile</h2>
+    </div>
+    <div className="p-6">
+      <div className="flex flex-col md:flex-row items-center mb-6 relative">
+        <div className="w-auto h-72 relative mb-6 md:mb-0">
+          <img
+            src={previewImage ? previewImage : `${adminData.image}`}
+            alt="image"
+            className="w-60 h-56 object-contain rounded-lg"
+          />
+          <input
+            type="file"
+            className="mt-3 mb-4 border-rad"
+            accept="image/*"
+            id="img"
+            onChange={handleImageChange}
+          />
+          {imageSelected ? (
+            <button
+              className="rounded-md bg-blue-500 text-white px-4 py-2 mr-2 focus:outline-none"
+              onClick={handleImageUpload}
+            >
+              Upload Image
+            </button>
+          ) : (
+            <button
+              className="rounded-md bg-info-500 text-white px-4 py-2 mr-2 focus:outline-none "
+              disabled
+            >
+              Upload Image
+            </button>
+          )}
+
+          {loading && <BeatLoader color="#36d7b7" />}
         </div>
-        <div className="p-6">
-          <div className="flex items-center  mb-6 relative">
-            <div className="w-auto h-72 relative ">
-              <img
-                src={previewImage ? previewImage : `${adminData.image}`}
-                alt="image"
-                className="w-60 h-56 object-contain rounded-lg"
-              />
-              <input
-                type="file"
-                className="mt-3 mb-4 border-rad"
-                accept="image/*"
-                id="img"
-                onChange={handleImageChange}
-              />
-              {imageSelected ? (
-                <button
-                  className="rounded-md bg-blue-500 text-white px-4 py-2 mr-2 focus:outline-none"
-                  onClick={handleImageUpload}
-                >
-                  Upload Image
-                </button>
-              ) : (
-                <button
-                  className="rounded-md bg-info-500 text-white px-4 py-2 mr-2 focus:outline-none "
-                  disabled
-                >
-                  Upload Image
-                </button>
-              )}
-
-              {loading && <BeatLoader color="#36d7b7" />}
-            </div>
-            <div className="flex flex-col ml-40">
-              <h3 className="text-5xl font-bold text-gray-800">
-                {adminData.adminName}
-              </h3>
-              <p className="text-gray-600 text-2xl font-bold mb-2">
-                {adminData.adminEmail}
-              </p>
-              <p className="text-gray-600 text-2xl font-bold mb-2">
-                {adminData.adminMobile}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center mt-2 mb-4">
-            {isEditing ? (
-              <div className="flex items-center">
-                <input
-                  type="password"
-                  placeholder="New Password"
-                  className="rounded-md border border-gray-400 px-3 py-2 mr-2 focus:outline-none"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <input
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="rounded-md border border-gray-400 px-3 py-2 mr-2 focus:outline-none"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-
-                <button
-                  className="rounded-md bg-green-500 text-white px-4 py-2 mr-2 focus:outline-none"
-                  onClick={handleSavePassword}
-                >
-                  Save
-                </button>
-                <button
-                  className="rounded-md bg-gray-500 text-white px-4 py-2 focus:outline-none"
-                  onClick={() => setIsEditing(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <button
-                className="rounded-md bg-purple-500 text-white px-4 py-2 mr-2 focus:outline-none"
-                onClick={handleEditProfile}
-              >
-                <FaLock className="mr-2" />
-                Change Password
-              </button>
-            )}
-          </div>
-          {error && <p className="text-red-500">{error}</p>}
+        <div className="flex flex-col">
+          <h3 className="text-5xl font-bold text-gray-800">{adminData.adminName}</h3>
+          <p className="text-gray-600 text-2xl font-bold mb-2">{adminData.adminEmail}</p>
+          <p className="text-gray-600 text-2xl font-bold mb-2">{adminData.adminMobile}</p>
         </div>
       </div>
+      <div className="flex flex-col md:flex-row items-center mt-2 mb-4">
+        {isEditing ? (
+          <div className="flex flex-col md:flex-row items-center">
+            <input
+              type="password"
+              placeholder="New Password"
+              className="rounded-md border border-gray-400 px-3 py-2 mr-2 mb-2 md:mb-0 focus:outline-none"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="rounded-md border border-gray-400 px-3 py-2 mr-2 mb-2 md:mb-0 focus:outline-none"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
+            <button
+              className="rounded-md bg-green-500 text-white px-4 py-2 mr-2 focus:outline-none mt-2 md:mt-0"
+              onClick={handleSavePassword}
+            >
+              Save
+            </button>
+            <button
+              className="rounded-md bg-gray-500 text-white px-4 py-2 focus:outline-none mt-2 md:mt-0"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <div className="flex justify-center md:justify-start">
+            <button
+              className="rounded-md bg-purple-500 text-white px-4 py-2 mr-2 focus:outline-none flex items-center"
+              onClick={handleEditProfile}
+            >
+              <FaLock className="mr-2" />
+              Change Password
+            </button>
+          </div>
+        )}
+      </div>
+      {error && <p className="text-red-500">{error}</p>}
     </div>
+  </div>
+</div>
   );
 };
 

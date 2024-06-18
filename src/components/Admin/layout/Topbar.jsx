@@ -22,27 +22,26 @@ const Topbar = () => {
   }, []);
 
   return (
-    <div  className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between">
+    <div className="bg-gray-900 text-white py-4 px-6 flex items-center justify-between">
       <div className="flex items-center">
         <img src={logoImage} alt="Logo" className="h-8 mr-4" />
       </div>
 
-      
       <div className="flex items-center">
-        <div className="flex items-center mr-4">
-          <span className="text-sm font-semibold mr-4">{email}</span>
-          <span
-            onClick={() => navigate("/admin/profile")}
-            className="text-sm font-semibold cursor-pointer mr-4"
-          >
-            Accounts
-          </span>
-          <img
-            src={imagePath ? `${imagePath}` : profilePic}
-            alt="Profile"
-            className="h-8 rounded-full"
-          />
-        </div>
+        <span className="text-sm font-semibold mr-4 hidden sm:inline">
+          {email}
+        </span>
+        <span
+          onClick={() => navigate("/admin/profile")}
+          className="text-sm font-semibold cursor-pointer mr-4"
+        >
+          Accounts
+        </span>
+        <img
+          src={imagePath ? `${imagePath}` : profilePic}
+          alt="Profile"
+          className="h-8 rounded-full"
+        />
       </div>
     </div>
   );

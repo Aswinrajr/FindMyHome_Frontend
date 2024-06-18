@@ -2,7 +2,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logoutAdmin } from "../../../features/adminAuth";
-import { FaHome, FaUser, FaUsers, FaBriefcase, FaEnvelope, FaCog, FaQuestionCircle, FaSignOutAlt ,FaTag } from "react-icons/fa";
+import {
+  FaHome,
+  FaUser,
+  FaUsers,
+  FaBriefcase,
+  FaEnvelope,
+  FaSignOutAlt,
+  FaTag,
+  FaBars,
+} from "react-icons/fa";
 import axios from "axios";
 
 const Sidebar = () => {
@@ -14,6 +23,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeMessagesCount, setActiveMessagesCount] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
     const fetchActiveMessagesCount = async () => {
@@ -23,7 +33,6 @@ const Sidebar = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("==-==>", response);
         if (response.status === 200) {
           setActiveMessagesCount(response.data.count || 0);
         } else {
@@ -35,17 +44,34 @@ const Sidebar = () => {
     };
 
     fetchActiveMessagesCount();
-  }, []);
+  }, [adminUrl, token]);
 
   const handleLogout = () => {
     dispatch(logoutAdmin());
     navigate("/admin");
   };
 
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <div className="bg-gray-900 text-white h-full flex flex-col">
-      <div className="flex flex-col py-4 px-6 border-b border-gray-800">
-        <h2 className="text-lg font-semibold mb-2">Menu</h2>
+    <div className="bg-gray-900 text-white h-full flex flex-col md:w-64">
+      <div className="md:hidden flex justify-between items-center py-4 px-6 border-b border-gray-800">
+        <h2 className="text-lg font-semibold">Menu</h2>
+        <button
+          onClick={toggleSidebar}
+          className="text-white focus:outline-none"
+        >
+          <FaBars />
+        </button>
+      </div>
+      <div
+        className={`flex flex-col py-4 px-6 border-b border-gray-800 ${
+          isCollapsed ? "hidden" : "block"
+        } md:block`}
+      >
+        <h2 className="text-lg font-semibold mb-2 hidden md:block">Menu</h2>
         <ul className="space-y-2">
           <li
             className={`mb-4 ${
@@ -54,7 +80,7 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/dashboard"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaHome className="mr-2" />
               Dashboard
@@ -67,7 +93,7 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/users"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaUser className="mr-2" />
               Users
@@ -80,7 +106,7 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/providers"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaUsers className="mr-2" />
               Providers
@@ -93,7 +119,7 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/bookings"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaBriefcase className="mr-2" />
               Bookings
@@ -106,29 +132,15 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/messages"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaEnvelope className="mr-2" />
-              Messages{" "}
+              Messages
               {activeMessagesCount > 0 && (
                 <span className="bg-yellow-400 text-black rounded-full px-2 ml-2">
                   {activeMessagesCount}
                 </span>
               )}
-            </Link>
-          </li>
-
-          <li
-            className={`mb-4 ${
-              location.pathname === "/admin/settings" ? "text-yellow-400" : ""
-            }`}
-          >
-            <Link
-              to="/admin/settings"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
-            >
-              <FaCog className="mr-2" />
-              Settings
             </Link>
           </li>
           <li
@@ -138,24 +150,10 @@ const Sidebar = () => {
           >
             <Link
               to="/admin/offers"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
+              className="py-2 px-4 hover:text-yellow-400 flex items-center"
             >
               <FaTag className="mr-2" />
               Offers
-            </Link>
-          </li>
-
-          <li
-            className={`mb-4 ${
-              location.pathname === "/admin/help" ? "text-yellow-400" : ""
-            }`}
-          >
-            <Link
-              to="/admin/help"
-              className="block py-2 px-4 hover:text-yellow-400 flex items-center"
-            >
-              <FaQuestionCircle className="mr-2" />
-              Help
             </Link>
           </li>
         </ul>

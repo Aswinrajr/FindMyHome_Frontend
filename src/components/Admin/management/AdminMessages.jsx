@@ -54,35 +54,36 @@ const AdminMessages = () => {
     }
   };
   return (
-    <div>
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
-      {userData.map((user, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg mb-4"
-        >
-          <div className="flex-grow">
-            <p className="text-lg font-semibold">
-              {user.userName} is requested to become a Rentify.
-            </p>
-          </div>
-          <div className="ml-4">
-            <button
-              onClick={() => handleConfirm("accept", user.userEmail)}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Accept
-            </button>
-            <button
-              onClick={() => handleConfirm("reject", user.userEmail)}
-              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
-            >
-              Reject
-            </button>
-          </div>
+    <div className="px-4 py-6 sm:px-6 lg:px-8">
+    <Toaster position="top-center" reverseOrder={false}></Toaster>
+    {userData.map((user, index) => (
+      <div
+        key={index}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white shadow-md rounded-lg mb-4"
+      >
+        <div className="flex-grow">
+          <p className="text-lg font-semibold">
+            {user.userName} is requested to become a Rentify.
+          </p>
         </div>
-      ))}
-    </div>
+        <div className="flex mt-4 sm:mt-0 sm:ml-4">
+          <button
+            onClick={() => handleConfirm("accept", user.userEmail)}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+          >
+            Accept
+          </button>
+          <button
+            onClick={() => handleConfirm("reject", user.userEmail)}
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+  
   );
 };
 
