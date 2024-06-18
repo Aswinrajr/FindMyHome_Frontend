@@ -37,13 +37,13 @@ const Chat = () => {
             console.log("UserData ===>", response.data.userData);
 
             console.log("Connecting to socket...");
-            socket.current = io("https://chat.findmyhomestay.online:8800");
-
-            socket.current.on("connect", () => {
+            socket.current = io("https://chat.findmyhomestay.online:8800");   
+      
+            socket.current.on("connect", () => {   
               console.log("Connected to socket server with id: ", socket.current.id);
-              socket.current.emit("new-user-add", response.data.userData._id);
+              socket.current.emit("new-user-add", response.data.userData._id);  
             });
-
+    
             socket.current.on("user-added", (user) => {
               console.log("User added: ", user);
               setOnlineUsers((prevUsers) => [...prevUsers, user]);
