@@ -37,7 +37,7 @@ const Chat = () => {
             console.log("UserData ===>", response.data.userData);
 
             console.log("Connecting to socket...");
-            socket.current = io("https://findmyhomestay.online:8800");
+            socket.current = io("https://chat.findmyhomestay.online:8800");
 
             socket.current.on("connect", () => {
               console.log("Connected to socket server with id: ", socket.current.id);
