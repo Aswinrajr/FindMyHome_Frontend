@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { userInstance } from "../../../api/userInstance";
 import { userChats } from "../../../service/ChatService/ChatService";
 import TopBar from "../../../components/Sample/TopBar";
-import Conversation from "./Conversation";
 import ChatBox from "./ChatBox";
 import { io } from "socket.io-client";
 import { useLocation } from "react-router";
@@ -15,7 +14,6 @@ const Chat = () => {
 
   const [chats, setChats] = useState([]);
   const [userData, setUserData] = useState(null);
-  const [currentChat, setCurrentChat] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [sendMessage, setSentMessage] = useState(null);
   const [receiveMessage, setReceiveMessage] = useState(null);
@@ -38,15 +36,26 @@ const Chat = () => {
             setUserData(response.data.userData);
             console.log("UserData ===>", response.data.userData);
 
+            console.log("Connecting to socket...");
             socket.current = io("https://findmyhomestay.online:8800");
-            socket.current.emit("new-user-add", response.data.userData._id);
+
+            socket.current.on("connect", () => {
+              console.log("Connected to socket server with id: ", socket.current.id);
+              socket.current.emit("new-user-add", response.data.userData._id);
+            });
 
             socket.current.on("user-added", (user) => {
-              console.log("user", user);
+              console.log("User added: ", user);
               setOnlineUsers((prevUsers) => [...prevUsers, user]);
             });
+
             socket.current.on("receive-message", (data) => {
+              console.log("Message received: ", data);
               setReceiveMessage(data);
+            });
+
+            socket.current.on("disconnect", () => {
+              console.log("Socket disconnected");
             });
           }
         } catch (error) {
@@ -59,8 +68,7 @@ const Chat = () => {
 
     return () => {
       if (socket.current) {
-        socket.current.off("user-added");
-        socket.current.off("receive-message");
+        console.log("Disconnecting socket...");
         socket.current.disconnect();
       }
     };
@@ -69,11 +77,11 @@ const Chat = () => {
   const checkOnlineStatus = (chat) => {
     console.log("Chat===>", chat);
     const chatMember = chat?.members?.find((member) => member !== userData._id);
-    console.log("chatmember", chatMember);
-    console.log("onlineusers", onlineUsers);
+    console.log("Chat member:", chatMember);
+    console.log("Online users:", onlineUsers);
 
     if (onlineUsers.length > 0) {
-      const online = onlineUsers?.some(
+      const online = onlineUsers.some(
         (user) => user.userId === chatMember && user.socketId
       );
       return online;
