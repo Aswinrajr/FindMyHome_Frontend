@@ -194,7 +194,7 @@ const UserPreviewBooking = () => {
               <div
                 key={booking._id}
                 className="relative p-4 border-b border-gray-200 last:border-b-0 cursor-pointer"
-                onClick={() => navigate(`/getpreviewpage/${booking._id}`)}
+                
               >
                 {renderSeal(booking.status)}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-5">
@@ -207,6 +207,7 @@ const UserPreviewBooking = () => {
                             alt={`Room ${index + 1}`}
                             style={imageStyle}
                             className="w-full h-64 rounded-lg object-cover"
+                            onClick={() => navigate(`/getpreviewpage/${booking._id}`)}
                           />
                         </div>
                       ))}
