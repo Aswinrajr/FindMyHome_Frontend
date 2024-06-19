@@ -1,7 +1,5 @@
 {
-  "routes": [
-    { "source": "/", "destination": "/" },
-    { "source": "/provider", "destination": "/" }
-    
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
