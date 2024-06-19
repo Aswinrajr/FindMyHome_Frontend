@@ -60,7 +60,7 @@ const ProviderChat = () => {
   useEffect(() => {
     if (providerData) {
       console.log("ProviderData", providerData);
-      socket.current = io("http://localhost:8800");
+      socket.current = io("https://chat.findmyhomestay.online");
       socket.current.emit("new-user-add", providerData._id);
 
       socket.current.on("get-users", (user) => {
