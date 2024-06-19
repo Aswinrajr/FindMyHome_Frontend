@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/src/router/RouterPage.jsx" }
+    { "source": "/(.*)", "destination": "./index.html" }
   ]
 }
