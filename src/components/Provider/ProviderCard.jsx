@@ -56,7 +56,7 @@ const ProviderCard = () => {
 
     try {
       const response = await changePassword(data);
-      console.log("Password change",response)
+      
 
       if (response.status === 200) {
         toast.success(response.data.message);

@@ -5,13 +5,13 @@ import { Navigate, useNavigate } from "react-router";
 
 const AdminMessages = () => {
   let token = localStorage.getItem("accessToken")
-  console.log("In users list",token)
-  const newToken =JSON.parse(token)
-  token = newToken?.accessToken
-  console.log("New Token",token)
   const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
-  const [userData, setUserData] = useState([]);
+
+  const newToken =JSON.parse(token)
   const navigate = useNavigate();
+  token = newToken?.accessToken
+  const [userData, setUserData] = useState([]);              
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,7 +21,7 @@ const AdminMessages = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data.data);
+   
         setUserData(response.data.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -40,9 +40,9 @@ const AdminMessages = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+     
       const newUserdata = userData.filter((data)=>data.userEmail!==email)
-      console.log("newUserdata",newUserdata)
+    
       toast.success(`User role ${action} successfully`);
       setUserData(newUserdata)
       setTimeout(() => {

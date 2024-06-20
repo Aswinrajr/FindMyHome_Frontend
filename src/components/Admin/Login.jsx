@@ -1,11 +1,10 @@
 import  { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
-
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdmin } from "../../features/adminAuth";
 import ClipLoader from "react-spinners/ClipLoader";
+import logo from "../../assets/Screenshot_2024-01-12_004511-removebg-preview (1).png";
 
 import { adminLogin } from "../../service/Admin/LoginServices";
 
@@ -78,9 +77,9 @@ const Login = () => {
     }
 
     try {
-      console.log("Before API Call");
+     
       const response = await adminLogin(email, password);
-      console.log("After API Call:", response);
+    
 
       if (response.status === 200) {
         dispatch(setAdmin(response.data.token));

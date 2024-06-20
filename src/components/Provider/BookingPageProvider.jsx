@@ -154,7 +154,7 @@ const BookingPageProvider = () => {
             >
               <td className="px-6 py-4">
                 <img
-                  src={booking.image[0]}
+                  src={booking?.user?.image||userImage}
                   alt={booking.user?.name || "User Image"}
                   className="h-10 w-10 rounded-full"
                 />

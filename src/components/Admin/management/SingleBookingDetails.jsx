@@ -3,15 +3,15 @@ import { useLocation } from "react-router";
 import { singleBookingDetails } from "../../../service/Admin/ManagementService";
 
 const SingleBookingDetails = () => {
-  const [bookingData, setBookingData] = useState(null);
   const location = useLocation();
+  const [bookingData, setBookingData] = useState(null);
   const { id } = location.state;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await singleBookingDetails(id);
-        console.log("Response: ", response);
+    
         if (Array.isArray(response.data.data)) {
           setBookingData(response.data.data);
         }
@@ -22,7 +22,7 @@ const SingleBookingDetails = () => {
     fetchData();
   }, [id]);
 
-  console.log("==>", bookingData);
+
 
   return (
     <div className="container mx-auto px-4 py-8">

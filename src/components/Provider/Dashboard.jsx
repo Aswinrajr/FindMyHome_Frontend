@@ -46,7 +46,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const data = await providerDashboard();
-        console.log("Data==>", data.data);
+       
         setSalesData(data.data.salesData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const handleFilterChange = async (e) => {
     const selectedOption = e.target.value;
     setFilterOption(selectedOption);
-    console.log("Filter", selectedOption);
+  
     try {
       const response = await getSaleAnalysisProvider(selectedOption);
       console.log(response);

@@ -12,7 +12,6 @@ const ProviderRooms = () => {
 
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
-  console.log("Welcome to get provider rooms---------", token);
 
   const [rooms, setRooms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,10 +29,8 @@ const ProviderRooms = () => {
     const fetchRooms = async () => {
       try {
         const response = await getRoomData();
-        console.log("=====>", response);
 
         setRooms(response);
-        console.log("response.data", response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }

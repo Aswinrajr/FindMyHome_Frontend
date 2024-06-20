@@ -172,7 +172,7 @@ const AddRooms = () => {
     for (let i = 0; i < files.length; i++) {
       formData.append("images", files[i]);
     }
-    console.log(formData);
+   
 
     try {
       const response = await addRooms(data);

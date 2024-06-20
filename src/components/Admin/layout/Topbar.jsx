@@ -13,7 +13,6 @@ const Topbar = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosInstance.get(`/adminimage`);
-      console.log(response);
 
       setImagePath(response.data.imagePath);
       setEmail(response.data.email);

@@ -16,7 +16,7 @@ const Topbar = () => {
     const fetchProvider = async () => {
       try {
         const response = await verifyProvider();
-        console.log("---->",response)
+       
 
         setEmail(response.data.providerData);
       } catch (err) {

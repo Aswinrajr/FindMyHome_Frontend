@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import {
   getProviderData,
@@ -9,15 +9,14 @@ import profilePic from "../../../assets/profile_demo.avif";
 
 const Providers = () => {
   let token = localStorage.getItem("accessToken");
-
   const newToken = JSON.parse(token);
   token = newToken?.accessToken;
 
   const [providers, setProviders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 3;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProviders, setFilteredProviders] = useState([]);
+  const perPage = 3;
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -90,7 +89,7 @@ const Providers = () => {
     if (confirmation.isConfirmed) {
       try {
         const response = await providerActions(providerId);
-        console.log(response);
+    
         const updatedProviders = providers.map((provider) => {
           if (provider._id === providerId) {
             provider.status =

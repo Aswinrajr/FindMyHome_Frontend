@@ -54,7 +54,7 @@ const ProviderLogin = () => {
     try {
       const response = await providerLogin(email, password);
 
-      console.log("response: ", response);
+     
 
       if (response.status === 200) {
         dispatch(setProvider(response.data.token));
@@ -67,13 +67,13 @@ const ProviderLogin = () => {
           navigate("/provider/dashboard");
         }, 2000);
       } else if (response.response.status === 401) {
-        console.log(response.response.data.msg);
+       
         toast.error(response.response.data.msg);
       } else {
         toast.error(response.response.data.msg);
       }
     } catch (error) {
-      console.log("response===> ", error.response.response.data.msg);
+     
       toast.error(error.response.data.msg);
       console.error("Error:", error);
     } finally {

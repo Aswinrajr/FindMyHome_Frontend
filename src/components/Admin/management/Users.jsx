@@ -16,9 +16,9 @@ const Users = () => {
 
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 3;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const perPage = 3;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -90,7 +90,7 @@ const Users = () => {
     if (confirmation.isConfirmed) {
       try {
         const response = await userActions(userId);
-        console.log(response);
+      
 
         const updatedUsers = users.map((user) => {
           if (user._id === userId) {

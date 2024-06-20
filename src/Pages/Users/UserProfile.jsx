@@ -64,6 +64,7 @@ const UserProfile = () => {
     navigate(`/${path}`);
   };
   if (!user) return <Navigate to="/" />;
+  console.log("userData",userData.image)
 
   return (
     <>
@@ -83,7 +84,7 @@ const UserProfile = () => {
             <div className="flex flex-col md:flex-row items-center mb-6 relative">
               <div className="w-full md:w-auto h-72 relative mb-4 md:mb-0">
                 <img
-                  src={userData?.image ? `${baseUrl}/${userData.image}` : profileImage}
+                  src={userData?.image || profileImage}
                   alt="image"
                   className="w-full h-full object-cover rounded-lg"
                 />

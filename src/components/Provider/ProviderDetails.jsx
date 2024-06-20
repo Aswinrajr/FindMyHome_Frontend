@@ -99,7 +99,7 @@ const ProviderDetails = () => {
 
   const handleUploadImage = async (e) => {
     e.preventDefault();
-    console.log(imageUrl);
+   
     setLoading(true);
     const uploadedImages = [];
 
@@ -127,7 +127,7 @@ const ProviderDetails = () => {
       }
 
       setLoading(false);
-      console.log("Link=========>", uploadedImages);
+    
       setFiles(uploadedImages);
     } catch (err) {
       console.log("errror", err.response.data.error);
@@ -149,8 +149,7 @@ const ProviderDetails = () => {
       if (results && results.length > 0) {
         const { lat, lng } = results[0].geometry.location;
         console.log(lat, lng);
-        console.log(typeof lat);
-        console.log(typeof lng);
+   
 
         const formData = new FormData();
         files.forEach((file) => {
@@ -180,7 +179,7 @@ const ProviderDetails = () => {
 
         const saveResponse = await getProviderData(data);
 
-        console.log("====>", saveResponse);
+       
         if (saveResponse.status === 200) {
           toast.success(saveResponse.data.message);
           setTimeout(() => {

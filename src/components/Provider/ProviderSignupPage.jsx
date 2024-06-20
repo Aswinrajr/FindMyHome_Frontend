@@ -6,10 +6,10 @@ import { Toaster, toast } from "react-hot-toast";
 import backgroundImage from "../../assets/queen-937501_1280.jpg";
 
 const ProviderSignUp = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { phoneNumber } = location.state ? location.state : "";
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
-  const navigate = useNavigate();
   const [residenceName, setResidenceName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

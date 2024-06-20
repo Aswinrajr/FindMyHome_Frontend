@@ -15,13 +15,13 @@ import {
 import axios from "axios";
 
 const Sidebar = () => {
-  let token = localStorage.getItem("accessToken");
-  const newToken = JSON.parse(token);
-  token = newToken?.accessToken;
-  const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const adminUrl = import.meta.env.VITE_ADMIN_ROUTE;
+  let token = localStorage.getItem("accessToken");
+  const newToken = JSON.parse(token);
+  token = newToken?.accessToken;
   const [activeMessagesCount, setActiveMessagesCount] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(true);
 

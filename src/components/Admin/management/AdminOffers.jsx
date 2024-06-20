@@ -19,8 +19,7 @@ const AdminOffers = () => {
       try {
         const result = await getProvider();
         const response = await getAllOffers();
-        console.log("Offer response", response.data.data);
-        console.log("resultr", result);
+      
         if (result?.data) {
           setProviderData(result.data);
         }
@@ -39,7 +38,7 @@ const AdminOffers = () => {
     const selectedProvider = providerData.find(
       (p) => p._id === selectedProviderId
     );
-    console.log(selectedProvider);
+ 
     setSelectedProvider(selectedProvider);
   };
 
@@ -79,9 +78,9 @@ const AdminOffers = () => {
 
       try {
         const response = await saveOfferData(newOffer);
-        console.log("Response", response);
+       
       } catch (err) {
-        console.log("Errro on saing offer", err);
+        console.log("Errr on saving offer", err);
       }
     }
   };
@@ -91,7 +90,7 @@ const AdminOffers = () => {
     updatedOffers.splice(index, 1);
     setActiveOffers(updatedOffers);
     const response = await deleteOffer(id);
-    console.log("Response", response);
+
   };
 
   return (

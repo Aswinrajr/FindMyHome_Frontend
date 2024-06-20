@@ -24,7 +24,7 @@ const Sidebar = () => {
     const fetchProvider = async () => {
       try {
         const response = await verifyProvider();
-        console.log("---->", response);
+
         setProviderId(response.data.providerData._id);
       } catch (err) {
         console.log("Error in fetch provider", err);

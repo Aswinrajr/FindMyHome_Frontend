@@ -11,7 +11,7 @@ const ProviderSingleBooking = () => {
     const fetchData = async () => {
       try {
         const response = await singleBookingProvider(id);
-        console.log("Response: ", response);
+
         if (Array.isArray(response.data.data)) {
           setBookingData(response.data.data);
         }
@@ -22,7 +22,7 @@ const ProviderSingleBooking = () => {
     fetchData();
   }, [id]);
 
-  console.log("==>", bookingData);
+
 
   return (
     <div className="container mx-auto px-4 py-8">

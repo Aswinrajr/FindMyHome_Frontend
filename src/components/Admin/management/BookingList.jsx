@@ -8,10 +8,10 @@ const BookingList = () => {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
-
   const [sortBy, setSortBy] = useState("asc");
+  const navigate = useNavigate();
   const bookingsPerPage = 3;
+
 
   let token = localStorage.getItem("accessToken");
   const newToken = JSON.parse(token);
@@ -44,7 +44,7 @@ const BookingList = () => {
 
   const handleSort = () => {
     const sorted = filteredBookings.slice().sort((a, b) => {
-      if (sortBy === "asc") {
+      if (sortBy === "desc") {
         return a.totalAmounttoPay - b.totalAmounttoPay;
       } else {
         return b.totalAmounttoPay - a.totalAmounttoPay;
@@ -64,7 +64,7 @@ const BookingList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleViewMore = async (id) => {
-    console.log(id);
+
     navigate("/admin/singlebookingdetails", { state: { id: id } });
   };
 
@@ -205,7 +205,7 @@ const BookingList = () => {
               >
                 <td className="px-6 py-4">
                   <img
-                    src={booking?.image[0] || userImage}
+                    src={booking?.user?.image || userImage}
                     alt={booking?.user?.name || "User Image"}
                     className="h-10 w-10 rounded-full object-cover"
                   />
