@@ -179,7 +179,7 @@ const Users = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <img
                     src={
-                      user.image ? `${baseUrl}/${user.image}` : `${profilePic}`
+                      user?.image|| profilePic
                     }
                     alt={user.name}
                     className="h-10 w-10 rounded-full"

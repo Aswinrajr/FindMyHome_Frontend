@@ -21,7 +21,9 @@ const BookingList = () => {
     const fetchBookingData = async () => {
       try {
         const response = await getBookingData();
+      
         setBookings(response.data.orders);
+        console.log(bookings)
         setFilteredBookings(response.data.orders);
       } catch (error) {
         console.error("Error fetching booking data:", error);
