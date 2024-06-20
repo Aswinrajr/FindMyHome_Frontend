@@ -64,6 +64,7 @@ import FailurePage from "../components/User/FailurePage.jsx";
 import Chat from "../components/Chat/userChat/Chat.jsx";
 import Invoice from "../Pages/Users/Invoice.jsx";
 import UserBookingReviewPage from "../Pages/Users/UserBookingReviewPage.jsx";
+import ProviderMobileVerification from "../components/Provider/ProviderMobileVerification.jsx";
 
 const routerPage = createBrowserRouter([
   {
@@ -136,6 +137,11 @@ const routerPage = createBrowserRouter([
   {
     path: "/provider/otplogin",
     element: <LoginByOtp />,
+  },
+  {
+    path:"/provider/mobilesignup",
+    element:<ProviderMobileVerification/>
+
   },
 
   //Provider Protected Routes

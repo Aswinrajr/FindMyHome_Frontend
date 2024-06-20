@@ -9,6 +9,7 @@ const ProviderSignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { phoneNumber } = location.state ? location.state : "";
+  console.log("phoneNumber",phoneNumber?phoneNumber:"no number")
   const providerRoute = import.meta.env.VITE_PROVIDER_ROUTE;
   const [residenceName, setResidenceName] = useState("");
   const [email, setEmail] = useState("");
