@@ -5,17 +5,20 @@ let tokens = localStorage.getItem("userAccessToken");
 const newToken = JSON.parse(tokens);
 const token = newToken?.userAccessToken;
 
-
-export const createRoom = async (proId,userId,bookingId) => {
+export const createRoom = async (proId, userId, bookingId) => {
   try {
     console.log("Welcome to create chat room", userId);
 
-    const response = await userInstance.post(`/chat`,{proId,userId,bookingId}, {
-      headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await userInstance.post(
+      `/chat`,
+      { proId, userId, bookingId },
+      {
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     console.log("response", response);
 
@@ -66,7 +69,6 @@ export const getrecipientChatData = async (recId) => {
   }
 };
 
-
 export const getChatMessages = async (chatId) => {
   try {
     console.log("Welcome to get all messages", chatId);
@@ -87,12 +89,11 @@ export const getChatMessages = async (chatId) => {
   }
 };
 
-
 export const sendMessage = async (data) => {
   try {
     console.log("Welcome to get all messages", data);
 
-    const response = await userInstance.post(`/message`,data, {
+    const response = await userInstance.post(`/message`, data, {
       headers: {
         "Cache-Control": "no-cache, no-store, must-revalidate",
         Authorization: `Bearer ${token}`,
@@ -107,9 +108,6 @@ export const sendMessage = async (data) => {
     return error;
   }
 };
-
-
-
 
 //Provider
 export const ProviderChats = async (userId) => {
@@ -132,17 +130,19 @@ export const ProviderChats = async (userId) => {
   }
 };
 
-
 export const getLastMessage = async (recipientChatId) => {
   try {
     console.log("Welcome to provider Chats", recipientChatId);
 
-    const response = await providerInstance.get(`/lastmessage/${recipientChatId}`, {
-      headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await providerInstance.get(
+      `/lastmessage/${recipientChatId}`,
+      {
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     console.log("response", response);
 

@@ -65,7 +65,7 @@ const Dashboard = () => {
   
     try {
       const response = await getSaleAnalysisProvider(selectedOption);
-      console.log(response);
+
 
       setSalesData(response.data);
     } catch (error) {

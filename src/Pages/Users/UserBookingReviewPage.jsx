@@ -29,11 +29,11 @@ const BookingDetails = () => {
     const fetchData = async () => {
       try {
         const response = await getuserBookingDetails(params.id);
-        console.log("Response.data", response.data);
+  
 
         setBookingData(response.data.bookingData);
         setRoomData(response.data.roomData);
-        console.log("bookingData", bookingData);
+       
       } catch (err) {
         console.log("Error in booking data", err);
       }

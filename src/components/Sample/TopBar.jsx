@@ -25,10 +25,9 @@ const TopBar = () => {
             Authorization: `Bearer ${extractedToken}`,
           },
         });
-        console.log("response in navbar", response);
+
         const validUser = response.data.userData;
         setCount(response.data.count);
-        console.log(validUser);
 
         if (validUser) {
           return;
@@ -41,7 +40,6 @@ const TopBar = () => {
           }, 1000);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error.response.status);
         if (error.response.status === 403) {
           toast.error("User is blocked please contact admin");
           dispatch(logoutUser());
@@ -92,7 +90,10 @@ const TopBar = () => {
             {showOptions && (
               <ul className="absolute p-4 top-12 right-0 bg-white border border-gray-200 rounded shadow-md z-20 space-y-1">
                 <li>
-                  <Link to="/userprofile" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link
+                    to="/userprofile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
                     Profile
                   </Link>
                 </li>
@@ -154,10 +155,18 @@ const TopBar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20">
           <div className="flex flex-col space-y-4 p-4">
-            <Link to="/" className="hover:text-gray-700" onClick={toggleMobileMenu}>
+            <Link
+              to="/"
+              className="hover:text-gray-700"
+              onClick={toggleMobileMenu}
+            >
               Home
             </Link>
-            <Link to="/rentify" className="hover:text-gray-700" onClick={toggleMobileMenu}>
+            <Link
+              to="/rentify"
+              className="hover:text-gray-700"
+              onClick={toggleMobileMenu}
+            >
               Rentify
             </Link>
             {userToken ? (
@@ -195,11 +204,19 @@ const TopBar = () => {
                 </Link>
               </>
             ) : (
-              <Link to="/login" className="hover:text-gray-700" onClick={toggleMobileMenu}>
+              <Link
+                to="/login"
+                className="hover:text-gray-700"
+                onClick={toggleMobileMenu}
+              >
                 Login
               </Link>
             )}
-            <Link to="/contact" className="hover:text-gray-700" onClick={toggleMobileMenu}>
+            <Link
+              to="/contact"
+              className="hover:text-gray-700"
+              onClick={toggleMobileMenu}
+            >
               Contact
             </Link>
           </div>

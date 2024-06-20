@@ -5,18 +5,10 @@ import { useLocation, useNavigate } from "react-router";
 const FailurePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
 
-
-  
-
- 
-
-  const bookingData = location?.state?.data
-  const adress = location?.state?.adress
-
-
-
+  const bookingData = location?.state?.data;
+  const adress = location?.state?.adress;
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -96,7 +88,7 @@ const FailurePage = () => {
                 </div>
                 <div>
                   <span className="font-bold">Address:</span>{" "}
-                  {bookingData.Adress||adress}
+                  {bookingData.Adress || adress}
                 </div>
               </div>
             </div>

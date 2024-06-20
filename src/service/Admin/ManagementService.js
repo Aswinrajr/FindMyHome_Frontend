@@ -6,18 +6,12 @@ token = newToken?.accessToken;
 
 export const getUserData = async () => {
   try {
-    
-    
     const response = await axiosInstance.get(`/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in getting userData", err);
@@ -36,11 +30,7 @@ export const userActions = async (userId) => {
         },
       }
     );
-    //   console.log("...........................................")
-    //   console.log("response", response);
-    //   console.log(" response.data", response.data);
-    //   console.log("response.data.msg", response.data.msg);
-    //   console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in user Action", err);
@@ -55,11 +45,7 @@ export const getProviderData = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in Get provider Data", err);
@@ -78,11 +64,7 @@ export const providerActions = async (providerId) => {
         },
       }
     );
-    //   console.log("...........................................")
-    //   console.log("response", response);
-    //   console.log(" response.data", response.data);
-    //   console.log("response.data.msg", response.data.msg);
-    //   console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in Provider action", err);
@@ -97,11 +79,7 @@ export const getBookingData = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in Get booking data", err);
@@ -109,20 +87,15 @@ export const getBookingData = async () => {
   }
 };
 
-
 export const singleBookingDetails = async (id) => {
   try {
-    console.log(id)
+    console.log(id);
     const response = await axiosInstance.get(`/singlebookingdetails/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+
     return response;
   } catch (err) {
     console.log("Error in Get booking data", err);
@@ -132,18 +105,16 @@ export const singleBookingDetails = async (id) => {
 
 export const fetchOverallSalesData = async () => {
   try {
-    console.log("Welcome to admin dashboard")
+    console.log("Welcome to admin dashboard");
 
-     const response = await axiosInstance.get(`/getdashboarddata`, {
+    const response = await axiosInstance.get(`/getdashboarddata`, {
       headers: {
-         Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-     console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+
+    console.log("response", response);
+
     return response;
   } catch (err) {
     console.log("Error in admin dashboard==>", err);
@@ -151,20 +122,19 @@ export const fetchOverallSalesData = async () => {
   }
 };
 
-
 export const fetchSalesDataGraph = async (period) => {
   try {
-    console.log(period)
-    const response = await axiosInstance.post(`/getgraphdata`,{period}, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+    console.log(period);
+    const response = await axiosInstance.post(
+      `/getgraphdata`,
+      { period },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+   
     return response;
   } catch (err) {
     console.log("Error in Get booking data", err);
@@ -174,17 +144,12 @@ export const fetchSalesDataGraph = async (period) => {
 
 export const getAllOffers = async () => {
   try {
-   
     const response = await axiosInstance.get(`/getalloffers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+   
     return response;
   } catch (err) {
     console.log("Error in Get oofers", err);
@@ -194,17 +159,12 @@ export const getAllOffers = async () => {
 
 export const saveOfferData = async (offer) => {
   try {
-   
-    const response = await axiosInstance.post(`/saveofferdata`,offer, {
+    const response = await axiosInstance.post(`/saveofferdata`, offer, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+   
     return response;
   } catch (err) {
     console.log("Error in save oofers", err);
@@ -214,17 +174,12 @@ export const saveOfferData = async (offer) => {
 
 export const getProvider = async () => {
   try {
-   
     const response = await axiosInstance.get(`/getallprovider`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+   
     return response;
   } catch (err) {
     console.log("Error in get provider", err);
@@ -232,21 +187,16 @@ export const getProvider = async () => {
   }
 };
 
-
 export const deleteOffer = async (id) => {
   try {
-    console.log(id)
-   
+    console.log(id);
+
     const response = await axiosInstance.delete(`/deleteoffer/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+   
     return response;
   } catch (err) {
     console.log("Error in delete offer", err);
@@ -256,18 +206,12 @@ export const deleteOffer = async (id) => {
 
 export const getAdminSaleAnalysis = async (period) => {
   try {
- 
-   
     const response = await axiosInstance.get(`/getgraphdata/${period}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("...........................................")
-    // console.log("response", response);
-    // console.log(" response.data", response.data);
-    // console.log("response.data.msg", response.data.msg);
-    // console.log("........................................")
+   
     return response;
   } catch (err) {
     console.log("Error in delete offer", err);

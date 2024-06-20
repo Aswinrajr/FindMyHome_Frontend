@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { userInstance } from "../../api/userInstance";
 let tokens = localStorage.getItem("userAccessToken");
 
@@ -8,7 +7,7 @@ const token = newToken?.userAccessToken;
 export const userLogin = async (email, password) => {
   try {
     console.log("Welcome to user login");
-    console.log(email, password);
+
     const response = await userInstance.post(`/login`, {
       email,
       password,
@@ -16,7 +15,6 @@ export const userLogin = async (email, password) => {
 
     return response;
   } catch (error) {
-    console.log("Error in user login", error);
     return error;
   }
 };
@@ -25,9 +23,9 @@ export const cancelBooking = async (bookingId) => {
   try {
     console.log("Welcome to user cancel booking");
 
-    const response = await userInstance.post(
+    const response = await userInstance.put(
       `/cancelBooking/${bookingId}`,
-      {},
+
       {
         headers: {
           "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -36,11 +34,8 @@ export const cancelBooking = async (bookingId) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user booking cancel", error);
     return error;
   }
 };
@@ -56,11 +51,8 @@ export const getSearchedRoomData = async (data) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user get searched room data", error);
     return error;
   }
 };
@@ -76,18 +68,15 @@ export const userAddsRoom = async (data) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user Add room", error);
     return error;
   }
 };
 
 export const changeUserPassword = async (data) => {
   try {
-    console.log("Welcome to user change password==>", data);
+    console.log("Welcome to user change password");
 
     const response = await userInstance.put(`/changepassword`, data, {
       headers: {
@@ -96,11 +85,8 @@ export const changeUserPassword = async (data) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user change password", error);
     return error;
   }
 };
@@ -120,11 +106,8 @@ export const editUserProfile = async () => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user edit profile", error);
     return error;
   }
 };
@@ -140,11 +123,8 @@ export const userUpdateData = async (formDataToSend) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user update data", error);
     return error;
   }
 };
@@ -160,31 +140,25 @@ export const editUserRoom = async (roomId) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user edit room", error);
     return error;
   }
 };
 
 export const userUpdateRoom = async (id, data) => {
   try {
-    console.log("Welcome to user save update  Room", id, data);
+    console.log("Welcome to user save update  Room");
 
-    const response = await userInstance.post(`/updaterooms/${id}`, data, {
+    const response = await userInstance.put(`/updaterooms/${id}`, data, {
       headers: {
         "Cache-Control": "no-cache, no-store, must-revalidate",
         Authorization: `Bearer ${token}`,
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user save update room", error);
     return error;
   }
 };
@@ -194,7 +168,8 @@ export const userBookingPreview = async (currentPage, limit, sortOrder) => {
     console.log("Welcome to user bookings");
 
     const response = await userInstance.post(
-      `/getuserbookings`,{currentPage, limit, sortOrder},
+      `/getuserbookings`,
+      { currentPage, limit, sortOrder },
       {},
       {
         headers: {
@@ -204,18 +179,15 @@ export const userBookingPreview = async (currentPage, limit, sortOrder) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user bookings", error);
     return error;
   }
 };
 
 export const getUserData = async () => {
   try {
-    console.log("Welcome to get User Data", token);
+    console.log("Welcome to get User Data");
 
     const response = await userInstance.post(
       `/getuserdata`,
@@ -228,11 +200,8 @@ export const getUserData = async () => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user get Data", error);
     return error;
   }
 };
@@ -252,11 +221,8 @@ export const rentifyUser = async () => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user rent room", error);
     return error;
   }
 };
@@ -272,8 +238,6 @@ export const getUsersRoom = async () => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
     console.log("Error in user saved room data", error);
@@ -283,9 +247,6 @@ export const getUsersRoom = async () => {
 
 export const bookRoom = async (newData, roomId) => {
   try {
-    console.log("Welcome to get User book Room");
-    console.log("First in book room function");
-
     const response = await userInstance.post(`/bookroom/${roomId}`, newData, {
       headers: {
         "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -293,11 +254,8 @@ export const bookRoom = async (newData, roomId) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user booking", error);
     return error;
   }
 };
@@ -313,18 +271,15 @@ export const roomViewPage = async (id) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user room preview", error);
     return error;
   }
 };
 
 export const bookRoomPage = async (roomId, data) => {
   try {
-    console.log("Welcome to get User  book room",roomId, data);
+    console.log("Welcome to get User  book room", roomId, data);
 
     const response = await userInstance.post(`/bookrooms/${roomId}`, data, {
       headers: {
@@ -333,11 +288,8 @@ export const bookRoomPage = async (roomId, data) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user room booking", error);
     return error;
   }
 };
@@ -345,7 +297,6 @@ export const bookRoomPage = async (roomId, data) => {
 export const verifyBookings = async (roomId) => {
   try {
     console.log("Welcome to get User  verify booking");
-    console.log("Second verify razorpay");
 
     const response = await userInstance.post(
       `/verifybooking/${roomId}`,
@@ -358,11 +309,8 @@ export const verifyBookings = async (roomId) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user verify booking", error);
     return error;
   }
 };
@@ -370,7 +318,7 @@ export const verifyBookings = async (roomId) => {
 export const placeBookingOrder = async (bookingDetails, mode) => {
   try {
     console.log("Welcome to get User place booking order");
-    console.log("Third place booking order");
+
     const data = {
       bookingDetails,
       mode,
@@ -383,11 +331,8 @@ export const placeBookingOrder = async (bookingDetails, mode) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user place booking order", error);
     return error;
   }
 };
@@ -403,11 +348,8 @@ export const individualBooking = async (roomId) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user room boking individual", error);
     return error;
   }
 };
@@ -423,11 +365,8 @@ export const userWalletBalence = async () => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user room boking individual", error);
     return error;
   }
 };
@@ -447,18 +386,15 @@ export const submitReview = async (data, roomId) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user review", error);
     return error;
   }
 };
 
 export const getAllReviews = async (roomId) => {
   try {
-    console.log("Welcome to get User getAllReviews", roomId);
+    console.log("Welcome to get User getAllReviews");
 
     const response = await userInstance.get(`/getallreview/${roomId}`, {
       headers: {
@@ -467,11 +403,8 @@ export const getAllReviews = async (roomId) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user review", error);
     return error;
   }
 };
@@ -487,11 +420,8 @@ export const saveToCart = async (bookingDetails) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user cart", error);
     return error;
   }
 };
@@ -507,11 +437,8 @@ export const getCartData = async () => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user cart data", error);
     return error;
   }
 };
@@ -527,11 +454,8 @@ export const getUsersDashboard = async () => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user dashboard", error);
     return error;
   }
 };
@@ -551,11 +475,8 @@ export const isBooked = async (roomId, formData) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in user is room booked", error);
     return error;
   }
 };
@@ -575,12 +496,9 @@ export const continueWithWallet = async (bookingDetails, mode) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
     console.log("Error in wallet payment", error);
-    
   }
 };
 
@@ -608,11 +526,8 @@ export const walletTransactions = async (
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in wallet payment", error);
     return error;
   }
 };
@@ -628,11 +543,8 @@ export const getSaleAnalysis = async (period) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in wallet payment", error);
     return error;
   }
 };
@@ -654,11 +566,8 @@ export const getAllMessages = async (providerId, bookingId, roomId) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in get all message", error);
     return error;
   }
 };
@@ -677,8 +586,6 @@ export const saveMessage = async (providerId, bookingId, roomId) => {
         },
       }
     );
-
-    console.log("response", response);
 
     return response;
   } catch (error) {
@@ -704,11 +611,8 @@ export const getFilteredRoomData = async (filterdata, roomData) => {
       }
     );
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in get all message", error);
     return error;
   }
 };
@@ -724,11 +628,8 @@ export const getuserBookingDetails = async (id) => {
       },
     });
 
-    console.log("response", response);
-
     return response;
   } catch (error) {
-    console.log("Error in get all message", error);
     return error;
   }
 };

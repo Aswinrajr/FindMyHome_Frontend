@@ -39,7 +39,7 @@ const UserEditRoom = () => {
     const fetchRoomData = async () => {
       try {
         const response = await editUserRoom(roomId);
-        console.log("Response in user edit rooms fetching data", response);
+       
         setRoomData(response.data);
         setFiles(response.data.images);
       } catch (error) {
@@ -52,7 +52,7 @@ const UserEditRoom = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, value);
+  
 
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
@@ -167,7 +167,7 @@ const UserEditRoom = () => {
       };
 
       const response = await userUpdateRoom(roomData._id, data);
-      console.log("response in saving the edited rooms ", response);
+     
       if (response.status === 200) {
         toast.success("Room Updated Successfully");
         setTimeout(() => {

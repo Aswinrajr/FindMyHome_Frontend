@@ -22,7 +22,7 @@ const UserWallet = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await userWalletBalence();
-      console.log(response);
+
       if (response.status === 200) {
         setWalletBalance(response.data.walletBalance);
       }
@@ -30,14 +30,7 @@ const UserWallet = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchwalletTransaction = async () => {
-  //     const transactions = await walletTransactions();
-  //     console.log("Transcations", transactions);
-  //     setTransactionList(transactions.data.transactions);
-  //   };
-  //   fetchwalletTransaction();
-  // }, []);
+
 
   const handleDeposit = () => {
     if (depositAmount > 0) {
@@ -64,7 +57,7 @@ const UserWallet = () => {
               <h2 className="text-2xl font-semibold">Your Wallet</h2>
             </div>
             <div className="text-2xl font-bold text-indigo-600">
-              ${walletBalance?.toFixed(2)}
+            ₹{walletBalance?.toFixed(2)}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

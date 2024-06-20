@@ -29,11 +29,11 @@ const ProviderCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getProviderCard();
-      console.log("Provider===>", response);
+    
 
       if (response.status === 200) {
         setProvider(response.data.providerData);
-        console.log("Provider", provider);
+      
       }
     };
     fetchData();

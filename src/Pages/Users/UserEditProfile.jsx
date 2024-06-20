@@ -15,7 +15,7 @@ const UserEditProfile = () => {
   const user = localStorage.getItem("userAccessToken");
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const navigate = useNavigate();
-console.log(profileImage)
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -33,7 +33,7 @@ console.log(profileImage)
     const fetchData = async () => {
       try {
         const response = await editUserProfile();
-        console.log("Response in user Edit fetch data", response);
+       
 
         const userData = response.data.data;
         setFormData((prevData) => ({
@@ -48,7 +48,7 @@ console.log(profileImage)
           image: userData.image || null,
           imageUrl: userData.image  ||null,
         }));
-        console.log(userData);
+       
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -82,7 +82,7 @@ console.log(profileImage)
 
   const handleImageUpload = async (e) => {
     let file = e.target.files[0];
-    console.log(file);
+  
     if (/^image\/(jpeg|png|gif|webp|avif|bmp|tiff)$/.test(file.type)) {
       console.log("Valid file type");
     } else {
@@ -94,8 +94,8 @@ console.log(profileImage)
     }
 
     const imageUrl = await uploadCloudinary(file);
-    const { url, format } = imageUrl;
-    console.log(url, format);
+    const { url} = imageUrl;
+   
 
     setFormData((prevData) => ({
       ...prevData,

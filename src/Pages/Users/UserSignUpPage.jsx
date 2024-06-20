@@ -9,14 +9,14 @@ const SignUpPage = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location.state", location.state);
+
   const { phoneNumber } = location.state ? location.state : "";
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  console.log("phoneNumber==>", phoneNumber);
+
 
   const validatePassword = () => {
     return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
@@ -54,7 +54,7 @@ const SignUpPage = () => {
         password,
         confirmPassword,
       });
-      console.log(response);
+ 
 
       if (response.status === 201) {
         console.log("Sign up successful");

@@ -77,17 +77,17 @@ const UserLogin = () => {
       console.log("Response:==>", response);
 
       if (response.status === 200) {
-        console.log("Inside status 200", response.data);
+      
         dispatch(setUser(response.data.token));
         toast.success(response.data.msg);
         setTimeout(() => {
           navigate("/home");
         }, 1500);
       } else if (response.response.status === 401) {
-        console.log("Haii", response.response.data.msg);
+      
         toast.error(response.response.data.msg);
       } else if (response.response.status === 404) {
-        console.log("Haii", response.response.data.msg);
+ 
         toast.error(response.response.data.msg);
       } else {
         toast.error("Some thing went wrong please try after some time");

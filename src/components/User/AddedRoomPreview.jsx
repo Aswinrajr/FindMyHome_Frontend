@@ -17,13 +17,13 @@ const facilitiesData = [
 const AddedRoomPreview = () => {
   const [roomData, setRoomData] = useState(null);
   const {id} = useParams()
-  console.log(id)
+
 
   useEffect(() => {
     const fetchData = async()=>{
         const response = await roomViewPage(id)
-        console.log("response in added room ",response)
-        setRoomData(response.data);
+ 
+        setRoomData(response.data.roomData);
     }
     fetchData()
   }, []);
@@ -50,7 +50,7 @@ const AddedRoomPreview = () => {
                   slidesToShow={1}
                   slidesToScroll={1}
                 >
-                  {roomData.images.map((image, index) => (
+                  {roomData?.images?.map((image, index) => (
                     <img
                       key={index}
                       src={image}

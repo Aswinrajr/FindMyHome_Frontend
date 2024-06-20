@@ -4,23 +4,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { getAllReviews, submitReview } from "../../service/User/UserService";
 import { Toaster, toast } from "react-hot-toast";
 
-// const demoReviews = [
-//   {
-//     id: 1,
-//     roomRating: 4,
-//     description: "Great room with a beautiful view!",
-//     author: "John Doe",
-//   },
-//   {
-//     id: 2,
-//     roomRating: 2,
-//     description: "The room was clean and comfortable, but a bit small.",
-//     author: "Jane Smith",
-//   },
-// ];
 
 const StarRating = ({ rating }) => {
-  console.log("Current", rating);
+
   const stars = [];
 
   const ratingValue = rating;
@@ -41,15 +27,15 @@ const UserReview = ({ roomId }) => {
 
   const [description, setDescription] = useState("");
   const [reviews, setReviews] = useState([]);
-  console.log("roomId in review", roomId);
+
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await getAllReviews(roomId);
-      console.log("review", response);
+  
       if (response.status === 200) {
         setReviews(response.data.reviews.reviews);
-        // setRoomRating(response.data.reviews.reviews.rating);
+       
       }
     };
     fetchData();
@@ -69,9 +55,9 @@ const UserReview = ({ roomId }) => {
     console.log(data);
 
     const response = await submitReview(data, roomId);
-    console.log(response);
+    
     if (response.status === 200) {
-      console.log("toast");
+     
       toast.success(response.data.message);
     }
 

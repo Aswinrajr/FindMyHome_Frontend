@@ -39,7 +39,7 @@ const UserVerifyOtp = () => {
   const handleResendOtp = async () => {
     setResendDisabled(true);
     setTimer(30);
-    console.log(mobile);
+   
 
     try {
       const response = await axios.post(`${baseRoute}/reqotp`, {

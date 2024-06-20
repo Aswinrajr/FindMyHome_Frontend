@@ -2,7 +2,7 @@ import { providerInstance } from "../../api/providerAxiosInstance";
 let token = localStorage.getItem("providerAccessToken");
 const newToken = JSON.parse(token);
 token = newToken?.providerAccessToken;
-console.log("Welcome to get provider rooms---------", token);
+
 
 export const providerLogin = async (email, password) => {
   try {
@@ -222,12 +222,15 @@ export const providerDashboard = async () => {
 
 export const getSaleAnalysisProvider = async (period) => {
   try {
-    console.log("welcome to provider chart")
-    const response = await providerInstance.get(`/providerchartdata/${period}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    console.log("welcome to provider chart");
+    const response = await providerInstance.get(
+      `/providerchartdata/${period}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     console.log(response);
 

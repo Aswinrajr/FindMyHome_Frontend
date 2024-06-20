@@ -33,7 +33,7 @@ const SearchRooms = () => {
       document.getElementById("city"),
       {}
     );
-    console.log(autocomplete);
+  
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
@@ -41,7 +41,7 @@ const SearchRooms = () => {
         const cityComponent = place.address_components.find(
           (component) => component.long_name
         );
-        console.log(cityComponent);
+    
 
         const cityNames = cityComponent ? cityComponent.long_name : "";
 
@@ -53,14 +53,14 @@ const SearchRooms = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Formdata",formData)
+
     if (
       !formData.city ||
       !formData.checkIn ||
       !formData.adults ||
       !formData.children
     ) {
-      // toast.error("All fields are required");
+   
       setError("All fields are required");
       setTimeout(() => {
         setError("");
@@ -70,7 +70,7 @@ const SearchRooms = () => {
 
     if (formData.checkIn >= formData.checkOut) {
       setError("Selected date is invalid");
-      // toast.error("Selected date is invlid");
+     
       setTimeout(() => {
         setError("");
       }, 1000);
@@ -86,7 +86,7 @@ const SearchRooms = () => {
       }, 1000);
       return;
     }
-    console.log(formData);
+   
 
     try {
       setLoading(true); 
@@ -98,8 +98,7 @@ const SearchRooms = () => {
       const { results } = cordResponse.data;
       const { lat, lng } = results[0].geometry.location;
 
-      console.log(formData);
-      console.log(baseRoute);
+   
       const fetchData = async () => {
         const response = await axios.post(`${baseRoute}/searchrooms`, {
           city: formData.city,
@@ -110,16 +109,16 @@ const SearchRooms = () => {
           adults: formData.adults,
           children: formData.children,
         });
-        console.log(response.data.data);
+       
         const nearbyProviders = response.data.data.nearbyProviders;
         const nearbyUser = response.data.data.nearbyUser;
-        console.log("nearbyProviders.data", nearbyProviders.data);
+       
         const data = {
           formData,
           nearbyProviders,
           nearbyUser,
         };
-        console.log("Daaaata", data);
+    
         if (response.status === 200) {
           navigate("/searchedroom", { state: data });
         }
@@ -134,7 +133,7 @@ const SearchRooms = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    console.log()
+  
 
     if (name === "adults" && value < 1) {
       setError("No of person cannot be less than 1");

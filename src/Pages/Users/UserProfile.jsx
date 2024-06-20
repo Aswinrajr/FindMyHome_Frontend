@@ -64,7 +64,7 @@ const UserProfile = () => {
     navigate(`/${path}`);
   };
   if (!user) return <Navigate to="/" />;
-  console.log("userData",userData.image)
+ 
 
   return (
     <>

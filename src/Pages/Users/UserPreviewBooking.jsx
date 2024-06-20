@@ -28,7 +28,7 @@ const UserPreviewBooking = () => {
     const fetchData = async () => {
       try {
         const response = await userBookingPreview(currentPage, limit, sortOrder);
-        console.log("Fetching the bookings", response);
+      
 
         setBookingData(response.data.data);
         setTotalPages(Math.ceil(response.data.totalCount / limit));
@@ -201,12 +201,12 @@ const UserPreviewBooking = () => {
                   <div>
                     <Slider {...sliderSettings}>
                       {booking.image.map((imageUrl, index) => (
-                        <div key={index}>
+                        <div key={index} >
                           <img
                             src={`${imageUrl}`}
                             alt={`Room ${index + 1}`}
                             style={imageStyle}
-                            className="w-full h-64 rounded-lg object-cover"
+                            className="w-full h-64 rounded-lg object-contain"
                             onClick={() => navigate(`/getpreviewpage/${booking._id}`)}
                           />
                         </div>

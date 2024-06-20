@@ -30,11 +30,10 @@ const UserDashboard = () => {
   const handleFilterChange = async (e) => {
     const selectedOption = e.target.value;
     setFilterOption(selectedOption);
-    console.log("filter", selectedOption);
 
     try {
       const response = await getSaleAnalysis(selectedOption);
-      console.log(response);
+
       setUserData(response.data);
     } catch (error) {
       console.error("Error fetching sale analysis:", error);

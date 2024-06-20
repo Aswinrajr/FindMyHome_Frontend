@@ -77,7 +77,7 @@ const AddRooms = () => {
     e.preventDefault();
 
     if (imageUrl.length < 4) {
-      console.log("Min 5 image required");
+     
       setimageErr("Minmum of 5 image required");
       setTimeout(() => {
         setimageErr();

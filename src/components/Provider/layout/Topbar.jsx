@@ -9,20 +9,19 @@ import toast from "react-hot-toast";
 
 const Topbar = () => {
   const [email, setEmail] = useState();
-  const dispatch = useDispatch()
-  const navigate= useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProvider = async () => {
       try {
         const response = await verifyProvider();
-       
 
         setEmail(response.data.providerData);
       } catch (err) {
         console.log("Error in fetch provider0", err);
         if (err) {
-          toast.error("Some thing Went wrong please contact admin")
+          toast.error("Some thing Went wrong please contact admin");
           dispatch(logoutProvider());
           navigate("/provider");
         }

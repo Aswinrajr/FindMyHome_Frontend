@@ -231,7 +231,6 @@ const Roomcard = ({ filteredDatas }) => {
           try {
             const mode = "by Online";
             const result = await placeBookingOrder(bookingDetails, mode);
-            console.log(result);
 
             Swal.fire({
               title: "Room Booked Successfully",
@@ -267,7 +266,7 @@ const Roomcard = ({ filteredDatas }) => {
               }, 1500);
             } else {
               throw new Error(
-                "Error saving              to cart or invalid response."
+                "Error saving to cart or invalid response."
               );
             }
           }

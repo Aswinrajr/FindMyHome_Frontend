@@ -41,7 +41,7 @@ const UserAddRoom = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, value);
+
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
       setTimeout(() => {
@@ -99,11 +99,8 @@ const UserAddRoom = () => {
     e.preventDefault();
 
     if (uploadedFiles.length + selectedFiles.length < 4) {
-      // setImageErr("Image should be at least 5 in number");
       toast.error("Image should be at least 5 in number");
-      // setTimeout(() => {
-      //   setImageErr("");
-      // }, 1000);
+
       return;
     }
 
@@ -161,7 +158,6 @@ const UserAddRoom = () => {
     }
 
     if (uploadedFiles.length < 4) {
-      // setImageErr("Image should be at least 5 in number");
       toast.error("Image should be at least 5 in number");
       setTimeout(() => {
         setImageErr("");
@@ -190,7 +186,7 @@ const UserAddRoom = () => {
     try {
       const response = await userAddsRoom(data);
 
-      console.log("Response in add rooms", response);
+    
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {
@@ -232,16 +228,12 @@ const UserAddRoom = () => {
               <option value="Double">Double</option>
               <option value="Dormetry">Dormetry</option>
             </select>
-    
 
             {err && (
               <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
                 {err}
               </p>
             )}
-
-
-
           </div>
           <div className="mb-4">
             <label

@@ -174,7 +174,7 @@ const EditRooms = () => {
           },
         }
       );
-      console.log(response);
+      
       if (response.status === 200) {
         toast.success("Room Updated Successfully");
         setTimeout(() => {

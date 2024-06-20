@@ -44,7 +44,7 @@ const FullDetails = () => {
 
         setRoomData(response.data.roomData);
         setDiscountAmount(response.data.amount);
-        console.log(roomData);
+      
       } catch (error) {
         console.error("Error fetching room data:", error);
       }
@@ -232,7 +232,7 @@ const FullDetails = () => {
   };
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
-      console.log("Welcome to razorpay", bookingDetails);
+ 
       const orderUrl = await axios.post(
         `${baseRoute}/verifybooking/${roomId}`,
         { bookingDetails },
@@ -256,7 +256,7 @@ const FullDetails = () => {
         order_id: data.id,
         handler: async () => {
           try {
-            console.log("Place the order", bookingDetails);
+       
             const result = await axios.post(
               `${baseRoute}/placeorder`,
               bookingDetails,
@@ -336,7 +336,7 @@ const FullDetails = () => {
           },
         }
       );
-      console.log("Order placed:", orderResponse.data);
+    
       Swal.fire({
         title: "Room Booked Successfully, Booking details is sent to mail Id",
         icon: "success",
