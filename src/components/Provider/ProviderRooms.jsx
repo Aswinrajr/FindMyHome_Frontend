@@ -100,7 +100,7 @@ const ProviderRooms = () => {
                   <img
                     src={`${image}`}
                     alt={room.roomType}
-                    className="w-full h-full object-cover"
+                    className="w-80 h-60 object-contain"
                   />
                 </div>
               ))}
