@@ -63,9 +63,6 @@ const ChatBox = ({
     if (newMessage.trim() === "") {
       return;
     }
-    
-  
-    
 
     const message = {
       senderId: currentUser,
@@ -77,7 +74,7 @@ const ChatBox = ({
       const response = await sendMessage(message);
       console.log("Sending message", response);
       const { data } = response;
-      console.log("Data in user chat box",data)
+      console.log("Data in user chat box", data);
       setMessages([...messages, data]);
       setNewMessage("");
 
@@ -103,74 +100,75 @@ const ChatBox = ({
   const scroll = useRef();
 
   return (
-<div className="flex h-screen bg-gray-100">
-  <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div className="flex flex-col h-full">
+    <div className="flex h-screen bg-gray-100">
+  <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
  
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-800 text-white">
-        <div className="flex items-center">
-          <img
-            src={providerData?.profilePicture || imagePic}
-            alt="Profile"
-            className="w-10 h-10 rounded-full object-cover"
-          />
-          <h2 className="text-lg font-semibold ml-4">
+    <div className="flex items-center justify-between px-6 py-4 bg-gray-800 text-white">
+      <div className="flex items-center space-x-4">
+        <img
+          src={providerData?.profilePicture || imagePic}
+          alt="Profile"
+          className="w-12 h-12 rounded-full object-cover border-2 border-white"
+        />
+        <div>
+          <h2 className="text-xl font-semibold">
             {providerData?.providerName || "Unknown"}
           </h2>
-        </div>
-        <div className="text-gray-300">
-          {checkOnlineStatus ? "Online" : "Offline"}
+          <p className="text-sm text-gray-300">
+            {checkOnlineStatus ? "Online" : "Offline"}
+          </p>
         </div>
       </div>
+    </div>
 
     
-      <div className="flex-grow p-4 overflow-y-auto">
-        {messages?.length > 0 ? (
-          messages?.map((message, index) => (
+    <div className="flex-grow p-6 overflow-y-auto bg-gray-50">
+      {messages?.length > 0 ? (
+        messages?.map((message, index) => (
+          <div
+            key={index}
+            ref={scroll}
+            className={`flex mb-4 ${
+              message.senderId === currentUser
+                ? "justify-end"
+                : "justify-start"
+            }`}
+          >
             <div
-              key={index}
-              ref={scroll}
-              className={`flex mb-4 ${
+              className={`max-w-xs px-4 py-2 rounded-lg shadow ${
                 message.senderId === currentUser
-                  ? "justify-end"
-                  : "justify-start"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-800"
               }`}
             >
-              <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
-                  message.senderId === currentUser
-                    ? "bg-gray-800 text-white"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                <p className="text-sm leading-tight">{message.text}</p>
-                <div className="flex items-center mt-2">
-                  <span className="text-xs text-gray-400">
-                    {format(message.createdAt)}
-                  </span>
-                  {message.senderId === currentUser && (
-                    <span className="ml-2 text-xs text-gray-400">
-                      Sent
-                    </span>
-                  )}
-                </div>
+              <p className="text-sm">{message.text}</p>
+              <div className="flex items-center justify-end mt-1">
+                <span className="text-xs opacity-75">
+                  {format(message.createdAt)}
+                </span>
+                {message.senderId === currentUser && (
+                  <span className="ml-2 text-xs opacity-75">Sent</span>
+                )}
               </div>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center">No messages available</p>
-        )}
-      </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-500 text-center">No messages available</p>
+      )}
+    </div>
 
-      <div className="px-4 py-3 bg-gray-100 border-t border-gray-300 flex items-center">
+  
+    <div className="px-6 py-4 bg-white border-t border-gray-200">
+      <div className="flex items-center space-x-2">
         <InputEmoji
           value={newMessage}
           onChange={handleChange}
-          className="flex-grow mr-2 py-2 px-4 rounded-lg bg-white shadow focus:outline-none focus:ring-2 focus:ring-gray-800"
+          className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Type your message..."
         />
         <button
-          className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
+          className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           onClick={handleSend}
         >
           Send

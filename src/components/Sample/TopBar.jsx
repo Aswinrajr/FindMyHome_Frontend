@@ -12,6 +12,7 @@ const TopBar = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [count, setCount] = useState(0);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [task,setTask] = useState()
 
   const userToken = localStorage.getItem("userAccessToken");
   const newUserToken = JSON.parse(userToken);
@@ -53,9 +54,14 @@ const TopBar = () => {
     fetchData();
   }, [extractedToken]);
 
+ 
+
+
+
   const handleLogout = () => {
     dispatch(logoutUser());
   };
+
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);

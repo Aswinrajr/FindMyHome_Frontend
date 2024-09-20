@@ -25,6 +25,7 @@
     "dotenv": "^16.4.1",
     "emoji-picker-react": "^4.9.3",
     "fast2sms": "^1.0.3",
+    "find_my_home": "file:",
     "firebase": "^10.8.1",
     "formik": "^2.4.5",
     "framer-motion": "^11.1.7",

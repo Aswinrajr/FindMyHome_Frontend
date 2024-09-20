@@ -38,6 +38,7 @@ const Chat = () => {
 
             console.log("Connecting to socket...");
             socket.current = io("https://chat.findmyhomestay.online");   
+            //  socket.current = io("http://localhost:8800");   
       
             socket.current.on("connect", () => {   
               console.log("Connected to socket server with id: ", socket.current.id);
