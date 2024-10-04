@@ -29,8 +29,6 @@ const BookingDetails = () => {
     const fetchData = async () => {
       try {
         const response = await getuserBookingDetails(params.id);
-  
-
         setBookingData(response.data.bookingData);
         setRoomData(response.data.roomData);
        
