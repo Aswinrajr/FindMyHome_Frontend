@@ -59,8 +59,10 @@ const ProviderChat = () => {
   useEffect(() => {
     if (providerData) {
       console.log("ProviderData", providerData);
-      socket.current = io("https://chat.findmyhomestay.online");
+      // socket.current = io("https://chat.findmyhomestay.online");
       // socket.current = io("http://localhost:8800");
+      socket.current = io("https://findmyhome-backend.onrender.com");
+
       socket.current.emit("new-user-add", providerData._id);
 
       socket.current.on("get-users", (user) => {
@@ -164,7 +166,6 @@ const ProviderChat = () => {
             setSentMessage={setSentMessage}
             receiveMessage={receiveMessage}
             socket={socket}
-           
           />
         ) : (
           <div className="bg-gray-100 border border-gray-300 rounded-md p-6 my-8">
