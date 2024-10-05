@@ -80,6 +80,7 @@ const UserEditProfile = () => {
 
   const handleImageUpload = async (e) => {
     let file = e.target.files[0];
+    console.log("file",file)
 
     if (/^image\/(jpeg|png|gif|webp|avif|bmp|tiff)$/.test(file.type)) {
       console.log("Valid file type");
@@ -93,6 +94,7 @@ const UserEditProfile = () => {
 
     const imageUrl = await uploadCloudinary(file);
     const { url } = imageUrl;
+    console.log(url)
 
     setFormData((prevData) => ({
       ...prevData,

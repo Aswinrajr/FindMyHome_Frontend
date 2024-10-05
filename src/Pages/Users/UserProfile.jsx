@@ -83,6 +83,7 @@ const UserProfile = () => {
           <div className="p-6">
             <div className="flex flex-col md:flex-row items-center mb-6 relative">
               <div className="w-full md:w-auto h-72 relative mb-4 md:mb-0">
+              
                 <img
                   src={userData?.image || profileImage}
                   alt="image"
