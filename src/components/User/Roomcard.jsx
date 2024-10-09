@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import Slider from "react-slick";
 import Swal from "sweetalert2";
 import logo from "../../assets/logo.png";
 import {
   bookRoom,
+  continueWithWallet,
+  getFilteredRoomData,
   getSearchedRoomData,
   placeBookingOrder,
   saveToCart,
@@ -14,38 +15,32 @@ import {
 import { toast, Toaster } from "react-hot-toast";
 
 const Roomcard = ({ filteredDatas }) => {
-  console.log("filteredDatas on room cardc", filteredDatas);
-
   const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
 
   const [roomData, setRoomData] = useState([]);
-  const [newRoomData, setNewRoomData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2);
+  const [getRoomData, setGetRoomData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPageData, setCurrentPageData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const token = localStorage.getItem("userAccessToken");
-
-  console.log("======>", roomData);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(roomData.length / itemsPerPage);
 
   useEffect(() => {
-    console.log("Calling");
     const fetchData = async () => {
       try {
         const response = await getSearchedRoomData(data);
-        // console.log("Response in searched rooms", response);
-
         if (response.status === 200) {
           setRoomData(response.data);
-          setNewRoomData(response.data);
+          setGetRoomData(response.data);
         }
       } catch (error) {
         console.error("Error fetching room data:", error);
       }
     };
-
     fetchData();
   }, [data]);
 
@@ -61,89 +56,48 @@ const Roomcard = ({ filteredDatas }) => {
   }, [navigate, token]);
 
   useEffect(() => {
-    if (filteredDatas?.length > 0) {
-      const getFilterData = roomData?.filter((item) => {
-        const roomType = item && item.room && item.room.roomType;
-        if (typeof filteredDatas === "string" && roomType) {
-          return roomType.toLowerCase() === filteredDatas?.toLowerCase();
-        } else {
-          console.log(
-            "Invalid filtered data or missing room type in item:",
-            item
+    const fetchFilteredData = async () => {
+      if (filteredDatas) {
+        try {
+          const response = await getFilteredRoomData(
+            filteredDatas,
+            getRoomData
           );
-          return false;
+          if (response.status === 200) {
+            setRoomData(response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching filtered room data:", error);
         }
-      });
-      setRoomData(getFilterData);
-    }
+      }
+    };
+    fetchFilteredData();
+  }, [filteredDatas]);
 
-    if (filteredDatas === "high_to_low") {
-      const sortedHighToLow = roomData
-        ?.slice()
-        .sort((a, b) => b.room.amount - a.room.amount);
-      console.log(sortedHighToLow);
-      setRoomData(sortedHighToLow);
-    }
-    if (filteredDatas === "low_to_high") {
-      const sortedLowToHigh = roomData
-        ?.slice()
-        .sort((a, b) => a.room.amount - b.room.amount);
-      console.log(sortedLowToHigh);
-      setRoomData(sortedLowToHigh);
-    }
-    if (["1", "2", "3", "4", "5"].includes(filteredDatas)) {
-      const star = parseInt(filteredDatas);
-      console.log("Star Rating:", star);
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const slicedData = roomData.slice(startIndex, endIndex);
+    setCurrentPageData(slicedData);
+  }, [currentPage, roomData]);
 
-      const filteredReviewRooms = newRoomData.filter((room) => {
-        console.log("Rooms", room);
-        const reviews = room.room.reviews;
-        console.log("Reviews", reviews);
-
-        const totalRatings = reviews.reduce(
-          (sum, review) => sum + review.rating,
-          0
+  useEffect(() => {
+    const handleSearch = () => {
+      if (searchTerm.trim() !== "") {
+        const searchData = roomData.filter((item) =>
+          item.room.roomType.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        const averageRating = Math.floor(totalRatings / reviews.length);
-
-        return averageRating === star;
-      });
-      console.log("Filtered review rooms", filteredReviewRooms);
-      setRoomData(filteredReviewRooms);
-
-      console.log("Rooms with average and star rating equal to", star);
-    }
-
-    if (filteredDatas === "clear") {
-      setRoomData(newRoomData);
-    }
-  }, [filteredDatas, newRoomData, roomData]);
-
-
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const filteredData = roomData?.filter((item) =>
-    item.room.roomType.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const nextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
-  };
+        setCurrentPageData(searchData.slice(0, itemsPerPage));
+        setCurrentPage(1);
+      } else {
+        setCurrentPageData(roomData.slice(0, itemsPerPage));
+      }
+    };
+    handleSearch();
+  }, [searchTerm, roomData]);
 
   const handleBook = async (roomId) => {
-    const newData = {
-      data,
-    };
+    const newData = { data };
 
     try {
       const response = await bookRoom(newData, roomId);
@@ -151,45 +105,54 @@ const Roomcard = ({ filteredDatas }) => {
         const bookingDetails = response.data.bookingDetails;
 
         const htmlContent = `
-        <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center gap-4">
-        <h3 class="text-lg font-bold text-gray-800">Booking Summary</h3>
-      
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-gray-700">Room Type:</span>
-          <span class="text-gray-600">${bookingDetails.roomType}</span>
-        </div>
-      
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-gray-700">Guests:</span>
-          <span class="text-gray-600">Adults: ${bookingDetails.adults}, Children: ${bookingDetails.children}</span>
-        </div>
-      
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-gray-700">Stay:</span>
-          <span class="text-gray-600">Number of Days: ${bookingDetails.numberOfDays}</span>
-        </div>
-      
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-gray-700">Dates:</span>
-          <div class="flex flex-wrap gap-2">
-            <span class="text-gray-600">Check-in: ${bookingDetails.checkInDate}</span>
-            <span class="text-gray-600">Check-out: ${bookingDetails.checkOutDate}</span>
-          </div>
-        </div>
-      
-        <div class="flex justify-between items-center gap-4">
-          <span class="font-medium text-gray-700">Amount:</span>
-          <span class="text-teal-500 font-medium">${bookingDetails.amount}</span>
-        </div>
-      
-        <div class="flex justify-between items-center gap-4 text-red-500 font-medium">
-          <span>Total Amount to Pay:</span>
-          <span>${bookingDetails.totalAmounttoPay}</span>
-        </div>
-      
+  <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+
+  
+  <div class="space-y-6">
+    <div class="flex justify-between items-center border-b pb-4">
+      <span class="text-gray-600">Room Type</span>
+      <span class="font-semibold text-gray-800">${bookingDetails.roomType}</span>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <span class="text-gray-600">Guests</span>
+      <div>
+        <span class="font-semibold text-gray-800">${bookingDetails.adults} Adults</span>
        
-      </div>
+          <span class="font-semibold text-gray-800 ml-2">${bookingDetails.children} Children</span>
       
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center border-b pb-4">
+      <span class="text-gray-600">Length of Stay</span>
+      <span class="font-semibold text-gray-800">${bookingDetails.numberOfDays} nights</span>
+    </div>
+
+    <div class="space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Check-in</span>
+        <span class="font-semibold text-gray-800">${bookingDetails.checkInDate}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Check-out</span>
+        <span class="font-semibold text-gray-800">${bookingDetails.checkOutDate}</span>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 mt-6">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Room Rate (per night)</span>
+        <span class="font-semibold text-gray-800">₹${bookingDetails.amount}</span>
+      </div>
+      <div class="flex justify-between items-center mt-4">
+        <span class="text-lg font-semibold text-gray-800">Total Amount to pay</span>
+        <span class="text-2xl font-bold text-green-600">₹${bookingDetails.totalAmounttoPay}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
         `;
 
         Swal.fire({
@@ -203,7 +166,43 @@ const Roomcard = ({ filteredDatas }) => {
           denyButtonText: "Online Booking",
         }).then((result) => {
           if (result.isConfirmed) {
-            placeOrder(bookingDetails, "Cash");
+            Swal.fire({
+              title: "Do you want to pay with your wallet amount?",
+              icon: "info",
+              showDenyButton: true,
+              showCancelButton: true,
+              confirmButtonText: "No, Continue..",
+              denyButtonText: `Yes Proceed`,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                placeOrder(bookingDetails, "Cash");
+              } else if (result.isDenied) {
+                const walletPayment = async () => {
+                  const response = await continueWithWallet(
+                    bookingDetails,
+                    "wallet payment"
+                  );
+                  try {
+                    if (response.status === 200) {
+                      Swal.fire("Room Booked successfully", "", "success");
+                      setTimeout(() => {
+                        navigate("/successpage", {
+                          state: {
+                            data: response.data.order,
+                            adress: response.data.adress,
+                          },
+                        });
+                      }, 1500);
+                    }
+                  } catch (err) {
+                    console.log("Error in wallet payments", err);
+                    Swal.fire("Insufficient funds in wallet", "", "error");
+                  }
+                };
+
+                walletPayment();
+              }
+            });
           } else if (result.isDenied) {
             showRazorpay(roomId, bookingDetails);
           }
@@ -217,7 +216,6 @@ const Roomcard = ({ filteredDatas }) => {
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
       const orderUrl = await verifyBookings(roomId);
-      console.log("OrderUrl", orderUrl);
 
       const { data } = orderUrl;
 
@@ -234,7 +232,6 @@ const Roomcard = ({ filteredDatas }) => {
             const mode = "by Online";
             const result = await placeBookingOrder(bookingDetails, mode);
 
-            console.log("cash", result);
             Swal.fire({
               title: "Room Booked Successfully",
               icon: "success",
@@ -255,47 +252,39 @@ const Roomcard = ({ filteredDatas }) => {
       };
 
       const razorpay = new window.Razorpay(options);
-      console.log("Razorpay open", razorpay);
       razorpay.open();
 
       razorpay.on("payment.failed", async function (response) {
-      
         try {
-          console.log("Error Response:", response);
           if (response) {
-            console.log("Inside payment failed handler", bookingDetails);
             const newResponse = await saveToCart(bookingDetails);
-            console.log("Response from saveToCart:", newResponse);
             if (newResponse && newResponse.status === 200) {
               toast.error("Payment failed !! Details added to cart");
               setTimeout(() => {
                 razorpay.close();
-               
-           
                 navigate("/failurepage", { state: { data: bookingDetails } });
               }, 1500);
             } else {
-              throw new Error("Error saving to cart or invalid response.");
+              throw new Error(
+                "Error saving to cart or invalid response."
+              );
             }
           }
         } catch (error) {
           console.error("Error handling payment failure:", error);
           razorpay.close();
         }
-    
-      }
-  
-    );
+      });
     } catch (error) {
       console.error("Error in fetching order URL:", error);
     }
   };
+
   const placeOrder = async (bookingDetails) => {
     try {
       const mode = "by cash";
       const orderResponse = await placeBookingOrder(bookingDetails, mode);
 
-      console.log("Order placed:", orderResponse.data);
       Swal.fire({
         title: "Room Booked Successfully",
         icon: "success",
@@ -314,6 +303,18 @@ const Roomcard = ({ filteredDatas }) => {
     }
   };
 
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -325,63 +326,60 @@ const Roomcard = ({ filteredDatas }) => {
   return (
     <div className="room-cards-container">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <input
           type="text"
           placeholder="Search by room type..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 sm:mb-0"
         />
         <div className="pagination flex items-center space-x-2">
           <button
-            onClick={prevPage}
+            onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className={`px-3 py-2 rounded-md transition duration-300 ${
-              currentPage === 1
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white"
-            }`}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-l focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Prev
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
-
-          {Array.from(
-            { length: Math.ceil(filteredData.length / itemsPerPage) },
-            (_, index) => (
-              <button
-                key={index}
-                onClick={() => paginate(index + 1)}
-                className={`px-4 py-2 rounded-md transition duration-300 ${
-                  currentPage === index + 1
-                    ? "bg-indigo-600 text-white"
-                    : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              >
-                {index + 1}
-              </button>
-            )
-          )}
-
+          <span className="bg-gray-100 text-gray-700 font-semibold py-2 px-4">
+            {currentPage} of {totalPages}
+          </span>
           <button
-            onClick={nextPage}
-            disabled={
-              currentPage === Math.ceil(filteredData.length / itemsPerPage)
-            }
-            className={`px-3 py-2 rounded-md transition duration-300 ${
-              currentPage === Math.ceil(filteredData.length / itemsPerPage)
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white"
-            }`}
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-r focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
         </div>
       </div>
-      {currentItems.map((item, index) => (
+      {currentPageData?.map((item, index) => (
         <div
           key={index}
-          className="room-card bg-white shadow-md p-8 rounded-lg mb-4 flex flex-col md:flex-row"
+          className="room-card bg-white shadow-md p-4 rounded-lg mb-4 flex flex-col md:flex-row"
         >
           <div className="w-full md:w-1/2 pr-4">
             <Slider {...settings}>
@@ -391,21 +389,37 @@ const Roomcard = ({ filteredDatas }) => {
                     onClick={() => navigate(`roompreview/${item.room._id}`)}
                     src={`${image}`}
                     alt={`Room ${index} Image ${imageIndex}`}
-                    className="w-full h-48 mb-8 object-contain rounded-lg"
+                    className="w-full h-48 object-contain rounded-lg"
                   />
                 </div>
               ))}
             </Slider>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 mt-4 md:mt-0">
             <div className="flex flex-col h-full">
               <div className="bg-white border border-gray-200 rounded-lg shadow-md p-5">
                 <h3 className="text-xl font-semibold mb-2">
                   {item.room.roomType}
                 </h3>
-                <p className="text-lg text-black mb-2">
-                  Amount: ₹{item.room.amount}
-                </p>
+                {item?.offerAmount > 100 ? (
+                  <div className="flex items-center mb-2">
+                    <p className="text-lg font-semibold text-gray-800">
+                      Amount:
+                    </p>
+                    <div className="ml-2 flex items-center">
+                      <span className="text-lg text-gray-500 line-through">
+                        ₹{item.room.amount}
+                      </span>
+                      <span className="text-xl font-bold text-green-600 ml-2">
+                        ₹{item.room.amount - item.offerAmount}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-lg font-semibold text-gray-800 mb-2">
+                    Amount: ₹{item.room.amount}
+                  </p>
+                )}
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm">Adults: {item.room.adults}</span>
                   <span className="text-sm">
@@ -416,7 +430,6 @@ const Roomcard = ({ filteredDatas }) => {
                   Away from: {item.distance.toFixed(2)} KM
                 </p>
               </div>
-
               <button
                 onClick={() => handleBook(item.room._id)}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded mt-auto transition duration-300 focus:outline-none"

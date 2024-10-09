@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import imageUrl from "../../assets/istockphoto-1050564510-2048x2048.jpg";
+import imageUrl from "../../assets/banner2Image.jpg";
 import { Toaster } from "react-hot-toast";
 
 const Banner = () => {

@@ -41,7 +41,7 @@ const UserAddRoom = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, value);
+
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
       setTimeout(() => {
@@ -99,11 +99,8 @@ const UserAddRoom = () => {
     e.preventDefault();
 
     if (uploadedFiles.length + selectedFiles.length < 4) {
-      // setImageErr("Image should be at least 5 in number");
-      toast.error("Image should be at least 5 in number")
-      // setTimeout(() => {
-      //   setImageErr("");
-      // }, 1000);
+      toast.error("Image should be at least 5 in number");
+
       return;
     }
 
@@ -127,7 +124,7 @@ const UserAddRoom = () => {
     }
 
     setUploadedFiles((prevFiles) => [...prevFiles, ...uploadedImages]);
-    console.log("======>",uploadedFiles)
+    console.log("======>", uploadedFiles);
     setSelectedFiles([]);
     setLoading(false);
   };
@@ -161,8 +158,7 @@ const UserAddRoom = () => {
     }
 
     if (uploadedFiles.length < 4) {
-      // setImageErr("Image should be at least 5 in number");
-      toast.error("Image should be at least 5 in number")
+      toast.error("Image should be at least 5 in number");
       setTimeout(() => {
         setImageErr("");
       }, 1000);
@@ -190,7 +186,7 @@ const UserAddRoom = () => {
     try {
       const response = await userAddsRoom(data);
 
-      console.log("Response in add rooms", response);
+    
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {
@@ -209,7 +205,10 @@ const UserAddRoom = () => {
       <div className="container mx-auto px-4 mt-8 mb-7">
         <Toaster position="top-center" reverseOrder={false} />
         <h1 className="text-2xl font-semibold mb-4">Add Rooms</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           <div className="mb-4">
             <label
               htmlFor="roomType"
@@ -229,7 +228,12 @@ const UserAddRoom = () => {
               <option value="Double">Double</option>
               <option value="Dormetry">Dormetry</option>
             </select>
-            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+
+            {err && (
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {err}
+              </p>
+            )}
           </div>
           <div className="mb-4">
             <label
@@ -250,9 +254,16 @@ const UserAddRoom = () => {
               min={1}
             />
 
-            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+            {err && (
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {err}
+              </p>
+            )}
+
             {adultErr && (
-              <p className="text-red-500 text-lg mt-2">{adultErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {adultErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -273,9 +284,17 @@ const UserAddRoom = () => {
               min={0}
               max={10}
             />
-            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+
             {childErr && (
-              <p className="text-red-500 text-lg mt-2">{childErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {childErr}
+              </p>
+            )}
+
+            {err && (
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {err}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -297,9 +316,17 @@ const UserAddRoom = () => {
               max={10000}
               maxLength={4}
             />
-            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+
+            {err && (
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {err}
+              </p>
+            )}
+
             {amountErr && (
-              <p className="text-red-500 text-lg mt-2">{amountErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {amountErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -320,14 +347,19 @@ const UserAddRoom = () => {
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
             </select>
-            {err && <p className="text-red-500 text-sm mt-1">{err}</p>}
+
+            {err && (
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {err}
+              </p>
+            )}
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 col-span-1 md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Amenities
             </label>
-            <div className="mt-1 grid grid-cols-2 gap-4">
+            <div className="mt-1 grid grid-cols-2 md:grid-cols-3 gap-4">
               {Object.entries(roomData.amenities).map(
                 ([amenity, checked], index) => (
                   <div key={index} className="flex items-center">
@@ -350,7 +382,7 @@ const UserAddRoom = () => {
               )}
             </div>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Images
@@ -365,17 +397,20 @@ const UserAddRoom = () => {
                 className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
+
             {imageErr && (
-              <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {imageErr}
+              </p>
             )}
             {loading && <BeatLoader color="#36d7b7" />}
-            <div className="flex flex-wrap space-x-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {uploadedFiles.map((file, index) => (
                 <div key={index} className="relative">
                   <img
                     src={file}
                     alt={`Image ${index + 1}`}
-                    className="max-w-xs max-h-xs"
+                    className="max-w-xs max-h-xs rounded-md"
                     style={{ width: "150px", height: "100px" }}
                   />
                   <button
@@ -391,7 +426,7 @@ const UserAddRoom = () => {
                   <img
                     src={URL.createObjectURL(file)}
                     alt={`Selected Image ${index + 1}`}
-                    className="max-w-xs max-h-xs"
+                    className="max-w-xs max-h-xs rounded-md"
                     style={{ width: "150px", height: "100px" }}
                   />
                   <button
@@ -404,18 +439,20 @@ const UserAddRoom = () => {
               ))}
             </div>
           </div>
-          <button
-            className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-            onClick={handleUploadImage}
-          >
-            Upload image
-          </button>
-          <button
-            type="submit"
-            className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-          >
-            Add Room
-          </button>
+          <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-4">
+            <button
+              className="w-full md:w-auto px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              onClick={handleUploadImage}
+            >
+              Upload image
+            </button>
+            <button
+              type="submit"
+              className="w-full md:w-auto px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+            >
+              Add Room
+            </button>
+          </div>
         </form>
       </div>
       <Footer />

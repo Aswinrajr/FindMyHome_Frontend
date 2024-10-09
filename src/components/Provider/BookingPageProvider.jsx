@@ -65,74 +65,96 @@ const BookingPageProvider = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center mb-6 flex-col md:flex-row">
+      <div className="relative mb-4 md:mb-0">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg
+            className="h-5 w-5 text-gray-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
         <input
           type="text"
           placeholder="Search by User Name..."
           value={searchTerm}
           onChange={handleSearch}
-          className="border border-gray-300 rounded-md px-3 py-2 w-72 focus:outline-none focus:border-blue-500"
+          className="border border-gray-300 rounded-md pl-10 pr-4 py-2 w-full md:w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <div className="flex items-center">
-          <div className="flex space-x-2 mr-4">
-            <button
-              onClick={() => handleSort("high")}
-              className={`bg-gray-500 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded ${
-                sortBy === "high" ? "bg-pink-500" : ""
-              }`}
-            >
-              High to Low
-            </button>
-            <button
-              onClick={() => handleSort("low")}
-              className={`bg-gray-500 hover:pink-gray-700 text-white font-semibold py-2 px-4 rounded ${
-                sortBy === "low" ? "bg-pink-500" : ""
-              }`}
-            >
-              Low to High
-            </button>
-          </div>
-          <div className="flex items-center space-x-2">
-            {Array.from(
-              { length: Math.ceil(filteredBookings.length / bookingsPerPage) },
-              (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => paginate(index + 1)}
-                  className={`px-3 py-2 rounded-md focus:outline-none ${
-                    currentPage === index + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              )
-            )}
-          </div>
+      </div>
+      <div className="flex items-center space-x-2">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleSort("high")}
+            className={`px-4 py-2 rounded-md font-semibold text-sm focus:outline-none ${
+              sortBy === "high"
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            High to Low
+          </button>
+          <button
+            onClick={() => handleSort("low")}
+            className={`px-4 py-2 rounded-md font-semibold text-sm focus:outline-none ${
+              sortBy === "low"
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Low to High
+          </button>
+        </div>
+        <div className="flex items-center space-x-2">
+          {Array.from(
+            { length: Math.ceil(filteredBookings.length / bookingsPerPage) },
+            (_, index) => (
+              <button
+                key={index}
+                onClick={() => paginate(index + 1)}
+                className={`px-3 py-2 rounded-md text-sm font-semibold focus:outline-none ${
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
         </div>
       </div>
-
-      <table className="w-full border-collapse">
-        <thead className="bg-gray-100">
+    </div>
+  
+    <div className="overflow-x-auto bg-white rounded-md shadow">
+      <table className="w-full border-collapse table-auto">
+        <thead className="bg-gray-100 text-gray-700">
           <tr>
             <th className="px-6 py-3 text-left font-semibold">User Image</th>
             <th className="px-6 py-3 text-left font-semibold">User Name</th>
-            <th className="px-6 py-3 text-left font-semibold">
-              Provider Image
-            </th>
+            <th className="px-6 py-3 text-left font-semibold">Provider Image</th>
             <th className="px-6 py-3 text-left font-semibold">Provider Name</th>
             <th className="px-6 py-3 text-left font-semibold">Address</th>
             <th className="px-6 py-3 text-left font-semibold">Status</th>
             <th className="px-6 py-3 text-left font-semibold">Amount</th>
+            <th className="px-6 py-3 text-left font-semibold">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
           {currentBookings.map((booking) => (
-            <tr key={booking._id} className="hover:bg-gray-100">
+            <tr
+              key={booking._id}
+              className="hover:bg-gray-100 transition duration-150"
+            >
               <td className="px-6 py-4">
                 <img
-                  src={booking.image[0]}
+                  src={booking?.user?.image||userImage}
                   alt={booking.user?.name || "User Image"}
                   className="h-10 w-10 rounded-full"
                 />
@@ -165,17 +187,20 @@ const BookingPageProvider = () => {
                 </span>
               </td>
               <td className="px-6 py-4">{booking.totalAmounttoPay || "N/A"}</td>
-              <td
-                className="px-6 py-4 text-blue-500 underline cursor-pointer"
-                onClick={() => handleViewMore(booking._id)}
-              >
-                View more
+              <td className="px-6 py-4">
+                <button
+                  className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition duration-150"
+                  onClick={() => handleViewMore(booking._id)}
+                >
+                  View More
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
+  </div>
   );
 };
 

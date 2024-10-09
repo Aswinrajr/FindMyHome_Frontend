@@ -1,26 +1,12 @@
 import { useEffect, useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { useParams } from "react-router";
+
 import { getAllReviews, submitReview } from "../../service/User/UserService";
 import { Toaster, toast } from "react-hot-toast";
 
-// const demoReviews = [
-//   {
-//     id: 1,
-//     roomRating: 4,
-//     description: "Great room with a beautiful view!",
-//     author: "John Doe",
-//   },
-//   {
-//     id: 2,
-//     roomRating: 2,
-//     description: "The room was clean and comfortable, but a bit small.",
-//     author: "Jane Smith",
-//   },
-// ];
 
 const StarRating = ({ rating }) => {
-  console.log("Current",rating)
+
   const stars = [];
 
   const ratingValue = rating;
@@ -35,29 +21,28 @@ const StarRating = ({ rating }) => {
   return <div className="flex items-center">{stars}</div>;
 };
 
-const UserReview = () => {
+const UserReview = ({ roomId }) => {
   const [roomRating, setRoomRating] = useState(0);
+  console.log("Welcome to user review page")
 
   const [description, setDescription] = useState("");
   const [reviews, setReviews] = useState([]);
-  const roomId = useParams();
-  console.log(roomId.id);
+
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getAllReviews(roomId.id);
-      console.log("review", response);
+      const response = await getAllReviews(roomId);
+  
       if (response.status === 200) {
         setReviews(response.data.reviews.reviews);
-        // setRoomRating(response.data.reviews.reviews.rating);
+       
       }
     };
     fetchData();
-  }, [roomId.id]);
+  }, [roomId]);
 
   const handleRatingChange = (e) => {
     setRoomRating(e.target.value);
-    
   };
 
   const handleSubmit = async (e) => {
@@ -70,16 +55,15 @@ const UserReview = () => {
     console.log(data);
 
     const response = await submitReview(data, roomId);
-    console.log(response);
+    
     if (response.status === 200) {
-      console.log("toast");
-      toast.success(response.data.message);
      
+      toast.success(response.data.message);
     }
 
     const newReview = {
       id: reviews.length + 1,
-      rating:roomRating,
+      rating: roomRating,
       description,
       author: "You",
     };
@@ -142,7 +126,9 @@ const UserReview = () => {
             className="bg-white shadow-md rounded-md p-4 mb-4"
           >
             <div className="flex justify-between items-center mb-2">
-              <h5 className="font-bold">{review?.userName?review.userName:"You"}</h5>
+              <h5 className="font-bold">
+                {review?.userName ? review.userName : "You"}
+              </h5>
               <StarRating rating={review.rating} />
             </div>
             <p className="text-gray-700">{review.description}</p>

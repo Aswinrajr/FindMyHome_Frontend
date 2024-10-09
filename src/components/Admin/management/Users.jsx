@@ -16,10 +16,9 @@ const Users = () => {
 
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 3;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
- 
+  const perPage = 3;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -91,7 +90,7 @@ const Users = () => {
     if (confirmation.isConfirmed) {
       try {
         const response = await userActions(userId);
-        console.log(response);
+      
 
         const updatedUsers = users.map((user) => {
           if (user._id === userId) {
@@ -115,88 +114,124 @@ const Users = () => {
   return (
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="border border-gray-300 rounded-md px-3 py-2 w-72 focus:outline-none focus:border-blue-500"
-        />
-        <div className="flex space-x-2">{renderPaginationButtons()}</div>
+        <div className="w-72">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          {renderPaginationButtons()}
+        </div>
       </div>
-      <table className="w-full whitespace-nowrap bg-white divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Image
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Name
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Mobile
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Role
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Status
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {currentUsers.map((user) => (
-            <tr key={user._id}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <img
-                  src={user.image?
-                   `${baseUrl}/${user.image}` : `${profilePic}`
-                  }
-                  alt={user.name}
-                  className="h-10 w-10 rounded-full"
-                />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.userName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.userMobile}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.status}</td>
-              <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
-                <button
-                  className={`py-2 px-4 rounded ${
-                    user.status === "Blocked"
-                      ? "bg-green-500 hover:bg-green-700"
-                      : "bg-red-500 hover:bg-red-700"
-                  } text-white font-bold`}
-                  onClick={() => userAction(user._id)}
-                >
-                  {user.status === "Active" ? "Block" : "Unblock"}
-                </button>
-              </td>
+
+      <div className="rounded-lg shadow-md">
+        <table className="w-full bg-white divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Image
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Name
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Mobile
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Role
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Action
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {currentUsers.map((user) => (
+              <tr
+                key={user._id}
+                className="hover:bg-gray-100 transition-colors duration-200"
+              >
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <img
+                    src={
+                      user?.image|| profilePic
+                    }
+                    alt={user.name}
+                    className="h-10 w-10 rounded-full"
+                  />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap font-medium">
+                  {user.userName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {user.userMobile}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      user.role === "Admin"
+                        ? "bg-green-100 text-green-800"
+                        : user.role === "Provider"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      user.status === "Active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {user.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap ">
+                  <button
+                    className={`py-1 px-3 text-xs font-medium rounded mt-2 ${
+                      user.status === "Blocked"
+                        ? "bg-green-500 hover:bg-green-700  text-white"
+                        : "bg-red-500 hover:bg-red-700 text-white"
+                    }`}
+                    onClick={() => userAction(user._id)}
+                  >
+                    {user.status === "Active" ? "Block" : "Unblock"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

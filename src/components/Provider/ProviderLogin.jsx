@@ -54,7 +54,7 @@ const ProviderLogin = () => {
     try {
       const response = await providerLogin(email, password);
 
-      console.log("response: ", response);
+     
 
       if (response.status === 200) {
         dispatch(setProvider(response.data.token));
@@ -67,13 +67,13 @@ const ProviderLogin = () => {
           navigate("/provider/dashboard");
         }, 2000);
       } else if (response.response.status === 401) {
-        console.log(response.response.data.msg);
+       
         toast.error(response.response.data.msg);
       } else {
         toast.error(response.response.data.msg);
       }
     } catch (error) {
-      console.log("response===> ", error.response.response.data.msg);
+     
       toast.error(error.response.data.msg);
       console.error("Error:", error);
     } finally {
@@ -156,7 +156,7 @@ const ProviderLogin = () => {
             <p className="text-gray-600 text-sm">
               Dont have an account?{" "}
               <span
-                onClick={() => navigate("/provider/register")}
+                onClick={() => navigate("/provider/mobilesignup")}
                 className="text-indigo-600 hover:underline cursor-pointer"
               >
                 Sign up

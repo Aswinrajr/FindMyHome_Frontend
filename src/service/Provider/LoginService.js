@@ -2,7 +2,7 @@ import { providerInstance } from "../../api/providerAxiosInstance";
 let token = localStorage.getItem("providerAccessToken");
 const newToken = JSON.parse(token);
 token = newToken?.providerAccessToken;
-console.log("Welcome to get provider rooms---------", token);
+
 
 export const providerLogin = async (email, password) => {
   try {
@@ -205,8 +205,26 @@ export const singleBookingProvider = async (id) => {
 
 export const providerDashboard = async () => {
   try {
+    const response = await providerInstance.get(`/providerdashboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(response);
+
+    return response;
+  } catch (err) {
+    console.log("Error in provider login", err);
+    return err;
+  }
+};
+
+export const getSaleAnalysisProvider = async (period) => {
+  try {
+    console.log("welcome to provider chart");
     const response = await providerInstance.get(
-      `/providerdashboard`,
+      `/providerchartdata/${period}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,15 +1,11 @@
-
 import { useState } from "react";
 import { axiosInstance } from "../../api/axios";
 
 const SampleAddRooms = () => {
-  
   let token = localStorage.getItem("providerAccessToken");
 
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
-
-
 
   const [files, setFiles] = useState([]);
 

@@ -9,14 +9,14 @@ const SignUpPage = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL_ROUTE;
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location.state", location.state);
+
   const { phoneNumber } = location.state ? location.state : "";
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  console.log("phoneNumber==>", phoneNumber);
+
 
   const validatePassword = () => {
     return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(
@@ -54,7 +54,7 @@ const SignUpPage = () => {
         password,
         confirmPassword,
       });
-      console.log(response);
+ 
 
       if (response.status === 201) {
         console.log("Sign up successful");
@@ -73,28 +73,33 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="relative flex items-center justify-center min-h-screen bg-gray-100">
       <img
         src={backgroundImage}
         alt="Background"
         className="absolute inset-0 object-cover w-full h-full"
       />
+      <div className="absolute inset-0 bg-black opacity-50"></div>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <div className="mb-8">
-          <img src={logo} alt="Logo" className="mx-auto h-12" />
+      <div className="relative w-full max-w-md bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-auto">
+        <div className="flex justify-center mb-8">
+          <img src={logo} alt="Logo" className="h-12 w-auto" />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Welcome Back User signup!
+          Welcome Back! User Signup
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+              {error}
+            </p>
+          )}
           <div>
-          {error && <p className="text-red-500 mb-2 text-center">{error}</p>}
             <label
               htmlFor="userName"
               className="block text-gray-700 font-semibold text-sm mb-2"
             >
-                User Name
+              User Name
             </label>
             <input
               type="text"
@@ -104,7 +109,6 @@ const SignUpPage = () => {
               className="w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your user name"
             />
-           
           </div>
           <div>
             <label
@@ -121,9 +125,7 @@ const SignUpPage = () => {
               className="w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your email"
             />
-       
           </div>
-
           <div>
             <label
               htmlFor="password"
@@ -139,7 +141,6 @@ const SignUpPage = () => {
               className="w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your password"
             />
-      
           </div>
           <div>
             <label
@@ -156,7 +157,6 @@ const SignUpPage = () => {
               className="w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Confirm your password"
             />
-     
           </div>
           <button
             type="submit"

@@ -174,7 +174,7 @@ const EditRooms = () => {
           },
         }
       );
-      console.log(response);
+      
       if (response.status === 200) {
         toast.success("Room Updated Successfully");
         setTimeout(() => {
@@ -188,17 +188,17 @@ const EditRooms = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <h1 className="text-2xl font-semibold mb-4">Edit Room</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Edit Room</h1>
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
-        <div className="mb-4">
+        <div>
           <label
             htmlFor="roomType"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
             Room Type
           </label>
@@ -207,7 +207,7 @@ const EditRooms = () => {
             name="roomType"
             value={roomData.roomType}
             onChange={handleChange}
-            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select a room type</option>
             <option value="Single">Single</option>
@@ -216,10 +216,11 @@ const EditRooms = () => {
             <option value="Premium">Premium</option>
           </select>
         </div>
-        <div className="mb-4">
+
+        <div>
           <label
             htmlFor="adults"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
             Adults
           </label>
@@ -229,129 +230,168 @@ const EditRooms = () => {
             name="adults"
             value={roomData.adults}
             onChange={handleChange}
-            className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter number of adults"
             required
           />
-          {adultErr && <p className="text-red-500 text-sm mt-1">{adultErr}</p>}
+          {adultErr && (
+            <p className="text-red-500 text-sm mt-1 bg-red-100 p-2 rounded">
+              {adultErr}
+            </p>
+          )}
         </div>
-        <div className="mb-4">
-  <label htmlFor="children" className="block text-sm font-medium text-gray-700">
-    Children
-  </label>
-  <input
-    type="number"
-    id="children"
-    name="children"
-    value={roomData.children}
-    onChange={handleChange}
-    className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-    placeholder="Enter number of children"
-  />
-  {childErr && <p className="text-red-500 text-sm mt-1">{childErr}</p>}
-</div>
-<div className="mb-4">
-  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-    Amount
-  </label>
-  <input
-    type="text"
-    id="amount"
-    name="amount"
-    value={roomData.amount}
-    onChange={handleChange}
-    className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-    placeholder="Enter amount"
-  />
-  {amountErr && <p className="text-red-500 text-sm mt-1">{amountErr}</p>}
-</div>
-<div className="mb-4">
-  <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-    Status
-  </label>
-  <select
-    id="status"
-    name="status"
-    value={roomData.status}
-    onChange={handleChange}
-    className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-    required
-  >
-    <option value="available">Available</option>
-    <option value="not-available">Not Available</option>
-  </select>
-</div>
 
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Amenities</label>
-  <div className="mt-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-    {Object.entries(roomData.amenities).map(([amenity, checked], index) => (
-      <div key={index} className="flex items-center">
-        <input
-          type="checkbox"
-          id={amenity}
-          name={amenity}
-          checked={checked}
-          onChange={handleChange}
-          className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
-        />
-        <label htmlFor={amenity} className="ml-2 text-sm text-gray-700">
-          {amenity}
-        </label>
-      </div>
-    ))}
-  </div>
-</div>
+        <div>
+          <label
+            htmlFor="children"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Children
+          </label>
+          <input
+            type="number"
+            id="children"
+            name="children"
+            value={roomData.children}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter number of children"
+          />
+          {childErr && (
+            <p className="text-red-500 text-sm mt-1 bg-red-100 p-2 rounded">
+              {childErr}
+            </p>
+          )}
+        </div>
 
-<div className="col-span-1 lg:col-span-2">
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700">Images</label>
-    <input
-      type="file"
-      onChange={(e) => setImageUrl(e.target.files)}
-      name="images"
-      id="images"
-      accept="image/*"
-      multiple
-      className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-    />
-    {imageErr && <p className="text-red-500 text-sm mt-1">{imageErr}</p>}
-    {loading && <BeatLoader color="#36d7b7" />}
-  </div>
-  <div className="flex flex-wrap gap-2">
-    {roomData.images.map((file, index) => (
-      <div key={index} className="relative">
-        <img
-          src={file}
-          alt={`Image ${index + 1}`}
-          className="max-w-xs max-h-xs"
-          style={{ width: "150px", height: "100px" }}
-        />
+        <div>
+          <label
+            htmlFor="amount"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Amount
+          </label>
+          <input
+            type="text"
+            id="amount"
+            name="amount"
+            value={roomData.amount}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter amount"
+          />
+          {amountErr && (
+            <p className="text-red-500 text-sm mt-1 bg-red-100 p-2 rounded">
+              {amountErr}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label
+            htmlFor="status"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Status
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={roomData.status}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="available">Available</option>
+            <option value="not-available">Not Available</option>
+          </select>
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Amenities
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {Object.entries(roomData.amenities).map(
+              ([amenity, checked], index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={amenity}
+                    name={amenity}
+                    checked={checked}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor={amenity}
+                    className="ml-2 text-sm text-gray-700"
+                  >
+                    {amenity}
+                  </label>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Images
+          </label>
+          <input
+            type="file"
+            onChange={(e) => setImageUrl(e.target.files)}
+            name="images"
+            id="images"
+            accept="image/*"
+            multiple
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {imageErr && (
+            <p className="text-red-500 text-sm mt-1 bg-red-100 p-2 rounded">
+              {imageErr}
+            </p>
+          )}
+          {loading && <BeatLoader color="#36d7b7" className="mt-2" />}
+
+          <div className="flex flex-wrap gap-4 mt-4">
+            {roomData.images.map((file, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={file}
+                  alt={`Image ${index + 1}`}
+                  className="w-32 h-24 object-cover rounded-md"
+                />
+                <button
+                  type="button"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center focus:outline-none"
+                  onClick={() => handleImageDelete(index)}
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            onClick={handleUploadImage}
+          >
+            Upload Images
+          </button>
+        </div>
+
         <button
-          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-          onClick={() => handleImageDelete(index)}
+          type="submit"
+          className="md:col-span-2 w-full px-6 py-3 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
         >
-          &times;
+          Update Room
         </button>
-      </div>
-    ))}
-  </div>
-  <button
-    className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-    onClick={handleUploadImage}
-  >
-    Upload image
-  </button>
-</div>
-<button
-  type="submit"
-  className="col-span-1 lg:col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
->
-  Update Room
-</button>
-</form>
-</div>
-);
+      </form>
+    </div>
+  );
 };
 
 export default EditRooms;

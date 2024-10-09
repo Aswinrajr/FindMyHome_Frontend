@@ -39,7 +39,7 @@ const UserEditRoom = () => {
     const fetchRoomData = async () => {
       try {
         const response = await editUserRoom(roomId);
-        console.log("Response in user edit rooms fetching data", response);
+       
         setRoomData(response.data);
         setFiles(response.data.images);
       } catch (error) {
@@ -52,7 +52,7 @@ const UserEditRoom = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, value);
+  
 
     if (name === "adults" && value < 1) {
       setAdultErr("Number of adults cannot be less than 1");
@@ -99,17 +99,17 @@ const UserEditRoom = () => {
   };
 
   if (!user) return <Navigate to="/" />;
-  
+
   const handleUploadImage = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const uploadedImages = [...roomData.images]; 
+    const uploadedImages = [...roomData.images];
     const newImageUrls = [];
-  
+
     for (let i = 0; i < imageUrl.length; i++) {
       const data = await uploadCloudinary(imageUrl[i]);
       const { url, format } = data;
-  
+
       if (format !== "jpg") {
         setImageErr("Selected file is not applicable");
         setTimeout(() => {
@@ -118,7 +118,7 @@ const UserEditRoom = () => {
         }, 1000);
         return;
       }
-  
+
       if (uploadedImages.length >= 5) {
         setImageErr("Maximum 5 images are allowed");
         setTimeout(() => {
@@ -127,11 +127,11 @@ const UserEditRoom = () => {
         }, 1000);
         return;
       }
-  
+
       uploadedImages.push(url);
       newImageUrls.push(url);
     }
-  
+
     setLoading(false);
     setFiles(uploadedImages);
     setRoomData((prevData) => ({
@@ -167,7 +167,7 @@ const UserEditRoom = () => {
       };
 
       const response = await userUpdateRoom(roomData._id, data);
-      console.log("response in saving the edited rooms ", response);
+     
       if (response.status === 200) {
         toast.success("Room Updated Successfully");
         setTimeout(() => {
@@ -186,7 +186,10 @@ const UserEditRoom = () => {
       <div className="container mx-auto px-4 mt-5 mb-6">
         <Toaster position="top-center" reverseOrder={false} />
         <h1 className="text-2xl font-semibold mb-4">Edit Room</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           <div className="mb-4">
             <label
               htmlFor="roomType"
@@ -226,8 +229,11 @@ const UserEditRoom = () => {
               max={10}
               maxLength={1}
             />
+
             {adultErr && (
-              <p className="text-red-500 text-lg mt-2">{adultErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {adultErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -249,8 +255,11 @@ const UserEditRoom = () => {
               max={10}
               maxLength={1}
             />
+
             {childErr && (
-              <p className="text-red-500 text-lg mt-2">{childErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {childErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -272,8 +281,11 @@ const UserEditRoom = () => {
               min={300}
               maxLength={4}
             />
+
             {amountErr && (
-              <p className="text-red-500 text-lg mt-2">{amountErr}</p>
+              <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                {amountErr}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -294,12 +306,12 @@ const UserEditRoom = () => {
               <option value="not-available">Not Available</option>
             </select>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Amenities
               </label>
-              <div className="mt-1 grid grid-cols-2 gap-4">
+              <div className="mt-1 grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(roomData.amenities).map(
                   ([amenity, checked], index) => (
                     <div key={index} className="flex items-center">
@@ -323,7 +335,7 @@ const UserEditRoom = () => {
               </div>
             </div>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Images
@@ -337,18 +349,22 @@ const UserEditRoom = () => {
                 multiple
                 className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
+
               {imageErr && (
-                <p className="text-red-500 text-sm mt-1">{imageErr}</p>
+                <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+                  {imageErr}
+                </p>
               )}
+
               {loading && <BeatLoader color="#36d7b7" />}
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {roomData.images.map((file, index) => (
                 <div key={index} className="relative">
                   <img
                     src={file}
                     alt={`Image ${index + 1}`}
-                    className="max-w-xs max-h-xs"
+                    className="max-w-xs max-h-xs rounded-md"
                     style={{ width: "150px", height: "100px" }}
                   />
                   <button
@@ -361,7 +377,7 @@ const UserEditRoom = () => {
               ))}
             </div>
             <button
-              className="col-span-2 w-28 px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:green-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              className="w-full md:w-auto px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
               onClick={handleUploadImage}
             >
               Upload image
@@ -369,13 +385,13 @@ const UserEditRoom = () => {
           </div>
           <button
             type="submit"
-            className="col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple "
+            className="col-span-1 md:col-span-2 w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
           >
             Update Room
           </button>
         </form>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

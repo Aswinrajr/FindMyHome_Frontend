@@ -8,10 +8,10 @@ const BookingList = () => {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
-
   const [sortBy, setSortBy] = useState("asc");
+  const navigate = useNavigate();
   const bookingsPerPage = 3;
+
 
   let token = localStorage.getItem("accessToken");
   const newToken = JSON.parse(token);
@@ -21,7 +21,9 @@ const BookingList = () => {
     const fetchBookingData = async () => {
       try {
         const response = await getBookingData();
+      
         setBookings(response.data.orders);
+        console.log(bookings)
         setFilteredBookings(response.data.orders);
       } catch (error) {
         console.error("Error fetching booking data:", error);
@@ -44,7 +46,7 @@ const BookingList = () => {
 
   const handleSort = () => {
     const sorted = filteredBookings.slice().sort((a, b) => {
-      if (sortBy === "asc") {
+      if (sortBy === "desc") {
         return a.totalAmounttoPay - b.totalAmounttoPay;
       } else {
         return b.totalAmounttoPay - a.totalAmounttoPay;
@@ -64,14 +66,14 @@ const BookingList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleViewMore = async (id) => {
-    console.log(id);
-    navigate("/singlebookingdetails", { state: { id: id } });
+
+    navigate("/admin/singlebookingdetails", { state: { id: id } });
   };
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+        <div className="w-full md:w-auto">
           <label htmlFor="search" className="mr-2 font-semibold">
             Search by User Name:
           </label>
@@ -81,108 +83,96 @@ const BookingList = () => {
             placeholder="Search..."
             value={searchTerm}
             onChange={handleSearch}
-            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+            className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-auto focus:outline-none focus:border-blue-500"
           />
         </div>
-        <div className="flex items-center">
-          <label htmlFor="sort" className="mr-2 font-semibold">
-            Sort by Amount:
-          </label>
-          <div className="relative">
-            <select
-              id="sort"
-              value={sortBy}
-              onChange={handleSort}
-              className="appearance-none bg-white border border-gray-300 rounded-md py-2 pl-3 pr-8 focus:outline-none focus:border-blue-500"
-            >
-              <option value="asc">Low to High</option>
-              <option value="desc">High to Low</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-              <svg
-                className="h-4 w-4 fill-current text-gray-500"
-                viewBox="0 0 20 20"
+        <div className="flex items-center w-full md:w-auto space-x-4">
+          <div className="flex items-center">
+            <label htmlFor="sort" className="mr-2 font-semibold">
+              Sort by Amount:
+            </label>
+            <div className="relative">
+              <select
+                id="sort"
+                value={sortBy}
+                onChange={handleSort}
+                className="appearance-none bg-white border border-gray-300 rounded-md py-2 pl-3 pr-8 focus:outline-none focus:border-blue-500"
               >
-                <path d="M7 10l5 5 5-5z" />
-              </svg>
+                <option value="asc">Low to High</option>
+                <option value="desc">High to Low</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                <svg
+                  className="h-4 w-4 fill-current text-gray-500"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </div>
             </div>
           </div>
-          <div className="ml-4">
-            <nav
-              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-              aria-label="Pagination"
+          <nav
+            className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+            aria-label="Pagination"
+          >
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              <span className="sr-only">Previous</span>
+              <svg
+                className="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
               >
-                <span className="sr-only">Previous</span>
-                <svg
-                  className="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              {Array.from(
-                {
-                  length: Math.ceil(filteredBookings.length / bookingsPerPage),
-                },
-                (_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => paginate(index + 1)}
-                    aria-current={
-                      currentPage === index + 1 ? "page" : undefined
-                    }
-                    className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                      currentPage === index + 1
-                        ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                        : ""
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
-              <button
-                onClick={() => paginate(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredBookings.length / bookingsPerPage)
-                }
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                <path
+                  fillRule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => paginate(currentPage)}
+              aria-current="page"
+              className={`relative inline-flex items-center px-4 py-2 border border-gray-300  text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 z-10 bg-blue-50`}
+            >
+              {currentPage}
+            </button>
+
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredBookings.length / bookingsPerPage)
+              }
+              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Next</span>
+              <svg
+                className="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
               >
-                <span className="sr-only">Next</span>
-                <svg
-                  className="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </nav>
-          </div>
+                <path
+                  fillRule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </nav>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+        <table className="min-w-full border-collapse">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-6 py-3 text-left font-semibold text-gray-800">
@@ -217,9 +207,9 @@ const BookingList = () => {
               >
                 <td className="px-6 py-4">
                   <img
-                    src={booking?.image[0] || userImage}
+                    src={booking?.user?.image || userImage}
                     alt={booking?.user?.name || "User Image"}
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full object-cover"
                   />
                 </td>
                 <td className="px-6 py-4">
@@ -229,7 +219,7 @@ const BookingList = () => {
                   <img
                     src={booking?.provider?.providerImage[0] || ""}
                     alt={booking?.provider?.name || "Provider Image"}
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full object-cover"
                   />
                 </td>
                 <td className="px-6 py-4">

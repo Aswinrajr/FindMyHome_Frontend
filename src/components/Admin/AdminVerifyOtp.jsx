@@ -7,14 +7,14 @@ import { setAdmin } from '../../features/adminAuth'
 import { toast, Toaster } from "react-hot-toast";
 
 const AdminVerifyOtp = () => {
-  const navigate = useNavigate();
-  const [otp, setOtp] = useState('');
-  const dispatch = useDispatch();
   const adminRoute = import.meta.env.VITE_ADMIN_ROUTE;
-  const [err,setErr] = useState()
-  console.log(adminRoute);
   const token = localStorage.getItem('accessToken')
-  console.log(token)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [otp, setOtp] = useState('');
+  const [err,setErr] = useState()
+
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();

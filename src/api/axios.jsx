@@ -1,29 +1,22 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL_ROUTE,
+  baseURL: import.meta.env.VITE_ADMIN_ROUTE,
 });
-
-// let authToken = localStorage.getItem("accessToken");
-
-
-// const newToken = JSON.parse(authToken);
-// let token = newToken?.accessToken;
-
-
-
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    // console.log("Welcome to axios interceptor request", config);
+ 
     const adminToken = localStorage.getItem("accessToken");
-    const extractedToken = adminToken ? JSON.parse(adminToken).accessToken : null;
+    const extractedToken = adminToken
+      ? JSON.parse(adminToken).accessToken
+      : null;
 
     if (extractedToken) {
-      console.log("In auth token");
+
       config.headers.Authorization = `Bearer ${extractedToken}`;
     }
-     
+
     return config;
   },
   (error) => {
@@ -34,7 +27,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("Welcome to axios interceptor response===>", response);
+
     return response;
   },
   (error) => {

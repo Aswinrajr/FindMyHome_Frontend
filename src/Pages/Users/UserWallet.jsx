@@ -1,25 +1,36 @@
 import { useEffect, useState } from "react";
-import { FaWallet, FaMoneyBillAlt, FaMoneyCheckAlt, FaCoins } from "react-icons/fa";
+import {
+  FaWallet,
+  FaMoneyBillAlt,
+  FaMoneyCheckAlt,
+  FaCoins,
+} from "react-icons/fa";
 import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
-import { userWalletBalence } from "../../service/User/UserService";
+import {
+  userWalletBalence,
+
+} from "../../service/User/UserService";
+import WalletTransactionPagination from "./WalletTransactionPagination";
 
 const UserWallet = () => {
   const [walletBalance, setWalletBalance] = useState();
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
 
-  useEffect(()=>{
-    const fetchData = async()=>{
-      const response = await userWalletBalence()
-      console.log(response)
-      if(response.status===200){
-        setWalletBalance(response.data.walletBalance)
-      }
-    }
-    fetchData()
 
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await userWalletBalence();
+
+      if (response.status === 200) {
+        setWalletBalance(response.data.walletBalance);
+      }
+    };
+    fetchData();
+  }, []);
+
+
 
   const handleDeposit = () => {
     if (depositAmount > 0) {
@@ -46,7 +57,7 @@ const UserWallet = () => {
               <h2 className="text-2xl font-semibold">Your Wallet</h2>
             </div>
             <div className="text-2xl font-bold text-indigo-600">
-              ${walletBalance?.toFixed(2)}
+            ₹{walletBalance?.toFixed(2)}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -67,7 +78,7 @@ const UserWallet = () => {
               />
               <button
                 onClick={handleDeposit}
-                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300"
+                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300" disabled
               >
                 Deposit
               </button>
@@ -89,7 +100,7 @@ const UserWallet = () => {
               />
               <button
                 onClick={handleWithdraw}
-                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300"
+                className="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white transition-colors duration-300" disabled
               >
                 Withdraw
               </button>
@@ -103,6 +114,9 @@ const UserWallet = () => {
           Secure and instant transactions with our wallet.
         </p>
       </div>
+
+      <WalletTransactionPagination />
+
       <Footer className="mt-auto" />
     </div>
   );

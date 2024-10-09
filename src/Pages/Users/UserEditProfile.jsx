@@ -9,6 +9,7 @@ import {
   editUserProfile,
   userUpdateData,
 } from "../../service/User/UserService";
+import { uploadCloudinary } from "../../Helper/Upload";
 
 const UserEditProfile = () => {
   const user = localStorage.getItem("userAccessToken");
@@ -31,7 +32,6 @@ const UserEditProfile = () => {
     const fetchData = async () => {
       try {
         const response = await editUserProfile();
-        console.log("Response in user Edit fetch data",response)
 
         const userData = response.data.data;
         setFormData((prevData) => ({
@@ -44,9 +44,8 @@ const UserEditProfile = () => {
           address: userData.userAdress || "",
           city: userData.city || "",
           image: userData.image || null,
-          imageUrl: userData.image ? `${baseUrl}/${userData.image}` : null,
+          imageUrl: userData.image || null,
         }));
-        console.log(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -68,6 +67,7 @@ const UserEditProfile = () => {
       }));
     });
   }, []);
+
   if (!user) return <Navigate to="/" />;
 
   const handleChange = (e) => {
@@ -78,19 +78,27 @@ const UserEditProfile = () => {
     }));
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     let file = e.target.files[0];
-    console.log(file)
-    if(file.type!="image/jpeg"){
-      console.log("Not valid")
-      toast.error("Image is not a valid format")
+    console.log("file",file)
+
+    if (/^image\/(jpeg|png|gif|webp|avif|bmp|tiff)$/.test(file.type)) {
+      console.log("Valid file type");
+    } else {
+      console.log("Not valid");
+      toast.error("Image is not a valid format");
       setTimeout(() => {
-      navigate("/userprofile")
-      }, 1500);
+        navigate("/userprofile");
+      }, 2000);
     }
+
+    const imageUrl = await uploadCloudinary(file);
+    const { url } = imageUrl;
+    console.log(url)
+
     setFormData((prevData) => ({
       ...prevData,
-      image: file,
+      image: url,
       imageUrl: URL.createObjectURL(file),
     }));
   };
@@ -101,7 +109,6 @@ const UserEditProfile = () => {
     if (!formData.address || !formData.city) {
       return toast.error("All fields are required");
     }
-
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -150,101 +157,104 @@ const UserEditProfile = () => {
             </h2>
           </div>
           <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-auto h-auto relative flex-shrink-0">
+            <div className="flex flex-col lg:flex-row items-start justify-between mb-6">
+              <div className="w-full lg:w-auto h-auto relative flex-shrink-0 mb-4 lg:mb-0">
                 <img
                   src={
                     formData.imageUrl
                       ? formData.imageUrl
                       : formData.image
-                      ? `${baseUrl}/${formData.image}`
+                      ? formData.image
                       : profileImage
                   }
                   alt="Profile"
-                  className="w-96 h-72 object-cover rounded-lg"
+                  className="w-full lg:w-96 h-72 object-contain rounded-lg"
                 />
+
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="absolute bottom-0 left-0 cursor-pointer hover:bg-grey-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="absolute bottom-0 left-0 cursor-pointer bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 />
               </div>
-              <div className="flex flex-col flex-grow ml-32">
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Name:
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email:
-                    </label>
-                    <div className="mt-1 p-2 w-3/4 border border-gray-300 bg-gray-200  rounded focus:outline-none focus:ring focus:border-blue-500">
-                      {formData.email}
+              <div className="flex flex-col w-full lg:w-1/2 lg:ml-8">
+                <form onSubmit={handleSubmit} className="w-full">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Name:
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                      />
                     </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Mobile:
-                    </label>
-                    <div className="mt-1 p-2 w-3/4 border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
-                      {formData.mobile}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Email:
+                      </label>
+                      <div className="mt-1 p-2 w-full border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
+                        {formData.email}
+                      </div>
                     </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Address:
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      id="address"
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      City:
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Gender:
-                    </label>
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-3/4 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
-                    >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Others">Others</option>
-                    </select>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Mobile:
+                      </label>
+                      <div className="mt-1 p-2 w-full border border-gray-300 bg-gray-200 rounded focus:outline-none focus:ring focus:border-blue-500">
+                        {formData.mobile}
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address:
+                      </label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        id="address"
+                        className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        City:
+                      </label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Gender:
+                      </label>
+                      <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    </div>
                   </div>
                   <button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6"
                   >
-                    Save Changes
+                    Update
                   </button>
                 </form>
               </div>
@@ -252,7 +262,7 @@ const UserEditProfile = () => {
           </div>
         </div>
       </div>
-      <Footer className="mt-6" />
+      <Footer />
     </>
   );
 };

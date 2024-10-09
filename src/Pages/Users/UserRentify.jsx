@@ -15,7 +15,7 @@ const UserRentify = () => {
       const roleChange = async () => {
         const changeRole = await rentifyUser();
 
-        console.log(changeRole);
+     
         if (changeRole.status === 200) {
           toast.success(changeRole.data.message);
           setTimeout(() => {

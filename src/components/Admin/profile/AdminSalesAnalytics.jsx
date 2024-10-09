@@ -7,7 +7,7 @@ const AdminSalesAnalytics = () => {
   useEffect(() => {
     const renderChart = () => {
       if (chartRef.current) {
-        chartRef.current.destroy(); // Destroy previous chart if exists
+        chartRef.current.destroy();
       }
       const ctx = document.getElementById("salesChart").getContext("2d");
       chartRef.current = new Chart(ctx, {
@@ -56,7 +56,7 @@ const AdminSalesAnalytics = () => {
   return (
     <div className="container mx-auto mt-10">
       <h1 className="text-2xl font-semibold mb-4">Sales Analytics</h1>
-      <canvas id="salesChart" width="30" height="15"></canvas> {/* Adjust width and height for a smaller graph */}
+      <canvas id="salesChart" width="30" height="15"></canvas> 
     </div>
   );
 };

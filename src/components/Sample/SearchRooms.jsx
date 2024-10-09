@@ -1,13 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { ClipLoader } from "react-spinners";
 
 const SearchRooms = () => {
   const baseRoute = import.meta.env.VITE_BASE_URL_ROUTE;
 
-  const [date, setDate] = useState();
+
   const [error, setError] = useState();
+  const [loading, setLoading] = useState(false); 
+  const [cityName,setCityName] = useState()
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -30,7 +33,7 @@ const SearchRooms = () => {
       document.getElementById("city"),
       {}
     );
-    console.log(autocomplete);
+  
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
@@ -38,24 +41,26 @@ const SearchRooms = () => {
         const cityComponent = place.address_components.find(
           (component) => component.long_name
         );
-        console.log(cityComponent);
+    
 
-        const cityName = cityComponent ? cityComponent.long_name : "";
+        const cityNames = cityComponent ? cityComponent.long_name : "";
 
-        console.log(cityName);
+        console.log(cityNames);
+        setCityName(cityNames)
       }
     });
   }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     if (
       !formData.city ||
       !formData.checkIn ||
       !formData.adults ||
       !formData.children
     ) {
-      // toast.error("All fields are required");
+   
       setError("All fields are required");
       setTimeout(() => {
         setError("");
@@ -63,27 +68,28 @@ const SearchRooms = () => {
       return;
     }
 
-    if (formData.checkIn > formData.checkOut) {
+    if (formData.checkIn >= formData.checkOut) {
       setError("Selected date is invalid");
-      // toast.error("Selected date is invlid");
+     
       setTimeout(() => {
         setError("");
       }, 1000);
       return;
     }
 
-    if (formData.checkIn < formattedDate || formData.checkOut < formattedDate) {
+    if (formData.checkIn <= formattedDate || formData.checkOut <= formattedDate) {
       setError("Selected date is invalid");
 
-      // toast.error("Selected date is invalid");
+   
       setTimeout(() => {
         setError("");
       }, 1000);
       return;
     }
-    console.log(formData);
+   
 
     try {
+      setLoading(true); 
       const cordResponse = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           formData.city
@@ -92,8 +98,7 @@ const SearchRooms = () => {
       const { results } = cordResponse.data;
       const { lat, lng } = results[0].geometry.location;
 
-      console.log(formData);
-      console.log(baseRoute);
+   
       const fetchData = async () => {
         const response = await axios.post(`${baseRoute}/searchrooms`, {
           city: formData.city,
@@ -104,30 +109,32 @@ const SearchRooms = () => {
           adults: formData.adults,
           children: formData.children,
         });
-        console.log(response.data.data);
+       
         const nearbyProviders = response.data.data.nearbyProviders;
         const nearbyUser = response.data.data.nearbyUser;
-        console.log("nearbyProviders.data", nearbyProviders.data);
+       
         const data = {
           formData,
           nearbyProviders,
           nearbyUser,
         };
-        console.log("Daaaata", data);
+    
         if (response.status === 200) {
           navigate("/searchedroom", { state: data });
         }
       };
-      fetchData();
+      await fetchData();
     } catch (err) {
       console.log(err);
-
-      // return toast.error("All fields are required")
+    } finally {
+      setLoading(false); 
     }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+  
+
     if (name === "adults" && value < 1) {
       setError("No of person cannot be less than 1");
       setTimeout(() => {
@@ -142,73 +149,85 @@ const SearchRooms = () => {
       }, 1000);
       return;
     }
+   
 
     setFormData({
       ...formData,
       [name]: value,
     });
+
   };
+  formData.city=cityName
 
   return (
-    <section className="py-16 px-8 bg-gray-200">
+    <section className="py-16 px-4 md:px-8 bg-blue-50">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Search Rooms</h2>
+        <h2 className="text-3xl font-bold mb-8 text-blue-800 text-center">
+          Search Rooms
+        </h2>
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col md:flex-row md:space-x-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <input
               type="text"
               id="city"
               name="city"
               placeholder="City"
-              className="flex-1 p-2 border"
+              className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
               onChange={handleChange}
             />
-
-            <input
-              type="date"
-              name="checkIn"
-              placeholder="Check-in"
-              className="flex-1 p-2 border"
-              onChange={handleChange}
-            />
-            <h1 className="text-red-500">{date}</h1>
-            <input
-              type="date"
-              name="checkOut"
-              placeholder="Check-out"
-              className="flex-1 p-2 border"
-              onChange={handleChange}
-            />
-            <h1 className="text-red-500">{date}</h1>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="checkIn"
+                className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+                onChange={handleChange}
+                placeholder="Check-in Date"
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => (e.target.type = e.target.value ? "date" : "text")}
+              />
+              <input
+                type="text"
+                name="checkOut"
+                className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+                onChange={handleChange}
+                placeholder="Check-out Date"
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => (e.target.type = e.target.value ? "date" : "text")}
+              />
+            </div>
           </div>
-          <div className="flex flex-col md:flex-row md:space-x-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <input
               type="number"
               name="adults"
               placeholder="Adults"
-              className="flex-1 p-2 border appearance-none"
+              className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 appearance-none"
               min="1"
               max="10"
               onChange={handleChange}
             />
-
             <input
               type="number"
               name="children"
               placeholder="Children"
-              className="flex-1 p-2 border appearance-none"
+              className="w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 appearance-none"
               min="0"
               max="10"
-              onChange={handleChange}
+              onChange={handleChange} 
             />
           </div>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-lg mt-4 bg-red-100 px-4 py-2 rounded-md">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
+            disabled={loading}
           >
-            Search
+            {loading ? <ClipLoader size={20} color="#fff" /> : "Search"} 
           </button>
         </form>
       </div>

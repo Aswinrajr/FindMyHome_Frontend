@@ -8,37 +8,30 @@ import TopBar from "../../components/Sample/TopBar";
 import Footer from "../../components/Sample/Footer";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
-import {  useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { toast, Toaster } from "react-hot-toast";
 
 const UserCart = () => {
-
-
   const [demoData, setDemoData] = useState([]);
   const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const fetchData = async () => {
       const data = await getCartData();
-      console.log("Data from API:", data.data.userCart.cart);
-      setDemoData(data.data.userCart.cart);
 
-      console.log(demoData)
+      setDemoData(data.data.userCart.cart);
     };
     fetchData();
   }, []);
 
   const handleContinuePayment = (data) => {
-    console.log("Continue to payment", data);
     showRazorpay(data.roomId, data);
   };
 
   const showRazorpay = async (roomId, bookingDetails) => {
     try {
       const orderUrl = await verifyBookings(roomId);
-      console.log("OrderUrl", orderUrl);
 
       const { data } = orderUrl;
 
@@ -55,14 +48,13 @@ const UserCart = () => {
             const mode = "by Online";
             const result = await placeBookingOrder(bookingDetails, mode);
 
-            console.log(result);
             Swal.fire({
               title: "Room Booked Successfully",
               icon: "success",
               confirmButtonText: "OK",
             });
             setTimeout(() => {
-              navigate("/home");
+              navigate("/successpage", { state: { data: bookingDetails } });
             }, 2000);
           } catch (err) {
             console.log("Error in verify order", err);

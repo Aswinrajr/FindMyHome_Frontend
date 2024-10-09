@@ -1,24 +1,20 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import {
-  FaDollarSign,
-  FaCalendarCheck,
-  FaCalendarTimes,
-  // FaChartLine,
-} from "react-icons/fa";
-
+import { FaDollarSign, FaCalendarCheck, FaCalendarTimes } from "react-icons/fa";
 import {
   completeDatas,
+  getSaleAnalysisProvider,
   providerDashboard,
 } from "../../service/Provider/LoginService";
+import ChartComponent from "./ProviderChart";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [salesData, setSalesData] = useState({});
 
+  const [filterOption, setFilterOption] = useState("");
   let token = localStorage.getItem("providerAccessToken");
-
   const newToken = JSON.parse(token);
   token = newToken?.providerAccessToken;
 
@@ -26,7 +22,6 @@ const Dashboard = () => {
     const completeData = async () => {
       try {
         const response = await completeDatas();
-
         console.log(response);
         if (response.data.msg === "Complete your profile Data") {
           Swal.fire({
@@ -47,31 +42,42 @@ const Dashboard = () => {
         console.error("Error completing data:", error);
       }
     };
+
     const fetchData = async () => {
-      const data = await providerDashboard();
-      console.log("Data==>", data.data.salesData);
-      setSalesData(data.data.salesData);
+      try {
+        const data = await providerDashboard();
+       
+        setSalesData(data.data.salesData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
-
     if (token) {
       completeData();
     }
   }, [navigate, token]);
 
+  const handleFilterChange = async (e) => {
+    const selectedOption = e.target.value;
+    setFilterOption(selectedOption);
+  
+    try {
+      const response = await getSaleAnalysisProvider(selectedOption);
+
+
+      setSalesData(response.data);
+    } catch (error) {
+      console.error("Error fetching sale analysis:", error);
+    }
+  };
+
   if (!token) return <Navigate to="/provider" />;
 
   return (
     <div className="container p-2 mx-auto mt-10">
-      {/* <button
-        onClick={() => navigate("/admin/sales")}
-        className="absolute top-20  right-8 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md"
-      >
-        <FaChartLine className="mr-2" />
-        Sales Analytics
-      </button> */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
           <FaDollarSign className="text-4xl text-blue-500 mb-2" />
           <div className="text-lg font-semibold">Total Income</div>
@@ -87,11 +93,22 @@ const Dashboard = () => {
           <div className="text-lg font-semibold">Total Cancelled</div>
           <div className="text-xl">{salesData.cancelledOrders}</div>
         </div>
-        <div className="flex flex-col justify-center items-center bg-gray-200 p-4 rounded-lg">
-          <FaCalendarCheck className="text-4xl text-green-500 mb-2" />
-          <div className="text-lg font-semibold">Total Confirmed</div>
-          <div className="text-xl">{salesData.totalBooked}</div>
-        </div>
+      </div>
+
+      <div className="flex justify-end mb-4 mt-8 mr-9 sm:mr-0">
+        <select
+          value={filterOption}
+          onChange={handleFilterChange}
+          className="p-2 border rounded-md"
+        >
+          <option>Select Period</option>
+          <option value="daily">Daily</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div className="mt-8">
+        <ChartComponent data={salesData} />
       </div>
     </div>
   );

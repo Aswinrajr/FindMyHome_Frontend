@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
-
+import ProtectedRouteUser from "../utils/ProtectedRoute.jsx";
+import ProtectedRouteAdmin from "../utils/ProtectedRouteAdmin.jsx";
+import ProtectedRouteProvider from "../utils/ProtectedRouteProvider.jsx";
 
 //ADMIN
 import Login from "../components/Admin/Login.jsx";
@@ -14,6 +16,7 @@ import MessageList from "../Pages/Admin/MessageList.jsx";
 import AdminProfilePage from "../Pages/Admin/AdminProfilePage";
 import AdminSingleBookingView from "../Pages/Admin/AdminSingleBookingView.jsx";
 import AdminSalesOverView from "../Pages/Admin/AdminSalesOverView.jsx";
+import AdminOfferPage from "../Pages/Admin/AdminOfferPage.jsx";
 
 //PROVIDER
 import ProviderLogin from "../components/Provider/ProviderLogin";
@@ -30,6 +33,7 @@ import ProviderProfile from "../Pages/Provider/ProviderProfile";
 import LoginByOtp from "../components/Provider/LoginByOtp";
 import ProviderViewBookings from "../Pages/Provider/ProviderViewBookings.jsx";
 import ProviderCardPage from "../Pages/Provider/ProviderCardPage";
+import ProviderChatPage from "../Pages/Provider/ProviderChatPage.jsx";
 
 //USER
 import UserLogin from "../Pages/Users/UserLogin";
@@ -57,44 +61,25 @@ import UserWallet from "../Pages/Users/UserWallet.jsx";
 import UserCart from "../Pages/Users/UserCart.jsx";
 import SuccessPage from "../components/User/SuccessPage.jsx";
 import FailurePage from "../components/User/FailurePage.jsx";
-
+import Chat from "../components/Chat/userChat/Chat.jsx";
+import Invoice from "../Pages/Users/Invoice.jsx";
+import UserBookingReviewPage from "../Pages/Users/UserBookingReviewPage.jsx";
+import ProviderMobileVerification from "../components/Provider/ProviderMobileVerification.jsx";
 
 const routerPage = createBrowserRouter([
   {
     path: "/*",
     element: <PageNotFound />,
-  
   },
   {
     path: "/",
     element: <SamplePage />,
   },
-  //admin
+
+  //Admin Public Routes
   {
     path: "/admin",
     element: <Login />,
-  },
-  {
-    path: "/admin/dashboard",
-    element: <Dashboard />,
-    
-  },
-  {
-    path: "/admin/users",
-    element: <UserPage />,
-  },
-  {
-    path: "/admin/providers",
-    element: <ProvidersPage />,
-  },
-
-  {
-    path: "/admin/providers",
-    element: <ProvidersPage />,
-  },
-  {
-    path: "/admin/bookings",
-    element: <BookingPage />,
   },
 
   {
@@ -109,53 +94,37 @@ const routerPage = createBrowserRouter([
     path: "/admin/changepassword",
     element: <AdminChangePassword />,
   },
-  {
-    path: "/admin/messages",
-    element: <MessageList />,
-  },
-  {
-    path: "/admin/profile",
-    element: <AdminProfilePage />,
-  },
-  {
-    path: "/singlebookingdetails",
-    element: <AdminSingleBookingView />,
-  },
-  {
-    path:"/admin/sales",
-    element:<AdminSalesOverView/>
 
+  //Admin Protected Routes
+  {
+    path: "/admin",
+    element: <ProtectedRouteAdmin />,
+    children: [
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "users", element: <UserPage /> },
+      { path: "providers", element: <ProvidersPage /> },
+      { path: "bookings", element: <BookingPage /> },
+      { path: "changepassword", element: <AdminChangePassword /> },
+      { path: "messages", element: <MessageList /> },
+      { path: "profile", element: <AdminProfilePage /> },
+      { path: "singlebookingdetails", element: <AdminSingleBookingView /> },
+      { path: "sales", element: <AdminSalesOverView /> },
+      { path: "offers", element: <AdminOfferPage /> },
+    ],
   },
 
-  //Provider
+  //Provider Public Routes
   {
     path: "/provider",
     element: <ProviderLogin />,
   },
   {
+    path: "/provider/register",
+    element: <FirebaseMobile />,
+  },
+  {
     path: "/provider/signup",
     element: <ProviderSignUp />,
-  },
-  {
-    path: "/provider/dashboard",
-    element: <ProviderDashboard />,
-  },
-  {
-    path: "/provider/bookings",
-    element: <ProviderBookings />,
-  },
-
-  {
-    path: "/provider/rooms",
-    element: <ProviderRooms />,
-  },
-  {
-    path: "/provider/rooms/addrooms",
-    element: <ProviderAddRooms />,
-  },
-  {
-    path: "/provider/rooms/editrooms/:roomId",
-    element: <ProviderEditRooms />,
   },
   {
     path: "/provider/forgotpassword",
@@ -170,23 +139,30 @@ const routerPage = createBrowserRouter([
     element: <LoginByOtp />,
   },
   {
-    path: "/provider/profileedit",
-    element: <ProviderProfile />,
-  },
-  {
-    path: "/provider/register",
-    element: <FirebaseMobile />,
-  },
-  {
-    path: "/provider/account",
-    element: <ProviderCardPage />,
-  },
-  {
-    path: "/provider/singlebookingdetails",
-    element: <ProviderViewBookings/>,
+    path:"/provider/mobilesignup",
+    element:<ProviderMobileVerification/>
+
   },
 
-  //Users
+  //Provider Protected Routes
+  {
+    path: "/provider",
+    element: <ProtectedRouteProvider />,
+    children: [
+      { path: "dashboard", element: <ProviderDashboard /> },
+      { path: "bookings", element: <ProviderBookings /> },
+      { path: "rooms", element: <ProviderRooms /> },
+      { path: "rooms/addrooms", element: <ProviderAddRooms /> },
+      { path: "rooms/editrooms/:roomId", element: <ProviderEditRooms /> },
+      { path: "profileedit", element: <ProviderProfile /> },
+      { path: "register", element: <FirebaseMobile /> },
+      { path: "account", element: <ProviderCardPage /> },
+      { path: "singlebookingdetails", element: <ProviderViewBookings /> },
+      { path: "chat", element: <ProviderChatPage /> },
+    ],
+  },
+
+  //Users Public Routes
   {
     path: "/login",
     element: <UserLogin />,
@@ -205,6 +181,11 @@ const routerPage = createBrowserRouter([
     element: <VerifyOtp />,
   },
   {
+    path: "/register",
+    element: <UserMobileSignup />,
+  },
+
+  {
     path: "/home",
     element: <SamplePage />,
   },
@@ -212,81 +193,37 @@ const routerPage = createBrowserRouter([
     path: "/searchedroom",
     element: <SearchedRoom />,
   },
-  {
-    path: "/searchedroom/roompreview/:id",
-    element: <FullDetails />,
-  },
-  {
-    path: "/userprofile",
-    element: <UserProfile />,
-  },
-  {
-    path: "/dashboard",
-    element: <UserDashboard />,
-  },
-  {
-    path: "/editprofile",
-    element: <UserProfile />,
-  },
-  {
-    path: "/change_password",
-    element: <UserChangePassword />,
-  },
-  {
-    path: "/notification",
-    element: <UserNotification />,
-  },
-  {
-    path: "/bookings",
-    element: <UserPreviewBooking />,
-  },
-  {
-    path: "/edit_profile",
-    element: <UserEditProfile />,
-  },
-  {
-    path: "/room",
-    element: <UserRoom />,
-  },
-  {
-    path: "/rentify",
-    element: <UserRentify />,
-  },
-  {
-    path: "/contact",
-    element: <UserContact />,
-  },
-  {
-    path: "/addroom",
-    element: <UserAddRoom />,
-  },
 
+  //User Protected Routes
   {
-    path: "/usereditroom/:roomId",
-    element: <UserEditRoom />,
+    element: <ProtectedRouteUser />,
+    children: [
+      { path: "home", element: <SamplePage /> },
+      { path: "searchedroom", element: <SearchedRoom /> },
+      { path: "searchedroom/roompreview/:id", element: <FullDetails /> },
+      { path: "userprofile", element: <UserProfile /> },
+      { path: "dashboard", element: <UserDashboard /> },
+      { path: "editprofile", element: <UserProfile /> },
+      { path: "change_password", element: <UserChangePassword /> },
+      { path: "notification", element: <UserNotification /> },
+      { path: "bookings", element: <UserPreviewBooking /> },
+      { path: "edit_profile", element: <UserEditProfile /> },
+      { path: "room", element: <UserRoom /> },
+      { path: "rentify", element: <UserRentify /> },
+      { path: "contact", element: <UserContact /> },
+      { path: "addroom", element: <UserAddRoom /> },
+      { path: "usereditroom/:roomId", element: <UserEditRoom /> },
+      { path: "register", element: <UserMobileSignup /> },
+      { path: "addedroompreview/:id", element: <UserAddedRoomDetails /> },
+      { path: "wallet", element: <UserWallet /> },
+      { path: "cart", element: <UserCart /> },
+      { path: "successpage", element: <SuccessPage /> },
+      { path: "failurepage", element: <FailurePage /> },
+      { path: "chat", element: <Chat /> },
+      { path: "invoice", element: <Invoice /> },
+      { path: "getpreviewpage/:id", element: <UserBookingReviewPage /> },
+    ],
   },
-  {
-    path: "/register",
-    element: <UserMobileSignup />,
-  },
-  {
-    path: "/addedroompreview/:id",
-    element: <UserAddedRoomDetails />,
-  },
-  {
-    path:"wallet",
-    element:<UserWallet/>
-  },
-  {
-    path:"/cart",
-    element:<UserCart/>
-  },{
-    path:"/successpage",
-    element:<SuccessPage/>
-  },{
-    path:"/failurepage",
-    element:<FailurePage/>
-  }
 ]);
 
 export default routerPage;
