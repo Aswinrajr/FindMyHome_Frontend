@@ -43,6 +43,7 @@ const Chat = () => {
       
             socket.current.on("connect", () => {   
               console.log("Connected to socket server with id: ", socket.current.id);
+              console.log("Connected to socket server with id: ", socket.current.id);
               socket.current.emit("new-user-add", response.data.userData._id);  
             });
     
